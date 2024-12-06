@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Curso;
+use App\Models\cursos_participante;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
+class InstructorController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        // Obtener el instructor asociado al usuario autenticado
+        $instructorId = $request->user()->instructor->id;
+
+        // Obtener los cursos donde el instructor está asignado usando la tabla pivote
+        $cursos = Curso::whereHas('instructores', function ($query) use ($instructorId) {
+            $query->where('instructore_id', $instructorId);
+        })->orderBy('id', 'desc')->get();
+
+        // Pasar los cursos a la vista
+        return view('vistas.cursos.instructor.index', compact('cursos'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        // Agregar validaciones si es necesario
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $curso = Curso::find($id);
+        $ParticipantesInscritos = cursos_participante::where('curso_id', $id)->with(['participante'])->get();
+        return view('vistas.cursos.instructor.show', compact('curso', 'ParticipantesInscritos'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        // Obtener el registro de cursos_participante con relación a curso y participante
+        $curso_participante = cursos_participante::with('curso', 'participante')->find($id);
+
+        // Retornar vista para calificar al participante
+        return view('vistas.cursos.instructor.edit', compact('curso_participante'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, cursos_participante $cursos_participante)
+    {
+        // Validación de entrada
+        $request->validate([
+            'calificacion' => 'required|numeric|min:0|max:100',
+            'comentarios' => 'nullable|string|max:1000', // Agregar restricción de longitud si es necesario
+        ]);
+
+        // Determinar si está acreditado
+        $acreditado = $request->calificacion >= 70 ? 2 : 1;
+
+        // Actualizar la información en el modelo
+        $cursos_participante->update([
+            'calificacion' => $request->calificacion,
+            'comentarios' => $request->comentarios,
+            'acreditado' => $acreditado
+        ]);
+
+        return redirect()->route('instructor.show', $cursos_participante->curso_id)->with('status', 'Calificación actualizada correctamente');
+    }
+
+    /**
+     * Subir calificaciones para un curso.
+     */
+    public function subir_calificaciones($id)
+    {
+        $curso = Curso::find($id);
+
+        // Validación de existencia de curso
+        if (!$curso) {
+            return back()->withErrors(['error' => 'El curso no existe.']);
+        }
+
+        $curso->estado_calificacion = 1;
+        $curso->save();
+
+        return redirect()->route('instructor.show', $id)->with('success', 'Calificaciónes subidas correctamente.');
+    }
+
+    /**
+     * Subir ficha técnica de un curso.
+     */
+    public function subir_fichatecnica(Request $request, $curso_id)
+    {
+        // Validar el archivo
+        $request->validate([
+            'ficha_tecnica' => 'required|file|mimes:pdf|max:2048', // Máximo 2MB y debe ser PDF
+        ]);
+
+        // Obtener el curso por ID
+        $curso = Curso::find($curso_id);
+
+        // Validación si el curso no existe
+        if (!$curso) {
+            return back()->withErrors(['error' => 'El curso no existe.']);
+        }
+
+        // Manejar el archivo de la ficha técnica
+        if ($request->hasFile('ficha_tecnica') && $request->file('ficha_tecnica')->isValid()) {
+            // Eliminar la ficha técnica anterior si existe
+            if ($curso->ficha_tecnica && file_exists(public_path('uploads/' . $curso->ficha_tecnica))) {
+                // Eliminar el archivo anterior
+                unlink(public_path('uploads/' . $curso->ficha_tecnica));
+            }
+
+            $path = $request->file('ficha_tecnica')->store('/archivos/fichas_tecnicas', 'custom_public'); // Guardar en storage/app/public/archivos/fichas_tecnicas
+
+            // Actualizar el campo en el modelo
+            $curso->ficha_tecnica = $path;
+            $curso->save();
+        }
+
+        return back()->with('success', 'Ficha técnica subida correctamente.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+}
