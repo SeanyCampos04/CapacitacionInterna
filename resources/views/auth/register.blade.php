@@ -80,7 +80,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <x-input-label for="plantel" :value="__('Plantel/Organización')" />
+                    <x-input-label for="plantel" :value="__('Plantel / Organización')" />
                     <x-text-input id="plantel" class="block mt-1 w-full" type="text" name="plantel"
                         :value="old('plantel')" required />
                     <x-input-error :messages="$errors->get('plantel')" class="mt-2" />
