@@ -114,14 +114,14 @@
                             <tbody>
                                 @foreach ($ParticipantesOrdenados as $participanteInscrito)
                                     <tr class="bg-white border-b">
-                                        <td class="text-center">{{ $participanteInscrito->participante->user->email }}
+                                        <td class="text-left">{{ $participanteInscrito->participante->user->email }}
                                         </td>
-                                        <td class="text-center">
-                                            {{ $participanteInscrito->participante->user->datos_generales->nombre }}
+                                        <td class="text-left">
                                             {{ $participanteInscrito->participante->user->datos_generales->apellido_paterno }}
                                             {{ $participanteInscrito->participante->user->datos_generales->apellido_materno }}
+                                            {{ $participanteInscrito->participante->user->datos_generales->nombre }}
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-left">
                                             {{ $participanteInscrito->participante->user->datos_generales->departamento->nombre }}
                                         </td>
                                         <td class="text-center">

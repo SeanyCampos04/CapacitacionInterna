@@ -168,13 +168,13 @@
                         <tbody>
                             @foreach ($ParticipantesOrdenados as $participanteInscrito)
                                 <tr class="bg-white border-b">
-                                    <td class="text-center">{{ $participanteInscrito->participante->user->email }}</td>
-                                    <td class="text-center">
-                                        {{ $participanteInscrito->participante->user->datos_generales->nombre }}
+                                    <td class="text-left">{{ $participanteInscrito->participante->user->email }}</td>
+                                    <td class="text-left">
                                         {{ $participanteInscrito->participante->user->datos_generales->apellido_paterno }}
                                         {{ $participanteInscrito->participante->user->datos_generales->apellido_materno }}
+                                        {{ $participanteInscrito->participante->user->datos_generales->nombre }}
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-left">
                                         {{ $participanteInscrito->participante->user->datos_generales->departamento->nombre }}
                                     </td>
                                     @if ($curso->estado_calificacion != 0)
@@ -230,7 +230,7 @@
                                 @csrf
                                 <x-primary-button
                                     class="common-button bg-green-600 text-white hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-0"
-                                    onclick="return confirm('¿Estás seguro de que quieres subir las calificaciones?');">
+                                    onclick="return confirm('¿Estás seguro de que quieres subir las calificaciones? ⚠️UNA VEZ SUBIDAS EL INSTRUCTOR NO PODRÁ HACER CAMBIOS⚠️');">
                                     Subir calificacion
                                 </x-primary-button>
                             </form>
