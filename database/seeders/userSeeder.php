@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
             ['email'=> 'admin@tecvalles.mx',
             'name' => 'admin',
             'password' => bcrypt ('12345678')],
-
+            'tipo' => 1,
         ];
 
         foreach($users as $user){
