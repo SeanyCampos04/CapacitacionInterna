@@ -13,7 +13,9 @@ class userSeeder extends Seeder
     public function run(): void
     {
         $users = [
-            ['email'=> 'admin@tecvalles.mx', 'name' => 'admin', 'password' => '12345678'],
+            ['email'=> 'admin@tecvalles.mx',
+            'name' => 'admin',
+            'password' => bycrypt ('12345678')],
 
         ];
 
