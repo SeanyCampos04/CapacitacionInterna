@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('cursos', function (Blueprint $table) {
             $table->id();
             $table->string('instructor');
+            $table->string('departamento');
             $table->foreignId('departamento_id')->constrained()->onDelete('cascade');
             $table->string('nombre');
             $table->date('fdi');
@@ -25,11 +26,14 @@ return new class extends Migration
             $table->integer('duracion');
             $table->string('no_registro');
             $table->foreignId('periodo_id')->constrained()->onDelete('cascade');
+            $table->string('periodo');
             $table->string('tipo');
+            $table->string('sede');
+            $table->string('folio');
             $table->boolean('es_tics')->nullable();
             $table->boolean('es_tutorias')->nullable();
             $table->string('clase');
-            $table->integer('limite_participantes');
+            $table->integer('limiteAlumnos');
             $table->string('estado_calificacion')->default(0);
             $table->string('ficha_tecnica')->nullable();
             $table->boolean('estatus')->default(true);
