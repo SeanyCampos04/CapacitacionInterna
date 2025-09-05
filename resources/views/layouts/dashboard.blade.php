@@ -9,7 +9,14 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-7 text-gray-900 ">
-                    {{ __("Bienvenido, ") }} {{ Auth::user()->datos_generales->nombre}} {{ Auth::user()->datos_generales->apellido_paterno}} {{ Auth::user()->datos_generales->apellido_materno}}
+                    {{ __("Bienvenido, ") }}
+                    @if(Auth::user() && Auth::user()->datos_generales)
+                        {{ Auth::user()->datos_generales->nombre }}
+                        {{ Auth::user()->datos_generales->apellido_paterno }}
+                        {{ Auth::user()->datos_generales->apellido_materno }}
+                    @else
+                        {{ Auth::user()->name ?? Auth::user()->nombre ?? '' }}
+                    @endif
                 </div>
             </div>
         </div>

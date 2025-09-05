@@ -229,9 +229,15 @@
                     <x-slot name="trigger">
                         <button
                             class="inline-flex items-center px-1 py-4 text-sm leading-5 font-medium rounded-md text-gray-100 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->datos_generales->nombre }}
-                                {{ Auth::user()->datos_generales->apellido_paterno }}
-                                {{ Auth::user()->datos_generales->apellido_materno }}</div>
+                            <div>
+                                @if(Auth::user() && Auth::user()->datos_generales)
+                                    {{ Auth::user()->datos_generales->nombre }}
+                                    {{ Auth::user()->datos_generales->apellido_paterno }}
+                                    {{ Auth::user()->datos_generales->apellido_materno }}
+                                @else
+                                    {{ Auth::user()->name ?? Auth::user()->nombre ?? '' }}
+                                @endif
+                            </div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
