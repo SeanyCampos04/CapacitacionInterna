@@ -22,7 +22,7 @@ class InitialSeeder extends Seeder
     {
 
         $users = [
-            ['email'=> 'admin@tecvalles.mx', 'password' => '12345678', 'tipo' => '1']
+            ['email'=> 'admin@tecvalles.mx', 'password' => bcrypt('12345678'), 'tipo' => '1']
         ];
 
         foreach($users as $user){
