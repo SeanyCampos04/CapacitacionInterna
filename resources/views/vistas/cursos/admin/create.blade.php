@@ -9,13 +9,13 @@
         <form action="{{ route('cursos.store') }}" method="POST"
             class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
             @csrf
-            <x-text-input id="dncId" name="dncId" type="hidden" class="mt-1 block w-full" value="{{$solicitarcurso->id}}"/>
+            <x-text-input id="dncId" name="dncId" type="hidden" class="mt-1 block w-full" value="{{$solicitarcurso->id ?? ''}}"/>
 
             <!-- Nombre del curso -->
             <div class="mt-4">
                 <x-input-label for="nombre" value="Nombre del curso" />
                 <x-text-input id="nombre" name="nombre" type="text" class="mt-1 block w-full"
-                    value="{{ $solicitarcurso->nombre }}" />
+                    value="{{ $solicitarcurso->nombre ?? '' }}" />
                 <x-input-error :messages="$errors->get('nombre')" class="mt-2" />
             </div>
             <!-- Instructores -->
@@ -61,7 +61,7 @@
             <div class="mt-4">
                 <x-input-label for="objetivo" value="Objetivo" />
                 <x-text-input id="objetivo" name="objetivo" type="text" class="mt-1 block w-full"
-                    value="{{ $solicitarcurso->objetivo }}" />
+                    value="{{ $solicitarcurso->objetivo ?? '' }}" />
                 <x-input-error :messages="$errors->get('objetivo')" class="mt-2" />
             </div>
             <!-- Modalidad -->
