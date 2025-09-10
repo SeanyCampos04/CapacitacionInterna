@@ -144,7 +144,6 @@
                                 @if ($estatus_usuario == 1)
                                     <x-dropdown-link :href="route('cursos_disponibles.index')">
                                         {{ __('Disponibles') }}
-
                                     </x-dropdown-link>
                                     <x-dropdown-link :href="route('cursos_cursando.index')">
                                         {{ __('Cursando') }}
@@ -153,7 +152,6 @@
                                 <x-dropdown-link :href="route('cursos_terminados.index')">
                                     {{ __('Terminados') }}
                                 </x-dropdown-link>
-
                             @endif
                             @if (in_array('Instructor', $user_roles))
                                 <x-dropdown-link :href="route('instructor.index')">
@@ -164,7 +162,6 @@
                                 <x-dropdown-link :href="route('solicitarcursos.create')">
                                     {{ __('Solicitar Curso') }}
                                 </x-dropdown-link>
-
                                 <x-dropdown-link :href="route('jefe_solicitarcursos.index')">
                                     {{ __('Mis solicitudes') }}
                                 </x-dropdown-link>
@@ -174,9 +171,12 @@
                                     in_array('Jefe Departamento', $user_roles) or
                                     in_array('Subdirector Academico', $user_roles))
                                 @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
-                                <x-dropdown-link :href="route('cursos_estadisticas.index')">
-                                    {{ __('Estadisticas') }}
-                                </x-dropdown-link>
+                                    <x-dropdown-link :href="route('cursos_estadisticas.index')">
+                                        {{ __('Estadisticas') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('cursos.create', ['id' => 0])">
+                                        {{ __('Registrar curso') }}
+                                    </x-dropdown-link>
                                 @endif
                                 <x-dropdown-link :href="route('cursos.index')">
                                     {{ __('Ver cursos') }}
