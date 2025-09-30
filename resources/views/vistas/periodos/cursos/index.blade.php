@@ -11,7 +11,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
-                    <!-- Buscador de cursos -->
+                    <!--  Buscador de cursos -->
                     <form action="{{ route('cursos.index') }}" method="GET" class="mb-4 flex justify-end p-4">
                         <input
                             type="text"
