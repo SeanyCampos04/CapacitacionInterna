@@ -2,7 +2,7 @@
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-white">
-            {{ __('Cursos del periodo:') }} {{$periodo->periodo}}
+            {{ __('Cursos del periodo:') }} {{$periodo?->periodo ?? 'Sin periodo'}}
         </h2>
     </x-slot>
 
@@ -60,17 +60,19 @@
                                     <td class="text-center">{{ $curso->nombre }}</td>
                                     <td class="text-center">
                                         @foreach ($curso->instructores as $instructor)
-                                            {{$instructor->user->datos_generales->nombre}} {{$instructor->user->datos_generales->apellido_paterno}} {{$instructor->user->datos_generales->apellido_materno}} <br>
+                                            {{ $instructor->user->datos_generales?->nombre ?? '' }}
+                                            {{ $instructor->user->datos_generales?->apellido_paterno ?? '' }}
+                                            {{ $instructor->user->datos_generales?->apellido_materno ?? '' }} <br>
                                         @endforeach
                                     </td>
-                                    <td class="text-center">{{ $curso->departamento->nombre }}</td>
-                                    <td class="text-center">{{ $curso->periodo->periodo }}</td>
+                                    <td class="text-center">{{ $curso->departamento?->nombre ?? 'Sin departamento' }}</td>
+                                    <td class="text-center">{{ $curso->periodo?->periodo ?? 'Sin periodo' }}</td>
                                     <td class="text-center">{{ $curso->modalidad }}</td>
                                     <td class="text-center">{{$curso->cursos_participantes->count()}}/{{ $curso->limite_participantes }}</td>
                                     @if ($curso->estatus == 1)
-                                    <td class="text-center">Disponible</td>
+                                        <td class="text-center">Disponible</td>
                                     @else
-                                    <td class="text-center">Terminado</td>
+                                        <td class="text-center">Terminado</td>
                                     @endif
                                     <td class="text-center">
                                         <form action="{{ route('cursos.show', $curso->id) }}" method="GET">
