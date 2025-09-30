@@ -25,33 +25,30 @@ class CursoController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('q');
+        $search = $request->input('q'); // Lo que se escribe en el buscador
+        $periodo = Periodo::latest()->first(); // Ajusta según tu lógica para obtener el periodo actual
 
-        // Obtener el periodo activo o el último periodo (ajusta según tu lógica)
-        $periodo = Periodo::latest()->first();
-
-        // Cargar cursos con relaciones necesarias y aplicar búsqueda
         $cursos = Curso::with([
-                'periodo',
-                'instructores.user.datos_generales',
-                'departamento',
-                'cursos_participantes'
-            ])
-            ->when($search, function($query, $search) {
-                $query->where('nombre', 'like', "%{$search}%")
-                      ->orWhereHas('instructores.user.datos_generales', function($q) use ($search) {
-                          $q->where('nombre', 'like', "%{$search}%")
-                            ->orWhere('apellido_paterno', 'like', "%{$search}%")
-                            ->orWhere('apellido_materno', 'like', "%{$search}%");
-                      })
-                      ->orWhereHas('departamento', function($q) use ($search) {
-                          $q->where('nombre', 'like', "%{$search}%");
-                      });
-            })
-            ->orderBy('id', 'desc')
-            ->get();
+            'periodo',
+            'instructores.user.datos_generales',
+            'departamento',
+            'cursos_participantes'
+        ])
+        ->when($search, function($query, $search) {
+            $query->where('nombre', 'like', "%{$search}%")
+                  ->orWhereHas('instructores.user.datos_generales', function($q) use ($search) {
+                      $q->where('nombre', 'like', "%{$search}%")
+                        ->orWhere('apellido_paterno', 'like', "%{$search}%")
+                        ->orWhere('apellido_materno', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('departamento', function($q) use ($search) {
+                      $q->where('nombre', 'like', "%{$search}%");
+                  });
+        })
+        ->orderBy('id', 'desc')
+        ->get();
 
-        return view('vistas.cursos.index', compact('cursos', 'search', 'periodo'));
+        return view('vistas.cursos.index', compact('cursos', 'periodo', 'search'));
     }
 
     public function docente_index(Request $request)
@@ -216,9 +213,10 @@ class CursoController extends Controller
             'es_tutorias' => $request->has('es_tutorias'),
         ]);
 
-        // Sincronizar instructores
+        // Sincronizar la relación con los instructores
         $curso->instructores()->sync($request->instructores);
 
+        // Redirigir con un mensaje de éxito
         return redirect(route('cursos.show', $curso->id))->with('success', 'Curso actualizado correctamente.');
     }
 
@@ -306,17 +304,14 @@ class CursoController extends Controller
 
         foreach ($cursos as $curso) {
             $trimestre = $curso->periodo->trimestre;
-
             if ($curso->clase == 'Docente') {
                 $estadisticas["trimestre_$trimestre"]['total_docente'] += $curso->participantes->count();
             } elseif ($curso->clase == 'Profesional') {
                 $estadisticas["trimestre_$trimestre"]['total_profesional'] += $curso->participantes->count();
             }
-
             if ($curso->es_tics) {
                 $estadisticas["trimestre_$trimestre"]['total_tics'] += $curso->participantes->count();
             }
-
             if ($curso->es_tutorias) {
                 $estadisticas["trimestre_$trimestre"]['total_tutorias'] += $curso->participantes->count();
             }
@@ -336,10 +331,10 @@ class CursoController extends Controller
                             ->whereDate('historial_usuarios.fecha_inicio', '<=', $fecha_fin_trimestre)
                             ->whereDate('historial_usuarios.fecha_fin', '>=', $fecha_inicio_trimestre);
                     })
-                        ->orWhere(function ($subQuery) use ($fecha_fin_trimestre) {
-                            $subQuery->whereNull('historial_usuarios.fecha_fin')
-                                ->whereDate('historial_usuarios.fecha_inicio', '<=', $fecha_fin_trimestre);
-                        });
+                    ->orWhere(function ($subQuery) use ($fecha_fin_trimestre) {
+                        $subQuery->whereNull('historial_usuarios.fecha_fin')
+                            ->whereDate('historial_usuarios.fecha_inicio', '<=', $fecha_fin_trimestre);
+                    });
                 })
                 ->distinct('users.id')
                 ->count();
