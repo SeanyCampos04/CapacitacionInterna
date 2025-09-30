@@ -10,21 +10,6 @@
         <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-
-                    <!--  Buscador de cursos -->
-                    <form action="{{ route('cursos.index') }}" method="GET" class="mb-4 flex justify-end p-4">
-                        <input
-                            type="text"
-                            name="q"
-                            value="{{ request('q') }}"
-                            placeholder="Buscar por curso, instructor o departamento"
-                            class="border border-gray-300 rounded-lg px-3 py-2 mr-2 w-1/3"
-                        >
-                        <x-primary-button class="bg-blue-600 hover:bg-blue-700">
-                            Buscar
-                        </x-primary-button>
-                    </form>
-
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500">
                         <thead class="text-xm text-gray-700 bg-gray-50">
                             <tr>
