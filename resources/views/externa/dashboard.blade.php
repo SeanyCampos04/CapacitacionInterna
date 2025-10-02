@@ -1,7 +1,7 @@
 <x-app-externa-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Capacitación Externa - Dashboard') }}
+            {{ __('Inicio') }}
         </h2>
     </x-slot>
 
@@ -31,21 +31,32 @@
 
                     <!-- Tarjetas de acciones rápidas -->
                     <div class="row">
-                        <div class="col-md-4 mb-4">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-plus-circle fa-3x text-success"></i>
+                        @php
+                            $user_roles = auth()->user()->user_roles->pluck('role.name')->toArray();
+                        @endphp
+
+                        <!-- Tarjeta Registrar - Solo para Instructores, Docentes, Admin, CAD -->
+                        @if (in_array('Instructor', $user_roles) or
+                             in_array('Docente', $user_roles) or
+                             in_array('admin', $user_roles) or
+                             in_array('CAD', $user_roles))
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-plus-circle fa-3x text-success"></i>
+                                        </div>
+                                        <h5 class="card-title">Registrar Capacitación</h5>
+                                        <p class="card-text">Registra una nueva capacitación externa</p>
+                                        <a href="{{ route('externa.formulario') }}" class="btn btn-success">
+                                            Ir al Formulario
+                                        </a>
                                     </div>
-                                    <h5 class="card-title">Registrar Capacitación</h5>
-                                    <p class="card-text">Registra una nueva capacitación externa</p>
-                                    <a href="{{ route('externa.formulario') }}" class="btn btn-success">
-                                        Ir al Formulario
-                                    </a>
                                 </div>
                             </div>
-                        </div>
+                        @endif
 
+                        <!-- Tarjeta Ver Capacitaciones - Visible para todos -->
                         <div class="col-md-4 mb-4">
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body text-center">
@@ -61,20 +72,26 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-4">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-user fa-3x text-info"></i>
+                        <!-- Tarjeta Mis Capacitaciones - Solo para Instructores, Docentes, Admin, CAD -->
+                        @if (in_array('Instructor', $user_roles) or
+                             in_array('Docente', $user_roles) or
+                             in_array('admin', $user_roles) or
+                             in_array('CAD', $user_roles))
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-user fa-3x text-info"></i>
+                                        </div>
+                                        <h5 class="card-title">Mis Capacitaciones</h5>
+                                        <p class="card-text">Ve tus capacitaciones registradas</p>
+                                        <a href="{{ route('externa.mis_capacitaciones') }}" class="btn btn-info">
+                                            Ver Mis Registros
+                                        </a>
                                     </div>
-                                    <h5 class="card-title">Mis Capacitaciones</h5>
-                                    <p class="card-text">Ve tus capacitaciones registradas</p>
-                                    <a href="{{ route('externa.mis_capacitaciones') }}" class="btn btn-info">
-                                        Ver Mis Registros
-                                    </a>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
