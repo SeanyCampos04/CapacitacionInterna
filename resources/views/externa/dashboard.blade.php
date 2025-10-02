@@ -26,17 +26,28 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <h3 class="text-2xl font-bold mb-4">{{ __("Bienvenido al Módulo de Capacitación Externa") }}</h3>
+                    <h3 class="text-2xl font-bold mb-4">{{ __("Bienvenido a Capacitación Externa") }}</h3>
+                    <h4 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">{{ Auth::user()->name }}</h4>
                     <p class="text-gray-600 dark:text-gray-300 mb-6">Gestiona y registra las capacitaciones externas de la institución.</p>
 
                     <!-- Tarjetas de acciones rápidas -->
                     <div class="row">
                         @php
-                            $user_roles = auth()->user()->user_roles->pluck('role.name')->toArray();
-                        @endphp
+                            // Obtener roles usando consulta directa a la base de datos (misma lógica que navegación)
+                            $user_id = auth()->user()->id;
+                            $user_role_ids = \Illuminate\Support\Facades\DB::table('user_roles')->where('user_id', $user_id)->pluck('role_id')->toArray();
 
-                        <!-- Tarjeta Registrar - Solo para Instructores, Docentes, Admin, CAD -->
-                        @if (in_array('Instructor', $user_roles) or
+                            // Obtener nombres de roles
+                            $user_roles = [];
+                            if (!empty($user_role_ids)) {
+                                $user_roles = \Illuminate\Support\Facades\DB::table('roles')->whereIn('id', $user_role_ids)->pluck('nombre')->toArray();
+                            }
+
+                            // Verificar si es instructor (role_id = 5 o nombre = 'Instructor')
+                            $is_instructor = in_array(5, $user_role_ids) || in_array('Instructor', $user_roles);
+                        @endphp                        <!-- Tarjeta Registrar - Solo para Instructores, Docentes, Admin, CAD -->
+                        @if ($is_instructor or
+                             in_array('Instructor', $user_roles) or
                              in_array('Docente', $user_roles) or
                              in_array('admin', $user_roles) or
                              in_array('CAD', $user_roles))
@@ -56,24 +67,27 @@
                             </div>
                         @endif
 
-                        <!-- Tarjeta Ver Capacitaciones - Visible para todos -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-list fa-3x text-primary"></i>
+                        <!-- Tarjeta Ver Capacitaciones - Visible para todos EXCEPTO Instructores -->
+                        @if (!$is_instructor)
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-list fa-3x text-primary"></i>
+                                        </div>
+                                        <h5 class="card-title">Ver Capacitaciones</h5>
+                                        <p class="card-text">Consulta todas las capacitaciones registradas</p>
+                                        <a href="{{ route('externa.datos') }}" class="btn btn-primary">
+                                            Ver Lista
+                                        </a>
                                     </div>
-                                    <h5 class="card-title">Ver Capacitaciones</h5>
-                                    <p class="card-text">Consulta todas las capacitaciones registradas</p>
-                                    <a href="{{ route('externa.datos') }}" class="btn btn-primary">
-                                        Ver Lista
-                                    </a>
                                 </div>
                             </div>
-                        </div>
+                        @endif
 
                         <!-- Tarjeta Mis Capacitaciones - Solo para Instructores, Docentes, Admin, CAD -->
-                        @if (in_array('Instructor', $user_roles) or
+                        @if ($is_instructor or
+                             in_array('Instructor', $user_roles) or
                              in_array('Docente', $user_roles) or
                              in_array('admin', $user_roles) or
                              in_array('CAD', $user_roles))

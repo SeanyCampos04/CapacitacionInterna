@@ -1,5 +1,19 @@
 @php
-    $user_roles = auth()->user()->user_roles->pluck('role.name')->toArray();
+    use Illuminate\Support\Facades\DB;
+
+    // Obtener roles usando consulta directa a la base de datos
+    $user_id = auth()->user()->id;
+    $user_role_ids = DB::table('user_roles')->where('user_id', $user_id)->pluck('role_id')->toArray();
+
+    // Obtener nombres de roles
+    $user_roles = [];
+    if (!empty($user_role_ids)) {
+        $user_roles = DB::table('roles')->whereIn('id', $user_role_ids)->pluck('nombre')->toArray();
+    }
+
+    // Verificar si es instructor (role_id = 5 o nombre = 'Instructor')
+    $is_instructor = in_array(5, $user_role_ids) || in_array('Instructor', $user_roles);
+
     $tipo_usuario = auth()->user()->tipo_usuario;
 @endphp
 
@@ -60,7 +74,7 @@
                 </div>
 
                 <!-- Visualizar Capacitaciones - Oculto para Instructores -->
-                @if (!in_array('Instructor', $user_roles))
+                @if (!$is_instructor)
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
                         <x-nav-link :href="route('externa.datos')" :active="request()->routeIs('externa.datos')">
                             {{ __('Visualizar') }}
@@ -69,7 +83,8 @@
                 @endif
 
                 <!-- Registrar Capacitación - Visible para Instructores, Docentes, Admin, CAD -->
-                @if (in_array('Instructor', $user_roles) or
+                @if ($is_instructor or
+                     in_array('Instructor', $user_roles) or
                      in_array('Docente', $user_roles) or
                      in_array('admin', $user_roles) or
                      in_array('CAD', $user_roles))
@@ -81,7 +96,8 @@
                 @endif
 
                 <!-- Mis Capacitaciones - Visible para Instructores, Docentes, Admin, CAD -->
-                @if (in_array('Instructor', $user_roles) or
+                @if ($is_instructor or
+                     in_array('Instructor', $user_roles) or
                      in_array('Docente', $user_roles) or
                      in_array('admin', $user_roles) or
                      in_array('CAD', $user_roles))
@@ -147,13 +163,14 @@
                 {{ __('Inicio') }}
             </x-responsive-nav-link>
 
-            @if (!in_array('Instructor', $user_roles))
+            @if (!$is_instructor)
                 <x-responsive-nav-link :href="route('externa.datos')" :active="request()->routeIs('externa.datos')">
                     {{ __('Visualizar') }}
                 </x-responsive-nav-link>
             @endif
 
-            @if (in_array('Instructor', $user_roles) or
+            @if ($is_instructor or
+                 in_array('Instructor', $user_roles) or
                  in_array('Docente', $user_roles) or
                  in_array('admin', $user_roles) or
                  in_array('CAD', $user_roles))
