@@ -1,4 +1,10 @@
-<x-app-layout>
+<x-app-externa-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Capacitaciones Externas Registradas') }}
+        </h2>
+    </x-slot>
+
     <!DOCTYPE html>
     <html lang="es">
     <head>
@@ -51,11 +57,6 @@
         </style>
     </head>
     <body>
-        <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Capacitaciones Externas Registradas') }}
-            </h2>
-        </x-slot>
         <div class="container">
                 @if($tipo_usuario == 1) <!-- Verifica si no es docente para mostrar el formulario de filtrado -->
                     @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
@@ -267,4 +268,4 @@
         </script>
     </body>
     </html>
-</x-app-layout>
+</x-app-externa-layout>

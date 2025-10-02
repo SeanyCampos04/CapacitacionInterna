@@ -1,4 +1,10 @@
-<x-app-layout>
+<x-app-externa-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Registro de Capacitaciones Externas') }}
+        </h2>
+    </x-slot>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -68,6 +74,27 @@
             position: absolute;
             right: 10px;
             top: 10px;
+            border-color: #0056b3;
+        }
+        .text-center {
+            margin-top: 20px;
+        }
+        .form-text {
+            color: #6c757d;
+        }
+        .alert {
+            border-radius: 8px;
+        }
+        input[type="file"] {
+            padding: 5px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .btn-close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
             color: #000;
         }
         /* Quitar el subrayado de todos los enlaces */
@@ -77,11 +104,6 @@
     </style>
 </head>
 <body>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Registro de Capacitaciones Externas') }}
-        </h2>
-    </x-slot>
     <div class="container">
     <p class="text-center text-muted">Complete el formulario para registrar su capacitación y generar constancias.</p>
     <form action="{{ route('capacitacionesext.store') }}" method="POST" enctype="multipart/form-data">
@@ -209,4 +231,4 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-</x-app-layout>
+</x-app-externa-layout>

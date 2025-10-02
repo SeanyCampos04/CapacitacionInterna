@@ -49,16 +49,23 @@ class RegistroCapacitacionesExtController extends Controller
         // Mostrar todas las capacitaciones para roles admin y CAD
         $capacitaciones = RegistroCapacitacionesExt::all();
 
-        return view('externa.datos', compact('capacitaciones'));
+        // Variables necesarias para la vista
+        $user_roles = auth()->user()->user_roles->pluck('role.name')->toArray();
+        $tipo_usuario = auth()->user()->tipo_usuario;
+
+        return view('externa.datos', compact('capacitaciones', 'user_roles', 'tipo_usuario'));
     }
 
     public function mis_capacitaciones()
     {
         $user = auth()->user();
-
         $capacitaciones = RegistroCapacitacionesExt::where('correo', $user->email)->get();
 
-        return view('externa.datos', compact('capacitaciones'));
+        // Variables necesarias para la vista
+        $user_roles = $user->user_roles->pluck('role.name')->toArray();
+        $tipo_usuario = $user->tipo_usuario;
+
+        return view('externa.datos', compact('capacitaciones', 'user_roles', 'tipo_usuario'));
     }
 
     public function destroy($id)
@@ -93,7 +100,11 @@ class RegistroCapacitacionesExtController extends Controller
 
         $capacitaciones = $query->get();
 
-        return view('externa.datos', ['capacitaciones' => $capacitaciones]);
+        // Variables necesarias para la vista
+        $user_roles = auth()->user()->user_roles->pluck('role.name')->toArray();
+        $tipo_usuario = auth()->user()->tipo_usuario;
+
+        return view('externa.datos', compact('capacitaciones', 'user_roles', 'tipo_usuario'));
     }
 
     public function create()

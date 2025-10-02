@@ -34,7 +34,7 @@
                             <x-dropdown-link :href="route('inicio')">
                                 {{ __('Capacitación Interna') }}
                             </x-dropdown-link>
-                            <x-dropdown-link :href="route('externa.datos')">
+                            <x-dropdown-link :href="route('externa.index')">
                                 {{ __('Capacitación Externa') }}
                             </x-dropdown-link>
                             <x-dropdown-link href="#" onclick="alert('Módulo en desarrollo')">
