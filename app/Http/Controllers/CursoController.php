@@ -25,28 +25,86 @@ class CursoController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('q'); // Lo que se escribe en el buscador
-        $periodo = Periodo::latest()->first(); // Ajusta según tu lógica para obtener el periodo actual
+        // Texto ingresado en el buscador (campo 'q' en la querystring)
+        $search = $request->input('q');
 
-        $cursos = Curso::with([
+        // Obtener el periodo actual (igual que antes)
+        $periodo = Periodo::latest()->first();
+
+        // Control de acceso por roles (flexible)
+        $user = $request->user();
+        $allowedRoles = [
+            'admin',
+            'cad',
+            'jefe_departamento',
+            'instructor',
+            'subdirector_academico'
+        ];
+
+        $canView = false;
+
+        // Si usas Spatie (hasAnyRole)
+        if ($user && method_exists($user, 'hasAnyRole')) {
+            $canView = $user->hasAnyRole($allowedRoles);
+        }
+
+        // Si tienes relación roles() con columna 'nombre' (como en otros lugares del proyecto)
+        if (! $canView && $user && method_exists($user, 'roles')) {
+            try {
+                $roleNames = $user->roles()->pluck('nombre')->map(function($r){ return strtolower($r); })->toArray();
+                foreach ($allowedRoles as $r) {
+                    if (in_array(strtolower($r), $roleNames)) {
+                        $canView = true;
+                        break;
+                    }
+                }
+            } catch (\Throwable $e) {
+                // ignora y sigue al siguiente método de chequeo
+            }
+        }
+
+        // Fallback: si el usuario tiene un campo 'role' en tabla users
+        if (! $canView && $user) {
+            $userRoleAttr = strtolower($user->role ?? '');
+            if (in_array($userRoleAttr, $allowedRoles)) {
+                $canView = true;
+            }
+        }
+
+        //if (! $canView) {
+            //abort(403, 'No tienes permiso para ver los cursos.'); //
+
+
+        // Query principal: eager loading de relaciones utilizadas
+        $query = Curso::with([
             'periodo',
             'instructores.user.datos_generales',
             'departamento',
             'cursos_participantes'
-        ])
-        ->when($search, function($query, $search) {
-            $query->where('nombre', 'like', "%{$search}%")
-                  ->orWhereHas('instructores.user.datos_generales', function($q) use ($search) {
-                      $q->where('nombre', 'like', "%{$search}%")
-                        ->orWhere('apellido_paterno', 'like', "%{$search}%")
-                        ->orWhere('apellido_materno', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('departamento', function($q) use ($search) {
-                      $q->where('nombre', 'like', "%{$search}%");
-                  });
-        })
-        ->orderBy('id', 'desc')
-        ->get();
+        ]);
+
+        // Si hay búsqueda, agrupar condiciones para evitar problemas de precedencia
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                    ->orWhere('no_registro', 'like', "%{$search}%")
+                    ->orWhere('modalidad', 'like', "%{$search}%")
+                    ->orWhere('lugar', 'like', "%{$search}%")
+                    ->orWhereHas('instructores.user.datos_generales', function($iq) use ($search) {
+                        $iq->where('nombre', 'like', "%{$search}%")
+                           ->orWhere('apellido_paterno', 'like', "%{$search}%")
+                           ->orWhere('apellido_materno', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('departamento', function($dq) use ($search) {
+                        $dq->where('nombre', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Orden y paginación (usamos fdi si existe, luego id)
+        $cursos = $query->orderByRaw("COALESCE(fdi, id) DESC")
+                        ->paginate(10)
+                        ->appends(['q' => $search]);
 
         return view('vistas.cursos.index', compact('cursos', 'periodo', 'search'));
     }
@@ -130,8 +188,10 @@ class CursoController extends Controller
         $curso->instructores()->sync($request->input('instructores'));
 
         $solicitarcurso = dnc::find($request->dncId);
-        $solicitarcurso->estatus = 2;
-        $solicitarcurso->save();
+        if ($solicitarcurso) {
+            $solicitarcurso->estatus = 2;
+            $solicitarcurso->save();
+        }
 
         // Redireccionar a la vista de cursos
         return redirect(route('cursos.show', $curso->id))->with('success', 'Curso registrado exitosamente.');
