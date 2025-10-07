@@ -22,6 +22,11 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+            <!-- Logo/Banner del Tecnológico -->
+            <div class="bg-white">
+                <x-logo />
+            </div>
+
             @include('layouts.navigation-externa')
 
             <!-- Page Heading -->
