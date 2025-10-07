@@ -70,11 +70,6 @@ class CursoController extends Controller
                 $canView = true;
             }
         }
-
-        //if (! $canView) {
-            //abort(403, 'No tienes permiso para ver los cursos.'); //
-
-
         // Query principal: eager loading de relaciones utilizadas
         $query = Curso::with([
             'periodo',

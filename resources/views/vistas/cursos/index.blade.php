@@ -15,7 +15,7 @@
                         type="text"
                         name="q"
                         id="searchInput"
-                        placeholder="Buscar por nombre del curso, instructor o departamento..."
+                        placeholder="Buscar por nombre del curso, instructor, departamento o modalidad..."
                         value="{{ old('q', $search ?? request('q')) }}"
                         class="w-full rounded-md border-gray-300 shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
                     >
@@ -126,7 +126,7 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(function () {
                     form.submit();
-                }, 450); // 450ms debounce
+                }, 800); // 450ms debounce
             });
         })();
     </script>

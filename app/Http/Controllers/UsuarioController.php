@@ -19,11 +19,35 @@ class UsuarioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $usuarios = User::all();
-        return view('vistas.usuarios.index', compact('usuarios'));
-    }
+    public function index(Request $request)
+{
+    // Solo roles autorizados pueden ver la lista
+    $user = Auth::user();
+    $rolesPermitidos = ['Admin/CAD', 'Jefe de departamento', 'Instructor', 'Subdirector académico'];
+
+
+
+
+    // Buscador
+    $busqueda = $request->input('busqueda');
+
+    $usuarios = User::with(['datos_generales.departamento'])
+        ->when($busqueda, function ($query, $busqueda) {
+            $query->whereHas('datos_generales', function ($subQuery) use ($busqueda) {
+                $subQuery->where('nombre', 'like', "%{$busqueda}%")
+                    ->orWhere('apellido_paterno', 'like', "%{$busqueda}%")
+                    ->orWhere('apellido_materno', 'like', "%{$busqueda}%")
+                    ->orWhereHas('departamento', function ($depQuery) use ($busqueda) {
+                        $depQuery->where('nombre', 'like', "%{$busqueda}%");
+                    });
+            })
+            ->orWhere('email', 'like', "%{$busqueda}%");
+        })
+        ->orderBy('id', 'desc')
+        ->get();
+
+    return view('vistas.usuarios.index', compact('usuarios', 'busqueda'));
+}
 
     /**
      * Show the form for creating a new resource.
