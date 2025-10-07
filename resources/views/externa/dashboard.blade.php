@@ -159,4 +159,7 @@
             successModal.show();
         </script>
     @endif
+
+    <!-- Footer solo para la vista de inicio -->
+    <x-footer></x-footer>
 </x-app-externa-layout>
