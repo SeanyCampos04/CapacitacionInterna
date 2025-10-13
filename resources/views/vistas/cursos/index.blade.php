@@ -8,34 +8,47 @@
     <div class="py-12">
         <div class="mx-auto sm:px-6 lg:px-8">
 
-            <!--  BUSCADOR que estará debajo del título y arriba de la tabla -->
+            <!--  buscador con filtro por periodo -->
             <div class="mb-6">
-                <form id="searchForm" action="{{ route('cursos.index') }}" method="GET" class="flex items-center gap-3">
+                <form id="searchForm" action="{{ route('cursos.index') }}" method="GET" class="flex flex-wrap items-center gap-3">
+
+                    <!-- Campo de texto -->
                     <input
                         type="text"
                         name="q"
                         id="searchInput"
-                        placeholder="Buscar por nombre del curso, instructor, departamento o modalidad..."
+                        placeholder="Buscar por nombre, instructor, departamento o modalidad"
                         value="{{ old('q', $search ?? request('q')) }}"
-                        class="w-full rounded-md border-gray-300 shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        class="flex-1 rounded-md border-gray-300 shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
                     >
 
-                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-700 text-white rounded-md shadow hover:bg-indigo-800">
+                    <!-- Select de periodo -->
+                    <select name="periodo_id" id="periodoSelect"
+                        class="rounded-md border-gray-300 shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                        <option value="">Todos los periodos</option>
+                        @foreach ($periodos as $p)
+                            <option value="{{ $p->id }}" {{ ($periodoFiltro ?? '') == $p->id ? 'selected' : '' }}>
+                                {{ $p->periodo }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-700 text-white rounded-md shadow hover:bg-indigo-800">
                         Buscar
                     </button>
-
-
-
                 </form>
 
                 <!-- Resultados -->
                 @php
                     $totalResultados = method_exists($cursos ?? null, 'total') ? $cursos->total() : ($cursos ? $cursos->count() : 0);
                 @endphp
-                <p class="text-sm text-gray-500 mt-2">Resultados: <strong>{{ $totalResultados }}</strong></p>
+                <p class="text-sm text-gray-500 mt-2">
+                    Resultados: <strong>{{ $totalResultados }}</strong>
+                </p>
             </div>
 
-            <!-- TABLA  -->
+            <!-- TABLA -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -103,7 +116,7 @@
                     </table>
                 </div>
 
-                <!--  PAGINACIÓN (si existe) -->
+                <!-- Paginación -->
                 <div class="p-4">
                     @if(method_exists($cursos ?? null, 'links'))
                         {{ $cursos->links() }}
@@ -114,19 +127,23 @@
         </div>
     </div>
 
-    <!-- JS: debounce para enviar búsqueda automáticamente  -->
+    <!-- JS: auto búsqueda con debounce -->
     <script>
         (function () {
             const input = document.getElementById('searchInput');
+            const select = document.getElementById('periodoSelect');
             const form = document.getElementById('searchForm');
             if (!input || !form) return;
 
             let timeout = null;
             input.addEventListener('input', function () {
                 clearTimeout(timeout);
-                timeout = setTimeout(function () {
-                    form.submit();
-                }, 800); // 450ms debounce
+                timeout = setTimeout(() => form.submit(), 800);
+            });
+
+            // enviar el formulario automáticamente al cambiar de periodo
+            select.addEventListener('change', function () {
+                form.submit();
             });
         })();
     </script>
