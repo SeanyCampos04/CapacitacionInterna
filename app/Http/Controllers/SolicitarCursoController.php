@@ -12,25 +12,57 @@ class SolicitarCursoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function admin_index()
-    {
+    public function admin_index(Request $request)
+{
+    if (Auth::id()) {
+        $query = dnc::query();
 
-        if (Auth::id()) {
-
-            $solicitarCursos = dnc::orderBy('id', 'desc')->get();
-            return view('vistas.DNC.admin.index', compact('solicitarCursos'));
+        // Filtro por texto libre
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->where(function ($subquery) use ($q) {
+                $subquery->where('nombre', 'like', "%{$q}%")
+                         ->orWhere('objetivo', 'like', "%{$q}%")
+                         ->orWhere('instructor_propuesto', 'like', "%{$q}%")
+                         ->orWhere('contacto_propuesto', 'like', "%{$q}%");
+            });
         }
-    }
 
-    public function jefe_departamento_index()
-    {
-
-        if (Auth::id()) {
-
-            $solicitarCursos = dnc::where('user_id', auth()->user()->id)->orderBy('id', 'desc')->get();
-            return view('vistas.DNC.jefe_departamento.index', compact('solicitarCursos'));
+        // Filtro por prioridad
+        if ($request->filled('prioridad')) {
+            $query->where('prioridad', $request->prioridad);
         }
+
+        // 🟢 Filtro por estatus
+        if ($request->filled('estatus')) {
+            $query->where('estatus', $request->estatus);
+        }
+
+        // 🏢 Filtro por departamento
+        if ($request->filled('departamento')) {
+            $query->where('departamento_id', $request->departamento);
+        }
+
+        // Contadores
+        $totalSolicitudes = dnc::count();
+        $totalFiltradas = $query->count();
+
+        // Orden descendente
+        $solicitarCursos = $query->orderBy('id', 'desc')->get();
+
+        // Para el select de departamentos
+        $departamentos = \App\Models\Departamento::all();
+
+        return view('vistas.DNC.admin.index', compact(
+            'solicitarCursos',
+            'departamentos',
+            'totalSolicitudes',
+            'totalFiltradas'
+        ));
     }
+}
+
+
 
     /**
      * Show the form for creating a new resource.
