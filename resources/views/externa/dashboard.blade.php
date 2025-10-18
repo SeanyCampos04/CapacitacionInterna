@@ -36,15 +36,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <h3 class="text-2xl font-bold mb-4">{{ __("Bienvenido a Capacitación Externa") }}</h3>
-                    <h4 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">
-                        @if(Auth::user() && Auth::user()->datos_generales)
-                            {{ Auth::user()->datos_generales->nombre }} {{ Auth::user()->datos_generales->apellido_paterno }}
-                        @else
-                            {{ Auth::user()->name }}
-                        @endif
-                    </h4>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">Gestiona y registra las capacitaciones externas de la institución.</p>
+                    <h3 class="text-2xl font-bold mb-4">{{ __("Menú de Opciones") }}</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Selecciona una de las opciones de funcionalidad del módulo</p>
 
                     <!-- Tarjetas de acciones rápidas -->
                     <div class="row">
