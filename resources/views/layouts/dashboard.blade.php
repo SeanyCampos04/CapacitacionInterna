@@ -1,8 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-2xl text-white">
-            {{ __('Inicio') }}
-        </h2>
+        <div class="flex justify-between items-center w-full">
+            <h2 class="font-semibold text-2xl text-white">
+                {{ __('Bienvenido') }}
+                @if(Auth::user() && Auth::user()->datos_generales)
+                    {{ Auth::user()->datos_generales->nombre }} {{ Auth::user()->datos_generales->apellido_paterno }}
+                @else
+                    {{ Auth::user()->name }}
+                @endif
+            </h2>
+            <span class="font-semibold text-lg text-white">
+                Capacitación Interna
+            </span>
+        </div>
     </x-slot>
 
     <div class="py-12">
