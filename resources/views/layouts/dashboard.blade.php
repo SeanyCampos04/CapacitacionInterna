@@ -42,40 +42,124 @@
                     <div class="row">
                         @php
                             $user = auth()->user();
-                            $user_roles = [];
+                            $user_role_ids = [];
 
-                            // Obtener roles del usuario
-                            if ($user && $user->user_roles) {
-                                $user_roles = $user->user_roles->pluck('role.nombre')->toArray();
+                            // Obtener IDs de roles del usuario usando consulta directa
+                            if ($user) {
+                                $user_role_ids = \Illuminate\Support\Facades\DB::table('user_roles')
+                                    ->where('user_id', $user->id)
+                                    ->pluck('role_id')
+                                    ->toArray();
                             }
 
-                            $is_admin = in_array('admin', $user_roles);
-                            $is_cad = in_array('CAD', $user_roles);
-                            $is_jefe_departamento = in_array('Jefe Departamento', $user_roles);
-                            $is_subdirector = in_array('Subdirector Academico', $user_roles);
-                            $is_docente = in_array('Docente', $user_roles);
-                        @endphp
+                            // Definir roles por ID
+                            $is_admin = in_array(1, $user_role_ids); // admin
+                            $is_jefe_departamento = in_array(2, $user_role_ids); // Jefe Departamento
+                            $is_subdirector = in_array(3, $user_role_ids); // Subdirector Academico
+                            $is_cad = in_array(4, $user_role_ids); // CAD
+                            $is_instructor = in_array(5, $user_role_ids); // Instructor
+                        @endphp                        <!-- USUARIOS - Admin, CAD, Jefe Departamento, Subdirector -->
+                        @if($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-users fa-3x text-primary"></i>
+                                        </div>
+                                        <h5 class="card-title">Usuarios</h5>
+                                        <p class="card-text">Gestión de usuarios del sistema</p>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                Opciones
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                @if($is_admin || $is_cad)
+                                                    <li><a class="dropdown-item" href="{{ route('register_user') }}">Registrar</a></li>
+                                                @endif
+                                                <li><a class="dropdown-item" href="{{ route('usuarios.index') }}">Ver Usuarios</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
 
-                        <!-- CURSOS - Visible para todos los usuarios autenticados -->
+                        <!-- DEPARTAMENTOS - Admin, CAD, Jefe Departamento, Subdirector -->
+                        @if($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-building fa-3x text-success"></i>
+                                        </div>
+                                        <h5 class="card-title">Departamentos</h5>
+                                        <p class="card-text">Gestión de departamentos</p>
+                                        <div class="dropdown">
+                                            <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                Opciones
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                @if($is_admin || $is_cad)
+                                                    <li><a class="dropdown-item" href="{{ route('departamentos.create') }}">Registrar</a></li>
+                                                @endif
+                                                <li><a class="dropdown-item" href="{{ route('departamentos.index') }}">Ver Departamentos</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- DNC - Solo Admin y CAD -->
+                        @if($is_admin || $is_cad)
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-clipboard-list fa-3x text-warning"></i>
+                                        </div>
+                                        <h5 class="card-title">DNC</h5>
+                                        <p class="card-text">Detección de Necesidades de Capacitación</p>
+                                        <a href="{{ route('admin_solicitarcursos.index') }}" class="btn btn-warning">
+                                            Solicitudes
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- CURSOS - Todos los roles tienen acceso -->
                         <div class="col-md-4 mb-4">
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body text-center">
                                     <div class="mb-3">
-                                        <i class="fas fa-graduation-cap fa-3x text-primary"></i>
+                                        <i class="fas fa-graduation-cap fa-3x text-info"></i>
                                     </div>
                                     <h5 class="card-title">Cursos</h5>
-                                    <p class="card-text">Gestiona y consulta los cursos disponibles</p>
+                                    <p class="card-text">Gestión y consulta de cursos</p>
                                     <div class="dropdown">
-                                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                             Opciones
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="{{ route('cursos_disponibles.index') }}">Cursos Disponibles</a></li>
-                                            <li><a class="dropdown-item" href="{{ route('cursos_cursando.index') }}">Cursos Cursando</a></li>
-                                            <li><a class="dropdown-item" href="{{ route('cursos_terminados.index') }}">Cursos Terminados</a></li>
                                             @if($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
+                                                <li><a class="dropdown-item" href="{{ route('cursos_disponibles.index') }}">Disponibles</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('cursos_cursando.index') }}">Cursando</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('cursos_terminados.index') }}">Terminados</a></li>
+                                                @if($is_jefe_departamento)
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item" href="{{ route('solicitarcursos.create') }}">Solicitar Curso</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('jefe_solicitarcursos.index') }}">Mis Solicitudes</a></li>
+                                                @endif
+                                                @if($is_admin || $is_cad)
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item" href="{{ route('cursos_estadisticas.index') }}">Estadísticas</a></li>
+                                                @endif
                                                 <li><hr class="dropdown-divider"></li>
-                                                <li><a class="dropdown-item" href="{{ route('cursos.index') }}">Ver Todos los Cursos</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('cursos.index') }}">Ver Cursos</a></li>
+                                            @endif
+                                            @if($is_instructor)
+                                                <li><a class="dropdown-item" href="{{ route('instructor.index') }}">Instructor</a></li>
                                             @endif
                                         </ul>
                                     </div>
@@ -83,88 +167,31 @@
                             </div>
                         </div>
 
-                        <!-- GESTIÓN ADMINISTRATIVA - Solo Admin y CAD -->
-                        @if($is_admin || $is_cad)
+                        <!-- PERIODOS - Admin, CAD, Jefe Departamento, Subdirector -->
+                        @if($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
                             <div class="col-md-4 mb-4">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
                                         <div class="mb-3">
-                                            <i class="fas fa-cog fa-3x text-success"></i>
+                                            <i class="fas fa-calendar-alt fa-3x text-secondary"></i>
                                         </div>
-                                        <h5 class="card-title">Administración</h5>
-                                        <p class="card-text">Herramientas administrativas del sistema</p>
+                                        <h5 class="card-title">Períodos</h5>
+                                        <p class="card-text">Gestión de períodos académicos</p>
                                         <div class="dropdown">
-                                            <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                 Opciones
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="{{ route('usuarios.index') }}">Gestionar Usuarios</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('register_user') }}">Registrar Usuario</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('admin_solicitarcursos.index') }}">Solicitudes de Cursos</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('cursos_estadisticas.index') }}">Estadísticas</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('periodos.index') }}">Gestionar Períodos</a></li>
+                                                @if($is_admin || $is_cad)
+                                                    <li><a class="dropdown-item" href="{{ route('periodos.create') }}">Registrar</a></li>
+                                                @endif
+                                                <li><a class="dropdown-item" href="{{ route('periodos.index') }}">Ver Períodos</a></li>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @endif
-
-                        <!-- SOLICITUDES - Solo Jefes de Departamento -->
-                        @if($is_jefe_departamento)
-                            <div class="col-md-4 mb-4">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body text-center">
-                                        <div class="mb-3">
-                                            <i class="fas fa-file-alt fa-3x text-warning"></i>
-                                        </div>
-                                        <h5 class="card-title">Solicitudes</h5>
-                                        <p class="card-text">Gestiona solicitudes de cursos</p>
-                                        <div class="dropdown">
-                                            <button class="btn btn-warning dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                Opciones
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="{{ route('solicitarcursos.create') }}">Solicitar Curso</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('jefe_solicitarcursos.index') }}">Mis Solicitudes</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        <!-- CURSOS DOCENTE - Solo para usuarios con función docente -->
-                        @if($is_docente || $is_admin || $is_cad)
-                            <div class="col-md-4 mb-4">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body text-center">
-                                        <div class="mb-3">
-                                            <i class="fas fa-chalkboard-teacher fa-3x text-info"></i>
-                                        </div>
-                                        <h5 class="card-title">Mis Cursos Docente</h5>
-                                        <p class="card-text">Cursos donde eres instructor</p>
-                                        <a href="{{ route('docente_cursos.index') }}" class="btn btn-info">
-                                            Ver Mis Cursos
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        <!-- ENCUESTAS - Visible para todos -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-poll fa-3x text-secondary"></i>
-                                    </div>
-                                    <h5 class="card-title">Encuestas</h5>
-                                    <p class="card-text">Evaluaciones de cursos completados</p>
-                                    <small class="text-muted">Disponible al terminar cursos</small>
-                                </div>
-                            </div>
-                        </div>
 
                     </div>
                 </div>
