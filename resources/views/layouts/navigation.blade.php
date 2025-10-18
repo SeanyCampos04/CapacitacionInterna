@@ -209,9 +209,9 @@
                                     <x-dropdown-link :href="route('cursos_estadisticas.index')">
                                         {{ __('Estadisticas') }}
                                     </x-dropdown-link>
-                                    <x-dropdown-link :href="route('cursos.create', ['id' => 0])">
+                                    <!-- <x-dropdown-link :href="route('cursos.create', ['id' => 0])">
                                         {{ __('Registrar curso') }}
-                                    </x-dropdown-link>
+                                    </x-dropdown-link> -->
                                 @endif
                                 <x-dropdown-link :href="route('cursos.index')">
                                     {{ __('Ver cursos') }}
