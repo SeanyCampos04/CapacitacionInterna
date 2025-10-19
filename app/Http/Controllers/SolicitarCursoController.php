@@ -178,7 +178,7 @@ class SolicitarCursoController extends Controller
     }
 
     /**
-     * Eliminar solicitud.
+     * Eliminar solicitud
      */
     public function destroy($id)
     {
