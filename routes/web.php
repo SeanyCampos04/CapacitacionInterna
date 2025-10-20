@@ -142,4 +142,45 @@ Route::middleware(['auth', 'role:Instructor'])->group(function (){
     Route::post('/curso/{curso_id}/subir-ficha-tecnica', [InstructorController::class, 'subir_fichatecnica'])->name('curso.subir_fichatecnica');
 });
 
+// =====================================================
+// RUTAS DEL MÓDULO DE CAPACITACIÓN EXTERNA
+// =====================================================
+
+Route::middleware('auth')->group(function () {
+    // Rutas principales del módulo externo
+    Route::prefix('externa')->name('externa.')->group(function () {
+        // Vista principal del módulo externo
+        Route::get('/', function () {
+            return view('externa.dashboard');
+        })->name('index');
+
+        // Gestión de capacitaciones externas
+        Route::get('/datos', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'index'])->name('datos');
+        Route::get('/formulario', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'create'])->name('formulario');
+        Route::post('/store', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'store'])->name('store');
+        Route::get('/mis-capacitaciones', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'mis_capacitaciones'])->name('mis_capacitaciones');
+        Route::get('/filtrar', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'filtrar'])->name('filtrar');
+        Route::delete('/eliminar/{id}', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'destroy'])->name('destroy');
+        Route::put('/actualizar-status/{id}', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'actualizarStatus'])->name('actualizar.status');
+        Route::put('/actualizar-folio/{id}', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'actualizarFolio'])->name('actualizar.folio');
+        Route::post('/actualizar-datos/{id}', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'actualizarDatos'])->name('actualizarDatos');
+
+        // Constancias PDF
+        Route::get('/constancia/{id}', [App\Http\Controllers\ConstanciaController::class, 'generarPDF'])->name('constancia');
+    });
+});
+
+// Rutas para usar los nombres originales manteniendo compatibilidad
+Route::middleware('auth')->group(function () {
+    Route::get('/capacitacionesext', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'index'])->name('capacitacionesext.index');
+    Route::get('/capacitacionesext/crear', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'create'])->name('capacitacionesext.create');
+    Route::post('/capacitacionesext', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'store'])->name('capacitacionesext.store');
+    Route::get('/capacitacionesext/filtrar', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'filtrar'])->name('capacitacionesext.filtrar');
+    Route::delete('/capacitacionesext/{id}', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'destroy'])->name('capacitacionesext.destroy');
+    Route::put('/capacitacionesext/actualizar-status/{id}', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'actualizarStatus'])->name('capacitacionesext.actualizarStatus');
+    Route::put('/capacitacionesext/actualizar-folio/{id}', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'actualizarFolio'])->name('capacitacionesext.actualizarFolio');
+    Route::post('/capacitacionesext/actualizar-datos/{id}', [App\Http\Controllers\RegistroCapacitacionesExtController::class, 'actualizarDatos'])->name('capacitacionesext.actualizarDatos');
+    Route::get('/capacitacionesext/constancia/{id}', [App\Http\Controllers\ConstanciaController::class, 'generarPDF'])->name('capacitacionesext.constancia');
+});
+
 require __DIR__.'/auth.php';

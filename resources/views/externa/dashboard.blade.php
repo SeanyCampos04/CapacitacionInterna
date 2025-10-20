@@ -1,0 +1,174 @@
+<x-app-externa-layout>
+    <x-slot name="header">
+        <div class="flex justify-between items-center w-full">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('Bienvenido') }}
+                @if(Auth::user() && Auth::user()->datos_generales)
+                    {{ Auth::user()->datos_generales->nombre }} {{ Auth::user()->datos_generales->apellido_paterno }}
+                @else
+                    {{ Auth::user()->name }}
+                @endif
+            </h2>
+            <span class="font-semibold text-lg text-blue-600 dark:text-blue-400">
+                Capacitación Externa
+            </span>
+        </div>
+    </x-slot>
+
+    <!-- Agregar Bootstrap CSS -->
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            /* Quitar el subrayado de todos los enlaces */
+            a {
+                text-decoration: none !important;
+            }
+            .card {
+                transition: transform 0.2s;
+            }
+            .card:hover {
+                transform: translateY(-5px);
+            }
+        </style>
+    </head>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <h3 class="text-2xl font-bold mb-4">{{ __("Menú de Opciones") }}</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Selecciona una de las opciones de funcionalidad del módulo</p>
+
+                    <!-- Tarjetas de acciones rápidas -->
+                    <div class="row">
+                        @php
+                            // Obtener roles usando consulta directa a la base de datos (misma lógica que navegación)
+                            $user_id = auth()->user()->id;
+                            $user_role_ids = \Illuminate\Support\Facades\DB::table('user_roles')->where('user_id', $user_id)->pluck('role_id')->toArray();
+
+                            // Obtener nombres de roles
+                            $user_roles = [];
+                            if (!empty($user_role_ids)) {
+                                $user_roles = \Illuminate\Support\Facades\DB::table('roles')->whereIn('id', $user_role_ids)->pluck('nombre')->toArray();
+                            }
+
+                            // Verificar si es instructor (role_id = 5 o nombre = 'Instructor')
+                            $is_instructor = in_array(5, $user_role_ids) || in_array('Instructor', $user_roles);
+                        @endphp                        <!-- Tarjeta Registrar - Solo para Instructores, Docentes, Admin, CAD -->
+                        @if ($is_instructor or
+                             in_array('Instructor', $user_roles) or
+                             in_array('Docente', $user_roles) or
+                             in_array('admin', $user_roles) or
+                             in_array('CAD', $user_roles))
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-plus-circle fa-3x text-success"></i>
+                                        </div>
+                                        <h5 class="card-title">Registrar Capacitación</h5>
+                                        <p class="card-text">Registra una nueva capacitación externa</p>
+                                        <a href="{{ route('externa.formulario') }}" class="btn btn-success">
+                                            Ir al Formulario
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Tarjeta Ver Capacitaciones - Visible para todos EXCEPTO Instructores -->
+                        @if (!$is_instructor)
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-list fa-3x text-primary"></i>
+                                        </div>
+                                        <h5 class="card-title">Ver Capacitaciones</h5>
+                                        <p class="card-text">Consulta todas las capacitaciones registradas</p>
+                                        <a href="{{ route('externa.datos') }}" class="btn btn-primary">
+                                            Ver Lista
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Tarjeta Mis Capacitaciones - Solo para Instructores, Docentes, Admin, CAD -->
+                        @if ($is_instructor or
+                             in_array('Instructor', $user_roles) or
+                             in_array('Docente', $user_roles) or
+                             in_array('admin', $user_roles) or
+                             in_array('CAD', $user_roles))
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-user fa-3x text-info"></i>
+                                        </div>
+                                        <h5 class="card-title">Mis Capacitaciones</h5>
+                                        <p class="card-text">Ve tus capacitaciones registradas</p>
+                                        <a href="{{ route('externa.mis_capacitaciones') }}" class="btn btn-info">
+                                            Ver Mis Registros
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal centrado verticalmente -->
+            <div class="modal" id="successModal">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Éxito</h4>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            @if(session('success'))
+                                {{ session('success') }}
+                            @else
+                                Modal body..
+                            @endif
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <x-primary-button type="button" class="bg-green-600 hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-0" data-bs-dismiss="modal">
+                                Cerrar
+                            </x-primary-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensaje de error -->
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Agregar Bootstrap JS y Font Awesome -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Mostrar el modal automáticamente si hay un mensaje de éxito -->
+    @if(session('success'))
+        <script>
+            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        </script>
+    @endif
+
+    <!-- Footer solo para la vista de inicio -->
+    <x-footer></x-footer>
+</x-app-externa-layout>
