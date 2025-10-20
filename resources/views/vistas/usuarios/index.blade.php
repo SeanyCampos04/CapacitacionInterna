@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
 
-                    {{-- 🔍 Buscador --}}
+                    <!-- Buscador -->
                     <form method="GET" action="{{ route('usuarios.index') }}" class="mb-6">
                         <div class="flex items-center justify-between gap-2">
                             <input
@@ -26,7 +26,7 @@
                         </div>
                     </form>
 
-                    {{-- Tabla --}}
+                    <!-- Tabla -->
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500">
                             <thead class="text-xm text-gray-700 bg-gray-50">

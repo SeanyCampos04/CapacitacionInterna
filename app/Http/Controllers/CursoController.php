@@ -24,85 +24,103 @@ class CursoController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        // Texto ingresado en el buscador (campo 'q' en la querystring)
-        $search = $request->input('q');
+{
+    // Texto ingresado en el buscador
+    $search = $request->input('q');
 
-        // Obtener el periodo actual (igual que antes)
-        $periodo = Periodo::latest()->first();
+    // filtro por periodo
+    $periodoFiltro = $request->input('periodo_id');
 
-        // Control de acceso por roles (flexible)
-        $user = $request->user();
-        $allowedRoles = [
-            'admin',
-            'cad',
-            'jefe_departamento',
-            'instructor',
-            'subdirector_academico'
-        ];
+    // Obtener todos los periodos para el <select> en la vista
+    $periodos = Periodo::orderByDesc('anio')->orderByDesc('trimestre')->get();
 
-        $canView = false;
+    // Obtener el periodo actual
+    $periodo = Periodo::latest()->first();
 
-        // Si usas Spatie (hasAnyRole)
-        if ($user && method_exists($user, 'hasAnyRole')) {
-            $canView = $user->hasAnyRole($allowedRoles);
-        }
+    // Control de acceso por roles
+    $user = $request->user();
+    $allowedRoles = [
+        'admin',
+        'cad',
+        'jefe_departamento',
+        'instructor',
+        'subdirector_academico'
+    ];
 
-        // Si tienes relación roles() con columna 'nombre' (como en otros lugares del proyecto)
-        if (! $canView && $user && method_exists($user, 'roles')) {
-            try {
-                $roleNames = $user->roles()->pluck('nombre')->map(function($r){ return strtolower($r); })->toArray();
-                foreach ($allowedRoles as $r) {
-                    if (in_array(strtolower($r), $roleNames)) {
-                        $canView = true;
-                        break;
-                    }
-                }
-            } catch (\Throwable $e) {
-                // ignora y sigue al siguiente método de chequeo
-            }
-        }
+    $canView = false;
 
-        // Fallback: si el usuario tiene un campo 'role' en tabla users
-        if (! $canView && $user) {
-            $userRoleAttr = strtolower($user->role ?? '');
-            if (in_array($userRoleAttr, $allowedRoles)) {
-                $canView = true;
-            }
-        }
-        // Query principal: eager loading de relaciones utilizadas
-        $query = Curso::with([
-            'periodo',
-            'instructores.user.datos_generales',
-            'departamento',
-            'cursos_participantes'
-        ]);
-
-        // Si hay búsqueda, agrupar condiciones para evitar problemas de precedencia
-        if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('nombre', 'like', "%{$search}%")
-                    ->orWhere('no_registro', 'like', "%{$search}%")
-                    ->orWhere('modalidad', 'like', "%{$search}%")
-                    ->orWhere('lugar', 'like', "%{$search}%")
-                    ->orWhereHas('instructores.user.datos_generales', function($iq) use ($search) {
-                        $iq->where('nombre', 'like', "%{$search}%")
-                           ->orWhere('apellido_paterno', 'like', "%{$search}%")
-                           ->orWhere('apellido_materno', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('departamento', function($dq) use ($search) {
-                        $dq->where('nombre', 'like', "%{$search}%");
-                    });
-            });
-        }
-
-        // Orden y paginación (usamos fdi si existe, luego id)
-        $cursos = $query->orderByRaw("COALESCE(fdi, id) DESC")
-                        ->paginate(10)
-                        ->appends(['q' => $search]);
-
-        return view('vistas.cursos.index', compact('cursos', 'periodo', 'search'));
+    if ($user && method_exists($user, 'hasAnyRole')) {
+        $canView = $user->hasAnyRole($allowedRoles);
     }
+
+    if (!$canView && $user && method_exists($user, 'roles')) {
+        try {
+            $roleNames = $user->roles()->pluck('nombre')->map(fn($r) => strtolower($r))->toArray();
+            foreach ($allowedRoles as $r) {
+                if (in_array(strtolower($r), $roleNames)) {
+                    $canView = true;
+                    break;
+                }
+            }
+        } catch (\Throwable $e) {}
+    }
+
+    if (!$canView && $user) {
+        $userRoleAttr = strtolower($user->role ?? '');
+        if (in_array($userRoleAttr, $allowedRoles)) {
+            $canView = true;
+        }
+    }
+
+    // Query principal
+    $query = Curso::with([
+        'periodo',
+        'instructores.user.datos_generales',
+        'departamento',
+        'cursos_participantes'
+    ]);
+
+    // Filtro por texto (nombre, modalidad, instructor)
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('nombre', 'like', "%{$search}%")
+                ->orWhere('no_registro', 'like', "%{$search}%")
+                ->orWhere('modalidad', 'like', "%{$search}%")
+                ->orWhere('lugar', 'like', "%{$search}%")
+                ->orWhereHas('instructores.user.datos_generales', function ($iq) use ($search) {
+                    $iq->where('nombre', 'like', "%{$search}%")
+                       ->orWhere('apellido_paterno', 'like', "%{$search}%")
+                       ->orWhere('apellido_materno', 'like', "%{$search}%");
+                })
+                ->orWhereHas('departamento', function ($dq) use ($search) {
+                    $dq->where('nombre', 'like', "%{$search}%");
+                })
+                // buscar por nombre del periodo
+                ->orWhereHas('periodo', function ($pq) use ($search) {
+                    $pq->where('nombre', 'like', "%{$search}%")
+                       ->orWhere('anio', 'like', "%{$search}%")
+                       ->orWhere('trimestre', 'like', "%{$search}%");
+                });
+        });
+    }
+
+    // filtro por periodo_id seleccionado en la vista
+    if ($periodoFiltro) {
+        $query->where('periodo_id', $periodoFiltro);
+    }
+
+    // Ordenar y paginar resultados
+    $cursos = $query->orderByRaw("COALESCE(fdi, id) DESC")
+                    ->paginate(10)
+                    ->appends([
+                        'q' => $search,
+                        'periodo_id' => $periodoFiltro
+                    ]);
+
+    // Pasar los datos a la vista
+    return view('vistas.cursos.index', compact('cursos', 'periodo', 'periodos', 'search', 'periodoFiltro'));
+}
+
 
     public function docente_index(Request $request)
     {
