@@ -11,8 +11,12 @@
         $user_roles = DB::table('roles')->whereIn('id', $user_role_ids)->pluck('nombre')->toArray();
     }
 
-    // Verificar si es instructor (role_id = 5 o nombre = 'Instructor')
+    // Definir roles por ID y nombre
     $is_instructor = in_array(5, $user_role_ids) || in_array('Instructor', $user_roles);
+    $is_admin = in_array(1, $user_role_ids) || in_array('admin', $user_roles);
+    $is_cad = in_array(4, $user_role_ids) || in_array('CAD', $user_roles);
+    $is_jefe_departamento = in_array(2, $user_role_ids) || in_array('Jefe Departamento', $user_roles);
+    $is_subdirector = in_array(3, $user_role_ids) || in_array('Subdirector Academico', $user_roles);
 
     $tipo_usuario = auth()->user()->tipo_usuario;
 @endphp
@@ -82,12 +86,14 @@
                     </div>
                 @endif
 
-                <!-- Registrar Capacitación - Visible para Instructores, Docentes, Admin, CAD -->
-                @if ($is_instructor or
+                <!-- Registrar Capacitación - Visible para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
+                @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
                      in_array('Instructor', $user_roles) or
                      in_array('Docente', $user_roles) or
                      in_array('admin', $user_roles) or
-                     in_array('CAD', $user_roles))
+                     in_array('CAD', $user_roles) or
+                     in_array('Jefe Departamento', $user_roles) or
+                     in_array('Subdirector Academico', $user_roles))
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
                         <x-nav-link :href="route('externa.formulario')" :active="request()->routeIs('externa.formulario')">
                             {{ __('Registrar') }}
@@ -95,12 +101,14 @@
                     </div>
                 @endif
 
-                <!-- Mis Capacitaciones - Visible para Instructores, Docentes, Admin, CAD -->
-                @if ($is_instructor or
+                <!-- Mis Capacitaciones - Visible para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
+                @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
                      in_array('Instructor', $user_roles) or
                      in_array('Docente', $user_roles) or
                      in_array('admin', $user_roles) or
-                     in_array('CAD', $user_roles))
+                     in_array('CAD', $user_roles) or
+                     in_array('Jefe Departamento', $user_roles) or
+                     in_array('Subdirector Academico', $user_roles))
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
                         <x-nav-link :href="route('externa.mis_capacitaciones')" :active="request()->routeIs('externa.mis_capacitaciones')">
                             {{ __('Mis Capacitaciones') }}
@@ -169,11 +177,13 @@
                 </x-responsive-nav-link>
             @endif
 
-            @if ($is_instructor or
+            @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
                  in_array('Instructor', $user_roles) or
                  in_array('Docente', $user_roles) or
                  in_array('admin', $user_roles) or
-                 in_array('CAD', $user_roles))
+                 in_array('CAD', $user_roles) or
+                 in_array('Jefe Departamento', $user_roles) or
+                 in_array('Subdirector Academico', $user_roles))
                 <x-responsive-nav-link :href="route('externa.formulario')" :active="request()->routeIs('externa.formulario')">
                     {{ __('Registrar') }}
                 </x-responsive-nav-link>
