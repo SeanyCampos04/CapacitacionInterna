@@ -52,14 +52,20 @@
                                 $user_roles = \Illuminate\Support\Facades\DB::table('roles')->whereIn('id', $user_role_ids)->pluck('nombre')->toArray();
                             }
 
-                            // Verificar si es instructor (role_id = 5 o nombre = 'Instructor')
+                            // Definir roles por ID y nombre
                             $is_instructor = in_array(5, $user_role_ids) || in_array('Instructor', $user_roles);
-                        @endphp                        <!-- Tarjeta Registrar - Solo para Instructores, Docentes, Admin, CAD -->
-                        @if ($is_instructor or
+                            $is_admin = in_array(1, $user_role_ids) || in_array('admin', $user_roles);
+                            $is_cad = in_array(4, $user_role_ids) || in_array('CAD', $user_roles);
+                            $is_jefe_departamento = in_array(2, $user_role_ids) || in_array('Jefe Departamento', $user_roles);
+                            $is_subdirector = in_array(3, $user_role_ids) || in_array('Subdirector Academico', $user_roles);
+                        @endphp                        <!-- Tarjeta Registrar - Para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
+                        @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
                              in_array('Instructor', $user_roles) or
                              in_array('Docente', $user_roles) or
                              in_array('admin', $user_roles) or
-                             in_array('CAD', $user_roles))
+                             in_array('CAD', $user_roles) or
+                             in_array('Jefe Departamento', $user_roles) or
+                             in_array('Subdirector Academico', $user_roles))
                             <div class="col-md-4 mb-4">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
@@ -94,12 +100,14 @@
                             </div>
                         @endif
 
-                        <!-- Tarjeta Mis Capacitaciones - Solo para Instructores, Docentes, Admin, CAD -->
-                        @if ($is_instructor or
+                        <!-- Tarjeta Mis Capacitaciones - Para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
+                        @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
                              in_array('Instructor', $user_roles) or
                              in_array('Docente', $user_roles) or
                              in_array('admin', $user_roles) or
-                             in_array('CAD', $user_roles))
+                             in_array('CAD', $user_roles) or
+                             in_array('Jefe Departamento', $user_roles) or
+                             in_array('Subdirector Academico', $user_roles))
                             <div class="col-md-4 mb-4">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
