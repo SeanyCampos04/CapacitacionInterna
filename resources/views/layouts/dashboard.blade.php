@@ -10,7 +10,7 @@
                 @endif
             </h2>
             <span class="font-semibold text-lg text-white">
-                Interna
+                Capacitación Interna
             </span>
         </div>
     </x-slot>
