@@ -60,36 +60,52 @@
         <div class="container">
                 @if($tipo_usuario == 1) <!-- Verifica si no es docente para mostrar el formulario de filtrado -->
                     @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
-                        <form action="{{ route('capacitacionesext.filtrar') }}" method="GET" class="mb-4">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label for="tipo_capacitacion" class="form-label">Filtrar por Tipo de Capacitación</label>
-                                    <select class="form-control" id="tipo_capacitacion" name="tipo_capacitacion">
-                                        <option value="">Todos</option>
-                                        <option value="diplomado" {{ request('tipo_capacitacion') == 'diplomado' ? 'selected' : '' }}>Diplomado</option>
-                                        <option value="taller_curso" {{ request('tipo_capacitacion') == 'taller_curso' ? 'selected' : '' }}>Taller o curso</option>
-                                        <option value="mooc" {{ request('tipo_capacitacion') == 'mooc' ? 'selected' : '' }}>Mooc (TecNM)</option>
-                                        <option value="otro" {{ request('tipo_capacitacion') == 'otro' ? 'selected' : '' }}>Otro</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="anio" class="form-label">Filtrar por Año</label>
-                                    <select class="form-control" id="anio" name="anio">
-                                        <option value="">Todos</option>
-                                        <option value="2022" {{ request('anio') == '2022' ? 'selected' : '' }}>2022</option>
-                                        <option value="2023" {{ request('anio') == '2023' ? 'selected' : '' }}>2023</option>
-                                        <option value="2024" {{ request('anio') == '2024' ? 'selected' : '' }}>2024</option>
-                                        <option value="2025" {{ request('anio') == '2025' ? 'selected' : '' }}>2025</option>
-                                        <option value="2026" {{ request('anio') == '2026' ? 'selected' : '' }}>2026</option>
-                                        <option value="2027" {{ request('anio') == '2027' ? 'selected' : '' }}>2027</option>
-                                        <option value="2028" {{ request('anio') == '2028' ? 'selected' : '' }}>2028</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 d-flex align-items-end">
-                                    <x-primary-button type="submit" class="btn-primary">Filtrar</x-primary-button>
-                                </div>
-                            </div>
-                        </form>
+                        <!-- Buscador y filtros -->
+                        <div class="mb-6">
+                            <form id="searchForm" action="{{ route('capacitacionesext.filtrar') }}" method="GET" class="flex flex-wrap items-center gap-3">
+                                <!-- Campo de búsqueda -->
+                                <input
+                                    type="text"
+                                    name="q"
+                                    id="searchInput"
+                                    placeholder="Buscar por nombre, tipo de capacitación, nombre de la capacitación u organismo"
+                                    value="{{ old('q', $search ?? request('q')) }}"
+                                    class="flex-1 rounded-md border-gray-300 shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                                >
+
+                                <!-- Filtro por tipo de capacitación -->
+                                <select name="tipo_capacitacion" id="tipoSelect"
+                                    class="rounded-md border-gray-300 shadow-sm px- py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                                    <option value="">--Todos los tipos--</option>
+                                    <option value="diplomado" {{ request('tipo_capacitacion') == 'diplomado' ? 'selected' : '' }}>Diplomado</option>
+                                    <option value="taller_curso" {{ request('tipo_capacitacion') == 'taller_curso' ? 'selected' : '' }}>Taller o curso</option>
+                                    <option value="mooc" {{ request('tipo_capacitacion') == 'mooc' ? 'selected' : '' }}>Mooc (TecNM)</option>
+                                    <option value="otro" {{ request('tipo_capacitacion') == 'otro' ? 'selected' : '' }}>Otro</option>
+                                </select>
+
+                                <!-- Filtro por año -->
+                                <select name="anio" id="anioSelect"
+                                    class="rounded-md border-gray-300 shadow-sm px- py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                                    <option value="">--Todos los años--</option>
+                                    @for($i = 2022; $i <= 2028; $i++)
+                                        <option value="{{ $i }}" {{ request('anio') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                    @endfor
+                                </select>
+
+                                <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-700 text-white rounded-md shadow hover:bg-indigo-800">
+                                    Buscar
+                                </button>
+                            </form>
+
+                            <!-- Resultados -->
+                            @php
+                                $totalResultados = method_exists($capacitaciones ?? null, 'total') ? $capacitaciones->total() : ($capacitaciones ? $capacitaciones->count() : 0);
+                            @endphp
+                            <p class="text-sm text-gray-500 mt-2">
+                                Resultados: <strong>{{ $totalResultados }}</strong> capacitaciones
+                            </p>
+                        </div>
                     @endif
                 @endif
 
@@ -129,12 +145,22 @@
                                 <td class="text-center">{{ $capacitacion->organismo }}</td>
                                 <td class="text-center">{{ $capacitacion->horas }}</td>
                                 <td class="text-center">
-                                    @if($capacitacion->evidencia)
-                                        <a href="{{ asset('storage/' . $capacitacion->evidencia) }}" target="_blank">Ver PDF</a>
-                                    @else
-                                        No disponible
-                                    @endif
-                                </td>
+    @php
+        $rutaEvidencia = 'storage/evidencias/' . basename($capacitacion->evidencia);
+    @endphp
+
+    @if ($capacitacion->evidencia && file_exists(public_path($rutaEvidencia)))
+        <a href="{{ url($rutaEvidencia) }}"
+           target="_blank"
+           class="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition">
+            Ver PDF
+        </a>
+    @else
+        <span class="text-gray-400">No disponible</span>
+    @endif
+</td>
+
+
                                 <td class="text-center">
                                     <!-- Mostrar el estado de la capacitación -->
                                     @if($capacitacion->status)
@@ -263,6 +289,33 @@
                 if ("{{ session('success') }}") {
                     var successModal = new bootstrap.Modal(document.getElementById('successModal'));
                     successModal.show();
+                }
+
+                // Búsqueda automática con debounce
+                const input = document.getElementById('searchInput');
+                const tipoSelect = document.getElementById('tipoSelect');
+                const anioSelect = document.getElementById('anioSelect');
+                const form = document.getElementById('searchForm');
+
+                if (input && form) {
+                    let timeout = null;
+                    input.addEventListener('input', function () {
+                        clearTimeout(timeout);
+                        timeout = setTimeout(() => form.submit(), 800);
+                    });
+
+                    // Enviar el formulario automáticamente al cambiar los selectores
+                    if (tipoSelect) {
+                        tipoSelect.addEventListener('change', function () {
+                            form.submit();
+                        });
+                    }
+
+                    if (anioSelect) {
+                        anioSelect.addEventListener('change', function () {
+                            form.submit();
+                        });
+                    }
                 }
             });
         </script>
