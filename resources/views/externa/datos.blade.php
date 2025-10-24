@@ -72,7 +72,7 @@
                                     type="text"
                                     name="q"
                                     id="searchInput"
-                                    placeholder="Buscar por nombre, tipo de capacitación, nombre de la capacitación u organismo"
+                                    placeholder="Buscar por nombre, nombre de la capacitación u organismo"
                                     value="{{ old('q', $search ?? request('q')) }}"
                                     class="flex-1 rounded-md border-gray-300 shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
                                 >
@@ -80,7 +80,7 @@
                                 <!-- Filtro por tipo de capacitación -->
                                 <select name="tipo_capacitacion" id="tipoSelect"
                                     class="rounded-md border-gray-300 shadow-sm px- py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                                    <option value="">--Todos los tipos--</option>
+                                    <option value="">--Todos los tipos de capacitación--</option>
                                     <option value="diplomado" {{ request('tipo_capacitacion') == 'diplomado' ? 'selected' : '' }}>Diplomado</option>
                                     <option value="taller_curso" {{ request('tipo_capacitacion') == 'taller_curso' ? 'selected' : '' }}>Taller o curso</option>
                                     <option value="mooc" {{ request('tipo_capacitacion') == 'mooc' ? 'selected' : '' }}>Mooc (TecNM)</option>
