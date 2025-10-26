@@ -11,12 +11,12 @@
         $user_roles = DB::table('roles')->whereIn('id', $user_role_ids)->pluck('nombre')->toArray();
     }
 
-    // Definir roles por ID y nombre
-    $is_instructor = in_array(5, $user_role_ids) || in_array('Instructor', $user_roles);
-    $is_admin = in_array(1, $user_role_ids) || in_array('admin', $user_roles);
-    $is_cad = in_array(4, $user_role_ids) || in_array('CAD', $user_roles);
-    $is_jefe_departamento = in_array(2, $user_role_ids) || in_array('Jefe Departamento', $user_roles);
-    $is_subdirector = in_array(3, $user_role_ids) || in_array('Subdirector Academico', $user_roles);
+    // Definir roles por ID específicos
+    $is_admin = in_array(1, $user_role_ids);           // Admin (id=1)
+    $is_jefe_departamento = in_array(2, $user_role_ids); // Jefe Departamento (id=2)
+    $is_subdirector = in_array(3, $user_role_ids);     // Subdirector Académico (id=3)
+    $is_cad = in_array(4, $user_role_ids);             // CAD (id=4)
+    $is_instructor = in_array(5, $user_role_ids);      // Instructor (id=5)
 
     $tipo_usuario = auth()->user()->tipo_usuario;
 @endphp
@@ -28,7 +28,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('externa.index') }}">
+                    <a href="{{ route('diplomados.index') }}">
                         <img style="height: 55px" src="{{ asset('images/logo.png') }}" alt="logo">
                     </a>
                 </div>
@@ -57,10 +57,10 @@
                             <x-dropdown-link :href="route('inicio')">
                                 {{ __('Capacitación Interna') }}
                             </x-dropdown-link>
-                            <x-dropdown-link :href="route('externa.index')" :active="request()->routeIs('externa.*')">
+                            <x-dropdown-link :href="route('externa.index')">
                                 {{ __('Capacitación Externa') }}
                             </x-dropdown-link>
-                            <x-dropdown-link :href="route('diplomados.index')">
+                            <x-dropdown-link :href="route('diplomados.index')" :active="request()->routeIs('diplomados.*')">
                                 {{ __('Diplomados') }}
                             </x-dropdown-link>
                             <x-dropdown-link href="#" onclick="alert('Módulo en desarrollo')">
@@ -72,51 +72,95 @@
 
                 <!-- Inicio -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('externa.index')" :active="request()->routeIs('externa.index')">
+                    <x-nav-link :href="route('diplomados.index')" :active="request()->routeIs('diplomados.index')">
                         {{ __('Inicio') }}
                     </x-nav-link>
                 </div>
 
-                <!-- Visualizar Capacitaciones - Oculto para Instructores -->
-                @if (!$is_instructor)
+                <!-- Registrar Diplomado - Solo para Admin (id=1) y CAD (id=4) -->
+                @if ($is_admin || $is_cad)
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
-                        <x-nav-link :href="route('externa.datos')" :active="request()->routeIs('externa.datos')">
-                            {{ __('Visualizar') }}
+                        <x-nav-link :href="route('diplomados.diplomados.create')" :active="request()->routeIs('diplomados.diplomados.create')">
+                            {{ __('Registrar Diplomado') }}
                         </x-nav-link>
                     </div>
                 @endif
 
-                <!-- Registrar Capacitación - Visible para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
-                @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
-                     in_array('Instructor', $user_roles) or
-                     in_array('Docente', $user_roles) or
-                     in_array('admin', $user_roles) or
-                     in_array('CAD', $user_roles) or
-                     in_array('Jefe Departamento', $user_roles) or
-                     in_array('Subdirector Academico', $user_roles))
+                <!-- Diplomados Registrados - Para Admin, CAD, Jefe Departamento, Subdirector -->
+                @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
-                        <x-nav-link :href="route('externa.formulario')" :active="request()->routeIs('externa.formulario')">
-                            {{ __('Registrar') }}
+                        <x-nav-link :href="route('diplomados.diplomados.index')" :active="request()->routeIs('diplomados.diplomados.*')">
+                            {{ __('Diplomados Registrados') }}
                         </x-nav-link>
                     </div>
                 @endif
 
-                <!-- Mis Capacitaciones - Visible para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
-                @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
-                     in_array('Instructor', $user_roles) or
-                     in_array('Docente', $user_roles) or
-                     in_array('admin', $user_roles) or
-                     in_array('CAD', $user_roles) or
-                     in_array('Jefe Departamento', $user_roles) or
-                     in_array('Subdirector Academico', $user_roles))
+                <!-- En Oferta - Visible para todos -->
+                <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
+                    <x-nav-link :href="route('diplomados.oferta')" :active="request()->routeIs('diplomados.oferta')">
+                        {{ __('En Oferta') }}
+                    </x-nav-link>
+                </div>
+
+                <!-- Mis Solicitudes - Visible para todos -->
+                <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
+                    <x-nav-link :href="route('diplomados.solicitudes')" :active="request()->routeIs('diplomados.solicitudes')">
+                        {{ __('Mis Solicitudes') }}
+                    </x-nav-link>
+                </div>
+
+                <!-- Opciones específicas para roles -->
+                <!-- En Curso y Terminado - Participante (Para Admin, CAD, Jefe, Subdirector) -->
+                @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
-                        <x-nav-link :href="route('externa.mis_capacitaciones')" :active="request()->routeIs('externa.mis_capacitaciones')">
-                            {{ __('Mis Capacitaciones') }}
-                        </x-nav-link>
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium rounded-md text-gray-100 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                    <div>{{ __('Participante') }}</div>
+                                    <div class="ms-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('diplomados.curso_docente')">
+                                    {{ __('En Curso - Participante') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('diplomados.terminado_docente')">
+                                    {{ __('Terminado - Participante') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
                     </div>
                 @endif
 
-            </div>
+                <!-- En Curso y Terminado - Instructor (Solo para Instructor) -->
+                @if ($is_instructor)
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium rounded-md text-gray-100 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                    <div>{{ __('Instructor') }}</div>
+                                    <div class="ms-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('diplomados.curso_instructor')">
+                                    {{ __('En Curso - Instructor') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('diplomados.terminado_instructor')">
+                                    {{ __('Terminado - Instructor') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+                @endif            </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -167,28 +211,45 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('externa.index')" :active="request()->routeIs('externa.index')">
+            <x-responsive-nav-link :href="route('diplomados.index')" :active="request()->routeIs('diplomados.index')">
                 {{ __('Inicio') }}
             </x-responsive-nav-link>
 
-            @if (!$is_instructor)
-                <x-responsive-nav-link :href="route('externa.datos')" :active="request()->routeIs('externa.datos')">
-                    {{ __('Visualizar') }}
+            @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
+                <x-responsive-nav-link :href="route('diplomados.diplomados.index')" :active="request()->routeIs('diplomados.diplomados.*')">
+                    {{ __('Diplomados Registrados') }}
                 </x-responsive-nav-link>
             @endif
 
-            @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
-                 in_array('Instructor', $user_roles) or
-                 in_array('Docente', $user_roles) or
-                 in_array('admin', $user_roles) or
-                 in_array('CAD', $user_roles) or
-                 in_array('Jefe Departamento', $user_roles) or
-                 in_array('Subdirector Academico', $user_roles))
-                <x-responsive-nav-link :href="route('externa.formulario')" :active="request()->routeIs('externa.formulario')">
-                    {{ __('Registrar') }}
+            @if ($is_admin || $is_cad)
+                <x-responsive-nav-link :href="route('diplomados.diplomados.create')">
+                    {{ __('Registrar Diplomado') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('externa.mis_capacitaciones')" :active="request()->routeIs('externa.mis_capacitaciones')">
-                    {{ __('Mis Capacitaciones') }}
+            @endif
+
+            <x-responsive-nav-link :href="route('diplomados.oferta')" :active="request()->routeIs('diplomados.oferta')">
+                {{ __('En Oferta') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('diplomados.solicitudes')" :active="request()->routeIs('diplomados.solicitudes')">
+                {{ __('Mis Solicitudes') }}
+            </x-responsive-nav-link>
+
+            @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
+                <x-responsive-nav-link :href="route('diplomados.curso_docente')">
+                    {{ __('En Curso - Participante') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('diplomados.terminado_docente')">
+                    {{ __('Terminado - Participante') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if ($is_instructor)
+                <x-responsive-nav-link :href="route('diplomados.curso_instructor')">
+                    {{ __('En Curso - Instructor') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('diplomados.terminado_instructor')">
+                    {{ __('Terminado - Instructor') }}
                 </x-responsive-nav-link>
             @endif
         </div>
