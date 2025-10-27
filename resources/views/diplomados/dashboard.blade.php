@@ -29,6 +29,32 @@
             .card:hover {
                 transform: translateY(-5px);
             }
+
+            /* Botón púrpura para instructor */
+            .btn-purple {
+                background: linear-gradient(45deg, #8b5cf6, #7c3aed);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+            .btn-purple:hover {
+                background: linear-gradient(45deg, #7c3aed, #6d28d9);
+                color: white;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+            }
+
+            /* Hacer que los dropdowns se abran hacia arriba */
+            .dropup .dropdown-menu {
+                top: auto !important;
+                bottom: 100% !important;
+                margin-bottom: 0.125rem !important;
+                transform: translate3d(0px, -2px, 0px) !important;
+            }
         </style>
     </head>
 
@@ -36,7 +62,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <h3 class="text-2xl font-bold mb-4">{{ __("Menú de Opciones - Diplomados") }}</h3>
+                    <h3 class="text-2xl font-bold mb-4">{{ __("Menú de Opciones") }}</h3>
                     <p class="text-gray-600 dark:text-gray-300 mb-6">Selecciona una de las opciones de funcionalidad del módulo de diplomados</p>
 
                     <!-- Tarjetas de acciones rápidas -->

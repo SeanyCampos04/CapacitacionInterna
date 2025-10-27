@@ -5,6 +5,9 @@
         </h2>
     </x-slot>
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <div class="container mx-auto mt-6 bg-white p-6 shadow-lg rounded-lg">
         <ul>
             @foreach ($modulos as $modulo)
@@ -47,7 +50,10 @@
                         <p class="text-red-500 font-semibold">Participantes por calificar: {{ $participantesSinCalificar }}</p>
                     @endif
 
-                    <a href="{{ route('diplomados.detalle.modulo.participantes', $modulo) }}" class="text-blue-500 hover:underline">Ver participantes</a>
+                    <a href="{{ route('diplomados.detalle.modulo.participantes', $modulo) }}"
+                       class="inline-flex items-center px-3 py-2 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 transition-colors duration-200">
+                        <i class="fas fa-users mr-2"></i>Ver participantes
+                    </a>
                 </li>
             @endforeach
         </ul>

@@ -34,9 +34,14 @@
             color: white;
             transform: scale(1.05);
         }
+
+        .solicitudes-container {
+            margin: 2rem 1.5rem !important;
+            padding: 1.5rem;
+        }
     </style>
 
-    <div class="container mx-auto mt-6 bg-white p-6 shadow-lg rounded-lg">
+    <div class="solicitudes-container bg-white shadow-lg rounded-lg">
 
         <table class="min-w-full table-auto border-collapse border border-gray-200">
             <thead>

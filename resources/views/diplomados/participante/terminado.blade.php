@@ -1,12 +1,21 @@
 <x-app-diplomados-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Diplomados en curso') }}
+            {{ __('Diplomados Terminados') }}
         </h2>
     </x-slot>
 
-    <div class="container mx-auto mt-6 bg-white p-6 shadow-lg rounded-lg">
-        <table class="min-w-full table-auto border-collapse border border-gray-200">
+    <style>
+        .optimized-container {
+            width: 95%;
+            max-width: 1200px !important;
+            margin: 2rem auto !important;
+            padding: 1.5rem;
+        }
+    </style>
+
+    <div class="optimized-container bg-white shadow-lg rounded-lg">
+        <table class="w-full table-auto border-collapse border border-gray-200">
             <thead>
                 <tr>
                     <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-left text-sm font-semibold">Diplomado</th>

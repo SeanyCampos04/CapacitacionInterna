@@ -1,11 +1,20 @@
 <x-app-diplomados-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Diplomados Registrados') }}
+            {{ __('Diplomados Terminados') }}
         </h2>
     </x-slot>
 
-    <div class="container mx-auto mt-6 bg-white p-6 shadow-lg rounded-lg">
+    <style>
+        .optimized-container {
+            width: 95%;
+            max-width: 1200px !important;
+            margin: 2rem auto !important;
+            padding: 1.5rem;
+        }
+    </style>
+
+    <div class="optimized-container bg-white shadow-lg rounded-lg">
         <h1 class="text-center text-2xl font-bold text-gray-800 mb-6">Diplomados registrados</h1>
 
         <!-- Artículo 1 -->
