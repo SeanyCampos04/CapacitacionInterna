@@ -90,7 +90,6 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <h6 class="fw-bold mb-3">{{ $diplomado->nombre }}</h6>
                         <p class="mb-0">{{ $diplomado->objetivo }}</p>
                     </div>
                     <div class="modal-footer">

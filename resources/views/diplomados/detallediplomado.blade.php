@@ -7,12 +7,13 @@
 
     <div class="container mx-auto mt-6 bg-white p-6 shadow-lg rounded-lg">
         @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
-            <form action="{{ route('registrar_modulos', $diplomado->id) }}" method="GET" class="inline">
-                @csrf
-                <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Agregar módulo</button>
-            </form>
+            <div class="mb-6">
+                <a href="{{ route('diplomados.modulos.create', $diplomado->id) }}" class="inline-block px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                    Agregar módulo
+                </a>
+            </div>
         @endif
-        <ul>
+        <ul class="space-y-4">
             @foreach ($modulos as $modulo)
                 @php
                     $fechaActual = \Carbon\Carbon::now();
@@ -35,7 +36,7 @@
                     }
                 @endphp
 
-                <li class="py-4 px-6 border-l-4 {{ $li }} border border-gray-600 rounded-lg flex justify-between items-center">
+                <li class="py-4 px-6 border-l-4 {{ $li }} border border-gray-600 rounded-lg flex justify-between items-center mb-4">
                     <div>
                         <span class="text-sm font-medium">{{ $modulo->nombre }}</span>
                         <div class="text-sm">

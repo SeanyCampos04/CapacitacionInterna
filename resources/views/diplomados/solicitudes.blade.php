@@ -5,6 +5,37 @@
         </h2>
     </x-slot>
 
+    <!-- Bootstrap CSS y Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            border-radius: 6px;
+            border: none;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 2px;
+            transition: all 0.2s;
+        }
+
+        .btn-view {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background-color: #2563eb;
+            color: white;
+            transform: scale(1.05);
+        }
+    </style>
+
     <div class="container mx-auto mt-6 bg-white p-6 shadow-lg rounded-lg">
 
         <table class="min-w-full table-auto border-collapse border border-gray-200">
@@ -19,6 +50,7 @@
                     <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-left text-sm font-semibold">Término Realización</th>
                     <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-left text-sm font-semibold">Estatus</th>
                     <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-left text-sm font-semibold">Como</th>
+                    <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-center text-sm font-semibold">Detalles</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,32 +73,18 @@
                     <td class="py-2 px-4 border-b border-gray-200 text-sm">Aceptado</td>
                     @endif
                     <td class="py-2 px-4 border-b border-gray-200 text-sm">Participante</td>
+                    <td class="py-2 px-4 border-b border-gray-200 text-center">
+                        <button type="button"
+                                class="btn-action btn-view"
+                                data-bs-toggle="modal"
+                                data-bs-target="#detailsModal-participante-{{ $solicitudParticipante->diplomado->id }}"
+                                title="Ver detalles">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
                 </tr>
-
-                <!-- Modal -->
-                <div class="modal fade" id="detailsModal-{{ $solicitudParticipante->diplomado->id }}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel-{{ $solicitudParticipante->diplomado->id }}" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="detailsModalLabel-{{ $solicitudParticipante->diplomado->id }}">Detalles del Diplomado</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p><strong>ID:</strong> {{ $solicitudParticipante->diplomado->id }}</p>
-                                <p><strong>Objetivo:</strong> {{ $solicitudParticipante->diplomado->objetivo }}</p>
-                                <p><strong>Categoría:</strong> {{ $solicitudParticipante->diplomado->clase }}</p>
-                                <p><strong>Responsable:</strong> {{ $solicitudParticipante->diplomado->responsable }}</p>
-                                <p><strong>Correo de Contacto:</strong> {{ $solicitudParticipante->diplomado->correo_contacto }}</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" data-dismiss="modal">Cerrar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 @endforeach
+
                 @foreach ($solicitudesInstructor as $solicitudInstructor)
                 <tr class="hover:bg-gray-50">
                     <td class="py-2 px-4 border-b border-gray-200 text-sm">{{ $solicitudInstructor->diplomado->nombre }}</td>
@@ -86,36 +104,123 @@
                     <td class="py-2 px-4 border-b border-gray-200 text-sm">Aceptado</td>
                     @endif
                     <td class="py-2 px-4 border-b border-gray-200 text-sm">Instructor</td>
+                    <td class="py-2 px-4 border-b border-gray-200 text-center">
+                        <button type="button"
+                                class="btn-action btn-view"
+                                data-bs-toggle="modal"
+                                data-bs-target="#detailsModal-instructor-{{ $solicitudInstructor->diplomado->id }}"
+                                title="Ver detalles">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
                 </tr>
-
-                <!-- Modal -->
-                <div class="modal fade" id="detailsModal-{{ $solicitudInstructor->diplomado->id }}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel-{{ $solicitudInstructor->diplomado->id }}" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="detailsModalLabel-{{ $solicitudInstructor->diplomado->id }}">Detalles del Diplomado</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p><strong>ID:</strong> {{ $solicitudInstructor->diplomado->id }}</p>
-                                <p><strong>Objetivo:</strong> {{ $solicitudInstructor->diplomado->objetivo }}</p>
-                                <p><strong>Categoría:</strong> {{ $solicitudInstructor->diplomado->clase }}</p>
-                                <p><strong>Responsable:</strong> {{ $solicitudInstructor->diplomado->responsable }}</p>
-                                <p><strong>Correo de Contacto:</strong> {{ $solicitudInstructor->diplomado->correo_contacto }}</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" data-dismiss="modal">Cerrar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 @endforeach
             </tbody>
         </table>
     </div>
-    <!-- Scripts necesarios para Bootstrap Modal -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Modales para Participantes -->
+    @foreach ($solicitudesParticipante as $solicitudParticipante)
+    <div class="modal fade" id="detailsModal-participante-{{ $solicitudParticipante->diplomado->id }}" tabindex="-1" aria-labelledby="detailsModalLabel-participante-{{ $solicitudParticipante->diplomado->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="detailsModalLabel-participante-{{ $solicitudParticipante->diplomado->id }}">
+                        <i class="fas fa-info-circle me-2"></i>Detalles del Diplomado
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary"><i class="fas fa-graduation-cap me-2"></i>Información General</h6>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>ID:</strong> <span class="text-muted">{{ $solicitudParticipante->diplomado->id }}</span></p>
+                                            <p><strong>Categoría:</strong> <span class="text-muted">{{ $solicitudParticipante->diplomado->clase }}</span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Responsable:</strong> <span class="text-muted">{{ $solicitudParticipante->diplomado->responsable }}</span></p>
+                                            <p><strong>Correo de Contacto:</strong> <span class="text-muted">{{ $solicitudParticipante->diplomado->correo_contacto }}</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <p><strong>Objetivo:</strong></p>
+                                            <div class="bg-light p-3 rounded">
+                                                <span class="text-muted">{{ $solicitudParticipante->diplomado->objetivo }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endforeach
+
+    <!-- Modales para Instructores -->
+    @foreach ($solicitudesInstructor as $solicitudInstructor)
+    <div class="modal fade" id="detailsModal-instructor-{{ $solicitudInstructor->diplomado->id }}" tabindex="-1" aria-labelledby="detailsModalLabel-instructor-{{ $solicitudInstructor->diplomado->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="detailsModalLabel-instructor-{{ $solicitudInstructor->diplomado->id }}">
+                        <i class="fas fa-info-circle me-2"></i>Detalles del Diplomado
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success"><i class="fas fa-chalkboard-teacher me-2"></i>Información General</h6>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>ID:</strong> <span class="text-muted">{{ $solicitudInstructor->diplomado->id }}</span></p>
+                                            <p><strong>Categoría:</strong> <span class="text-muted">{{ $solicitudInstructor->diplomado->clase }}</span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Responsable:</strong> <span class="text-muted">{{ $solicitudInstructor->diplomado->responsable }}</span></p>
+                                            <p><strong>Correo de Contacto:</strong> <span class="text-muted">{{ $solicitudInstructor->diplomado->correo_contacto }}</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <p><strong>Objetivo:</strong></p>
+                                            <div class="bg-light p-3 rounded">
+                                                <span class="text-muted">{{ $solicitudInstructor->diplomado->objetivo }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endforeach
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </x-app-diplomados-layout>

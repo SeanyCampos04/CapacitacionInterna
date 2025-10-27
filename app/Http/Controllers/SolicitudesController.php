@@ -182,7 +182,7 @@ class SolicitudesController extends Controller
             ]);
 
             // Guardar el archivo PDF en la carpeta 'cartas/terminacion' en el almacenamiento público
-            $path = $pdf->store('cartas/terminacion', 'custom_public');  // Guardar en storage/app/public/cartas/compromiso
+            $path = $pdf->store('cartas/terminacion', 'custom_public');
 
             // Crear la solicitud de inscripción con el archivo PDF
             solicitud_instructore::create([
@@ -191,7 +191,7 @@ class SolicitudesController extends Controller
                 'carta_terminacion' => $path,  // Almacenar la ruta del archivo en la base de datos
             ]);
 
-            return redirect()->back()->with('success', 'Solicitud realizada correctamente.');
+            return redirect()->back()->with('success', 'Solicitud realizada correctamente. Archivo guardado en: ' . $path);
         } else {
             return redirect()->back()->with('error', 'No se ha subido un archivo PDF.');
         }

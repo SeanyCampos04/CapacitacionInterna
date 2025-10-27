@@ -89,7 +89,7 @@
                 <!-- Diplomados Registrados - Para Admin, CAD, Jefe Departamento, Subdirector -->
                 @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
-                        <x-nav-link :href="route('diplomados.diplomados.index')" :active="request()->routeIs('diplomados.diplomados.*')">
+                        <x-nav-link :href="route('diplomados.diplomados.index')" :active="request()->routeIs('diplomados.diplomados.index') || request()->routeIs('diplomados.diplomados.edit') || request()->routeIs('diplomados.detalle')">
                             {{ __('Diplomados Registrados') }}
                         </x-nav-link>
                     </div>
@@ -112,10 +112,10 @@
                 <!-- Opciones específicas para roles -->
                 <!-- En Curso y Terminado - Participante (Para Admin, CAD, Jefe, Subdirector) -->
                 @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex sm:items-center">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
-                                <button class="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium rounded-md text-gray-100 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                <button class="inline-flex items-center px-1 py-4 text-sm leading-5 font-medium rounded-md text-gray-100 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                                     <div>{{ __('Participante') }}</div>
                                     <div class="ms-1">
                                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -138,10 +138,10 @@
 
                 <!-- En Curso y Terminado - Instructor (Solo para Instructor) -->
                 @if ($is_instructor)
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex sm:items-center">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
-                                <button class="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium rounded-md text-gray-100 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                <button class="inline-flex items-center px-1 py-4 text-sm leading-5 font-medium rounded-md text-gray-100 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                                     <div>{{ __('Instructor') }}</div>
                                     <div class="ms-1">
                                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -216,13 +216,13 @@
             </x-responsive-nav-link>
 
             @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
-                <x-responsive-nav-link :href="route('diplomados.diplomados.index')" :active="request()->routeIs('diplomados.diplomados.*')">
+                <x-responsive-nav-link :href="route('diplomados.diplomados.index')" :active="request()->routeIs('diplomados.diplomados.index') || request()->routeIs('diplomados.diplomados.edit') || request()->routeIs('diplomados.detalle')">
                     {{ __('Diplomados Registrados') }}
                 </x-responsive-nav-link>
             @endif
 
             @if ($is_admin || $is_cad)
-                <x-responsive-nav-link :href="route('diplomados.diplomados.create')">
+                <x-responsive-nav-link :href="route('diplomados.diplomados.create')" :active="request()->routeIs('diplomados.diplomados.create')">
                     {{ __('Registrar Diplomado') }}
                 </x-responsive-nav-link>
             @endif
