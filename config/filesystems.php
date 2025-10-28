@@ -46,8 +46,8 @@ return [
 
         'custom_public' => [
             'driver' => 'local',
-            'root' => public_path('uploads'),
-            'url' => env('APP_URL') . '/uploads',
+            'root' => public_path('archivos'),
+            'url' => env('APP_URL') . '/archivos',
             'visibility' => 'public',
             'throw' => false,
         ],

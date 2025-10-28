@@ -60,7 +60,7 @@
                             <x-dropdown-link :href="route('externa.index')" :active="request()->routeIs('externa.*')">
                                 {{ __('Capacitación Externa') }}
                             </x-dropdown-link>
-                            <x-dropdown-link href="#" onclick="alert('Módulo en desarrollo')">
+                            <x-dropdown-link :href="route('diplomados.index')">
                                 {{ __('Diplomados') }}
                             </x-dropdown-link>
                             <x-dropdown-link href="#" onclick="alert('Módulo en desarrollo')">

@@ -36,6 +36,20 @@
                         a {
                             text-decoration: none !important;
                         }
+
+                        /* Hacer que los dropdowns se abran hacia arriba */
+                        .dropup .dropdown-menu {
+                            top: auto !important;
+                            bottom: 100% !important;
+                            margin-bottom: 0.125rem !important;
+                            transform: translate3d(0px, -2px, 0px) !important;
+                            box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+                        }
+
+                        .dropup .dropdown-toggle::after {
+                            border-top: 0;
+                            border-bottom: 0.3em solid;
+                        }
                     </style>
 
                     <!-- Tarjetas de acciones rápidas -->
@@ -68,7 +82,7 @@
                                         </div>
                                         <h5 class="card-title">Usuarios</h5>
                                         <p class="card-text">Gestión de usuarios del sistema</p>
-                                        <div class="dropdown">
+                                        <div class="dropdown dropup">
                                             <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                 Opciones
                                             </button>
@@ -94,7 +108,7 @@
                                         </div>
                                         <h5 class="card-title">Departamentos</h5>
                                         <p class="card-text">Gestión de departamentos</p>
-                                        <div class="dropdown">
+                                        <div class="dropdown dropup">
                                             <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                 Opciones
                                             </button>
@@ -137,7 +151,7 @@
                                     </div>
                                     <h5 class="card-title">Cursos</h5>
                                     <p class="card-text">Gestión y consulta de cursos</p>
-                                    <div class="dropdown">
+                                    <div class="dropdown dropup">
                                         <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                             Opciones
                                         </button>
@@ -177,7 +191,7 @@
                                         </div>
                                         <h5 class="card-title">Períodos</h5>
                                         <p class="card-text">Gestión de períodos académicos</p>
-                                        <div class="dropdown">
+                                        <div class="dropdown dropup">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                 Opciones
                                             </button>
