@@ -69,8 +69,14 @@ class UsuarioController extends Controller
     {
         try {
             $usuario = User::findOrFail($id);
-            $participante = Participante::find($id);
-            $cursos = cursos_participante::with('curso')->where('participante_id', $participante->id)->orderBy('id', 'desc')->get();
+
+            // Buscar el participante usando el user_id, no el id directamente
+            $participante = Participante::where('user_id', $id)->first();
+
+            $cursos = [];
+            if ($participante) {
+                $cursos = cursos_participante::with('curso')->where('participante_id', $participante->id)->orderBy('id', 'desc')->get();
+            }
 
             return view('vistas.usuarios.show', compact('usuario', 'cursos'));
         } catch (\Exception $e) {
