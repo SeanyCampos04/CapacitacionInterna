@@ -78,47 +78,47 @@ class RegistroCapacitacionesExtController extends Controller
     }
 
     public function mis_capacitaciones()
-    {
-        $user = auth()->user();
-        $query = RegistroCapacitacionesExt::where('correo', $user->email);
+{
+    $user = auth()->user();
+    $query = RegistroCapacitacionesExt::where('correo', $user->email);
 
-        // Aplicar búsqueda si existe
-        if (request()->has('q')) {
-            $searchTerm = request('q');
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('nombre', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('apellido_paterno', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('apellido_materno', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('tipo_capacitacion', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('nombre_capacitacion', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('organismo', 'LIKE', "%{$searchTerm}%");
-            });
-        }
-
-        // Aplicar filtros adicionales si existen
-        if (request()->filled('tipo_capacitacion')) {
-            $query->where('tipo_capacitacion', request('tipo_capacitacion'));
-        }
-
-        if (request()->filled('anio')) {
-            $query->where('anio', request('anio'));
-        }
-
-        // Obtener las capacitaciones con paginación
-        $capacitaciones = $query->paginate(10);
-
-        // Variables necesarias para la vista
-        $user_roles = $user->user_roles->pluck('role.name')->toArray();
-        $tipo_usuario = $user->tipo_usuario;
-
-        return view('externa.datos', [
-            'capacitaciones' => $capacitaciones,
-            'user_roles' => $user_roles,
-            'tipo_usuario' => $tipo_usuario,
-            'search' => request('q')
-        ]);
+    // Aplicar búsqueda si existe
+    if (request()->has('q')) {
+        $searchTerm = request('q');
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('nombre', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('apellido_paterno', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('apellido_materno', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('tipo_capacitacion', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('nombre_capacitacion', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('organismo', 'LIKE', "%{$searchTerm}%");
+        });
     }
 
+    // Aplicar filtros adicionales si existen
+    if (request()->filled('tipo_capacitacion')) {
+        $query->where('tipo_capacitacion', request('tipo_capacitacion'));
+    }
+
+    if (request()->filled('anio')) {
+        $query->where('anio', request('anio'));
+    }
+
+    // Obtener las capacitaciones con paginación
+    $capacitaciones = $query->paginate(10);
+
+    // Variables necesarias para la vista
+    $user_roles = $user->user_roles->pluck('role.name')->toArray();
+    $tipo_usuario = $user->tipo_usuario;
+
+    return view('externa.datos', [
+        'capacitaciones' => $capacitaciones,
+        'user_roles' => $user_roles,
+        'tipo_usuario' => $tipo_usuario,
+        'search' => request('q'),
+        'is_mis_capacitaciones' => true // Agregar este parámetro
+    ]);
+}
     public function destroy($id)
     {
         // Buscar la capacitación por ID
@@ -136,47 +136,57 @@ class RegistroCapacitacionesExtController extends Controller
     }
 
     public function filtrar(Request $request)
-    {
-        $query = RegistroCapacitacionesExt::query();
+{
+    $query = RegistroCapacitacionesExt::query();
 
-        // Aplicar búsqueda si existe
-        if ($request->filled('q')) {
-            $searchTerm = $request->q;
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('nombre', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('apellido_paterno', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('apellido_materno', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('tipo_capacitacion', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('nombre_capacitacion', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('organismo', 'LIKE', "%{$searchTerm}%");
-            });
-        }
+    // DETECTAR SI ES "MIS CAPACITACIONES" por la URL
+    $currentUrl = url()->current();
+    $isMisCapacitaciones = str_contains($currentUrl, 'mis-capacitaciones') ||
+                          str_contains($currentUrl, 'mis_capacitaciones');
 
-        // Aplicar filtro por tipo de capacitación si está seleccionado
-        if ($request->filled('tipo_capacitacion')) {
-            $query->where('tipo_capacitacion', $request->tipo_capacitacion);
-        }
-
-        // Aplicar filtro por año si está seleccionado
-        if ($request->filled('anio')) {
-            $query->where('anio', $request->anio);
-        }
-
-        // Obtener las capacitaciones con paginación
-        $capacitaciones = $query->paginate(10);
-
-        // Variables necesarias para la vista
-        $user_roles = auth()->user()->user_roles->pluck('role.name')->toArray();
-        $tipo_usuario = auth()->user()->tipo_usuario;
-
-        return view('externa.datos', [
-            'capacitaciones' => $capacitaciones,
-            'user_roles' => $user_roles,
-            'tipo_usuario' => $tipo_usuario,
-            'search' => $request->q
-        ]);
+    // Si es "Mis Capacitaciones", filtrar por el usuario actual
+    if ($isMisCapacitaciones) {
+        $user = auth()->user();
+        $query->where('correo', $user->email);
     }
 
+    // Aplicar búsqueda si existe
+    if ($request->filled('q')) {
+        $searchTerm = $request->q;
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('nombre', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('apellido_paterno', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('apellido_materno', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('tipo_capacitacion', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('nombre_capacitacion', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('organismo', 'LIKE', "%{$searchTerm}%");
+        });
+    }
+
+    // Aplicar filtro por tipo de capacitación si está seleccionado
+    if ($request->filled('tipo_capacitacion')) {
+        $query->where('tipo_capacitacion', $request->tipo_capacitacion);
+    }
+
+    // Aplicar filtro por año si está seleccionado
+    if ($request->filled('anio')) {
+        $query->where('anio', $request->anio);
+    }
+
+    // Obtener las capacitaciones con paginación
+    $capacitaciones = $query->paginate(10);
+
+    // Variables necesarias para la vista
+    $user_roles = auth()->user()->user_roles->pluck('role.name')->toArray();
+    $tipo_usuario = auth()->user()->tipo_usuario;
+
+    return view('externa.datos', [
+        'capacitaciones' => $capacitaciones,
+        'user_roles' => $user_roles,
+        'tipo_usuario' => $tipo_usuario,
+        'search' => $request->q
+    ]);
+}
     public function create()
     {
         $userEmail = auth()->check() ? auth()->user()->email : null;

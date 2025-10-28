@@ -58,15 +58,15 @@
     </head>
     <body>
         <div class="container">
-                @if($tipo_usuario == 1) <!-- Verifica si no es docente para mostrar el formulario de filtrado -->
-                    @if (in_array('admin', $user_roles) or
-                         in_array('CAD', $user_roles) or
-                         in_array('Jefe Departamento', $user_roles) or
-                         in_array('Subdirector Academico', $user_roles) or
-                         in_array('Docente', $user_roles))
+                  @if((in_array('admin', $user_roles) || in_array('CAD', $user_roles) || in_array('Jefe Departamento', $user_roles) || in_array('Subdirector Academico', $user_roles) || in_array('Docente', $user_roles)) || (isset($is_mis_capacitaciones) && $is_mis_capacitaciones))
+        <!-- Mostrar buscador para roles específicos O si es Mis Capacitaciones -->
                         <!-- Buscador y filtros -->
                         <div class="mb-6">
-                            <form id="searchForm" action="{{ route('capacitacionesext.filtrar') }}" method="GET" class="flex flex-wrap items-center gap-3">
+                           @if(isset($is_mis_capacitaciones) && $is_mis_capacitaciones)
+    <form id="searchForm" action="{{ route('externa.mis_capacitaciones') }}" method="GET" class="flex flex-wrap items-center gap-3">
+@else
+    <form id="searchForm" action="{{ route('capacitacionesext.filtrar') }}" method="GET" class="flex flex-wrap items-center gap-3">
+@endif
                                 <!-- Campo de búsqueda -->
                                 <input
                                     type="text"
@@ -111,7 +111,7 @@
                             </p>
                         </div>
                     @endif
-                @endif
+               
 
             <div class="table-responsive">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500">
