@@ -58,21 +58,21 @@
     </head>
     <body>
         <div class="container">
-                @if($tipo_usuario == 1) <!-- Verifica si no es docente para mostrar el formulario de filtrado -->
-                    @if (in_array('admin', $user_roles) or
-                         in_array('CAD', $user_roles) or
-                         in_array('Jefe Departamento', $user_roles) or
-                         in_array('Subdirector Academico', $user_roles) or
-                         in_array('Docente', $user_roles))
+                  @if((in_array('admin', $user_roles) || in_array('CAD', $user_roles) || in_array('Jefe Departamento', $user_roles) || in_array('Subdirector Academico', $user_roles) || in_array('Docente', $user_roles)) || (isset($is_mis_capacitaciones) && $is_mis_capacitaciones))
+        <!-- Mostrar buscador para roles específicos O si es Mis Capacitaciones -->
                         <!-- Buscador y filtros -->
                         <div class="mb-6">
-                            <form id="searchForm" action="{{ route('capacitacionesext.filtrar') }}" method="GET" class="flex flex-wrap items-center gap-3">
+                           @if(isset($is_mis_capacitaciones) && $is_mis_capacitaciones)
+    <form id="searchForm" action="{{ route('externa.mis_capacitaciones') }}" method="GET" class="flex flex-wrap items-center gap-3">
+@else
+    <form id="searchForm" action="{{ route('capacitacionesext.filtrar') }}" method="GET" class="flex flex-wrap items-center gap-3">
+@endif
                                 <!-- Campo de búsqueda -->
                                 <input
                                     type="text"
                                     name="q"
                                     id="searchInput"
-                                    placeholder="Buscar por nombre, tipo de capacitación, nombre de la capacitación u organismo"
+                                    placeholder="Buscar por nombre, nombre de la capacitación u organismo"
                                     value="{{ old('q', $search ?? request('q')) }}"
                                     class="flex-1 rounded-md border-gray-300 shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
                                 >
@@ -80,7 +80,7 @@
                                 <!-- Filtro por tipo de capacitación -->
                                 <select name="tipo_capacitacion" id="tipoSelect"
                                     class="rounded-md border-gray-300 shadow-sm px- py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                                    <option value="">--Todos los tipos--</option>
+                                    <option value="">--Todos los tipos de capacitación--</option>
                                     <option value="diplomado" {{ request('tipo_capacitacion') == 'diplomado' ? 'selected' : '' }}>Diplomado</option>
                                     <option value="taller_curso" {{ request('tipo_capacitacion') == 'taller_curso' ? 'selected' : '' }}>Taller o curso</option>
                                     <option value="mooc" {{ request('tipo_capacitacion') == 'mooc' ? 'selected' : '' }}>Mooc (TecNM)</option>
@@ -111,7 +111,7 @@
                             </p>
                         </div>
                     @endif
-                @endif
+               
 
             <div class="table-responsive">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500">
