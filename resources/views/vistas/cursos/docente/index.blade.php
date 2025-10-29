@@ -13,11 +13,9 @@
                 </div>
             @else
                 @foreach ($cursos as $curso)
-                    @if($curso->cursos_participantes->count() < $curso->limite_participantes)
-                        @if($curso->estatus == 1)
-                        <div class="mb-4 mx-2 w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
-                            <div class="bg-white rounded-lg overflow-hidden shadow-md h-full">
-                                <div class="p-4">
+                    <div class="mb-4 mx-2 w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
+                        <div class="bg-white rounded-lg overflow-hidden shadow-md h-full">
+                            <div class="p-4">
                                     <h5 class="text-xl font-semibold">{{ $curso->nombre }}</h5>
                                     <h6 class="text-sm font-semibold text-gray-700 mb-2">
                                         <strong>
@@ -59,8 +57,6 @@
                                 </div>
                             </div>
                         </div>
-                        @endif
-                    @endif
                 @endforeach
             @endif
         </div>
