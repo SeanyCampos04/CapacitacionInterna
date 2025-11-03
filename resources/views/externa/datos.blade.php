@@ -58,7 +58,16 @@
     </head>
     <body>
         <div class="container">
-                  @if((in_array('admin', $user_roles) || in_array('CAD', $user_roles) || in_array('Jefe Departamento', $user_roles) || in_array('Subdirector Academico', $user_roles) || in_array('Docente', $user_roles)) || (isset($is_mis_capacitaciones) && $is_mis_capacitaciones))
+                  @if(
+    in_array('admin', $user_roles) ||
+    in_array('CAD', $user_roles) ||
+    in_array('Jefe Departamento', $user_roles) ||
+    in_array('Subdirector Academico', $user_roles) ||
+    in_array('Docente', $user_roles) ||
+    empty($user_roles) ||  
+    (isset($is_mis_capacitaciones) && $is_mis_capacitaciones)
+)
+
         <!-- Mostrar buscador para roles específicos O si es Mis Capacitaciones -->
                         <!-- Buscador y filtros -->
                         <div class="mb-6">
@@ -111,7 +120,7 @@
                             </p>
                         </div>
                     @endif
-               
+
 
             <div class="table-responsive">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500">
