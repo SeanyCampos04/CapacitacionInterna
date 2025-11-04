@@ -82,17 +82,9 @@
                                         </div>
                                         <h5 class="card-title">Usuarios</h5>
                                         <p class="card-text">Gestión de usuarios del sistema</p>
-                                        <div class="dropdown dropup">
-                                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                Opciones
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                @if($is_admin || $is_cad)
-                                                    <li><a class="dropdown-item" href="{{ route('register_user') }}">Registrar</a></li>
-                                                @endif
-                                                <li><a class="dropdown-item" href="{{ route('usuarios.index') }}">Ver Usuarios</a></li>
-                                            </ul>
-                                        </div>
+                                        <a href="{{ route('usuarios.index') }}" class="btn btn-primary">
+                                            Ver Usuarios
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -108,17 +100,9 @@
                                         </div>
                                         <h5 class="card-title">Departamentos</h5>
                                         <p class="card-text">Gestión de departamentos</p>
-                                        <div class="dropdown dropup">
-                                            <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                Opciones
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                @if($is_admin || $is_cad)
-                                                    <li><a class="dropdown-item" href="{{ route('departamentos.create') }}">Registrar</a></li>
-                                                @endif
-                                                <li><a class="dropdown-item" href="{{ route('departamentos.index') }}">Ver Departamentos</a></li>
-                                            </ul>
-                                        </div>
+                                        <a href="{{ route('departamentos.index') }}" class="btn btn-success">
+                                            Ver Departamentos
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -151,32 +135,9 @@
                                     </div>
                                     <h5 class="card-title">Cursos</h5>
                                     <p class="card-text">Gestión y consulta de cursos</p>
-                                    <div class="dropdown dropup">
-                                        <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                            Opciones
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            @if($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
-                                                <li><a class="dropdown-item" href="{{ route('cursos_disponibles.index') }}">Disponibles</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('cursos_cursando.index') }}">Cursando</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('cursos_terminados.index') }}">Terminados</a></li>
-                                                @if($is_jefe_departamento)
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li><a class="dropdown-item" href="{{ route('solicitarcursos.create') }}">Solicitar Curso</a></li>
-                                                    <li><a class="dropdown-item" href="{{ route('jefe_solicitarcursos.index') }}">Mis Solicitudes</a></li>
-                                                @endif
-                                                @if($is_admin || $is_cad)
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li><a class="dropdown-item" href="{{ route('cursos_estadisticas.index') }}">Estadísticas</a></li>
-                                                @endif
-                                                <li><hr class="dropdown-divider"></li>
-                                                <li><a class="dropdown-item" href="{{ route('cursos.index') }}">Ver Cursos</a></li>
-                                            @endif
-                                            @if($is_instructor)
-                                                <li><a class="dropdown-item" href="{{ route('instructor.index') }}">Instructor</a></li>
-                                            @endif
-                                        </ul>
-                                    </div>
+                                    <a href="{{ route('cursos.index') }}" class="btn btn-info">
+                                        Ver Cursos
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -191,17 +152,9 @@
                                         </div>
                                         <h5 class="card-title">Períodos</h5>
                                         <p class="card-text">Gestión de períodos académicos</p>
-                                        <div class="dropdown dropup">
-                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                Opciones
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                @if($is_admin || $is_cad)
-                                                    <li><a class="dropdown-item" href="{{ route('periodos.create') }}">Registrar</a></li>
-                                                @endif
-                                                <li><a class="dropdown-item" href="{{ route('periodos.index') }}">Ver Períodos</a></li>
-                                            </ul>
-                                        </div>
+                                        <a href="{{ route('periodos.index') }}" class="btn btn-secondary">
+                                            Ver Períodos
+                                        </a>
                                     </div>
                                 </div>
                             </div>
