@@ -10,21 +10,63 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
 
-                    <!-- Buscador -->
-                    <form method="GET" action="{{ route('usuarios.index') }}" class="mb-6">
-                        <div class="flex items-center justify-between gap-2">
-                            <input
-                                type="text"
-                                name="busqueda"
-                                value="{{ old('busqueda', $busqueda ?? '') }}"
-                                placeholder="Buscar por nombre, email o departamento..."
-                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                            >
-                            <x-primary-button class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800">
-                                Buscar
-                            </x-primary-button>
-                        </div>
-                    </form>
+                   <!-- Buscador con filtros -->
+<form method="GET" action="{{ route('usuarios.index') }}" class="mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
+
+        <!-- Input de búsqueda -->
+        <div class="md:col-span-2">
+            <input
+                type="text"
+                name="busqueda"
+                value="{{ old('busqueda', $busqueda ?? '') }}"
+                placeholder="Buscar por nombre, email o departamento..."
+                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+        </div>
+
+        <!-- Filtro por Departamento -->
+        <div>
+            <select name="departamento" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Todos los departamentos</option>
+                @foreach($departamentos as $dep)
+                    <option value="{{ $dep->id }}" {{ request('departamento') == $dep->id ? 'selected' : '' }}>
+                        {{ $dep->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Filtro por Estatus -->
+        <div>
+            <select name="estatus" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Todos los estatus</option>
+                <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>Activo</option>
+                <option value="0" {{ request('estatus') === '0' ? 'selected' : '' }}>Inactivo</option>
+            </select>
+        </div>
+
+        <!-- Filtro por Rol -->
+        <div>
+            <select name="rol" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Todos los roles</option>
+                @foreach($roles as $rol)
+                    <option value="{{ $rol }}" {{ request('rol') == $rol ? 'selected' : '' }}>
+                        {{ ucfirst($rol) }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <!-- Botón buscar -->
+    <div class="mt-4 text-right">
+        <x-primary-button class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800">
+            Buscar
+        </x-primary-button>
+    </div>
+</form>
+
 
                     <!-- Tabla -->
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
