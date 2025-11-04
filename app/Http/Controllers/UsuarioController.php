@@ -31,7 +31,7 @@ class UsuarioController extends Controller
     // Buscador
     $busqueda = $request->input('busqueda');
 
-    $usuarios = User::with(['datos_generales.departamento'])
+    $usuarios = User::with(['datos_generales.departamento', 'roles'])
         ->when($busqueda, function ($query, $busqueda) {
             $query->whereHas('datos_generales', function ($subQuery) use ($busqueda) {
                 $subQuery->where('nombre', 'like', "%{$busqueda}%")
@@ -43,8 +43,13 @@ class UsuarioController extends Controller
             })
             ->orWhere('email', 'like', "%{$busqueda}%");
         })
-        ->orderBy('id', 'desc')
-        ->get();
+        ->whereHas('datos_generales')
+        ->get()
+        ->sortBy(function ($usuario) {
+            return $usuario->datos_generales->apellido_paterno . ' ' .
+                   $usuario->datos_generales->apellido_materno . ' ' .
+                   $usuario->datos_generales->nombre;
+        });
 
     return view('vistas.usuarios.index', compact('usuarios', 'busqueda'));
 }

@@ -34,6 +34,7 @@
                                     <th scope="col" class="px-6 py-3 text-center">Nombre</th>
                                     <th scope="col" class="px-6 py-3 text-center">Email</th>
                                     <th scope="col" class="px-6 py-3 text-center">Departamento</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Rol</th>
                                     <th scope="col" class="px-6 py-3 text-center">Estatus</th>
                                     <th scope="col" class="px-6 py-3 text-center">Acciones</th>
                                 </tr>
@@ -51,6 +52,17 @@
                                             {{ $usuario->datos_generales->departamento->nombre ?? '—' }}
                                         </td>
                                         <td class="text-center">
+                                            @if($usuario->roles->count() > 0)
+                                                @foreach($usuario->roles as $role)
+                                                    <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-1 mb-1">
+                                                        {{ $role->nombre }}
+                                                    </span>
+                                                @endforeach
+                                            @else
+                                                <span class="text-gray-400">Sin rol</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
                                             {{ $usuario->estatus ? 'Activo' : 'Inactivo' }}
                                         </td>
                                         <td class="text-center">
@@ -65,7 +77,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center py-4 text-gray-500">
+                                        <td colspan="6" class="text-center py-4 text-gray-500">
                                             No se encontraron usuarios.
                                         </td>
                                     </tr>
