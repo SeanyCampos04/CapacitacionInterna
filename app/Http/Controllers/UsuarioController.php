@@ -21,15 +21,15 @@ class UsuarioController extends Controller
      */
     public function index(Request $request)
 {
-    // Solo roles autorizados pueden ver la lista
+    // Usuario actual
     $user = Auth::user();
     $rolesPermitidos = ['Admin/CAD', 'Jefe de departamento', 'Instructor', 'Subdirector académico'];
 
-
-
-
-    // Buscador
+    // Filtros del buscador
     $busqueda = $request->input('busqueda');
+    $filtroDepartamento = $request->input('departamento');
+    $filtroEstatus = $request->input('estatus');
+    $filtroRol = $request->input('rol');
 
     $usuarios = User::with(['datos_generales.departamento', 'roles'])
         ->when($busqueda, function ($query, $busqueda) {
@@ -43,16 +43,38 @@ class UsuarioController extends Controller
             })
             ->orWhere('email', 'like', "%{$busqueda}%");
         })
-        ->whereHas('datos_generales')
-        ->get()
-        ->sortBy(function ($usuario) {
-            return $usuario->datos_generales->apellido_paterno . ' ' .
-                   $usuario->datos_generales->apellido_materno . ' ' .
-                   $usuario->datos_generales->nombre;
-        });
+        ->when($filtroDepartamento, function ($query, $filtroDepartamento) {
+            $query->whereHas('datos_generales.departamento', function ($sub) use ($filtroDepartamento) {
+                $sub->where('id', $filtroDepartamento);
+            });
+        })
+        ->when($filtroEstatus !== null && $filtroEstatus !== '', function ($query) use ($filtroEstatus) {
+            $query->where('estatus', $filtroEstatus);
+        })
+        ->when($filtroRol, function ($query, $filtroRol) {
+            $query->whereHas('roles', function ($sub) use ($filtroRol) {
+                $sub->where('nombre', $filtroRol);
+            });
+        })
+        ->orderBy('id', 'desc')
+        ->get();
 
-    return view('vistas.usuarios.index', compact('usuarios', 'busqueda'));
+    // Variables necesarias para los selects
+    $departamentos = Departamento::orderBy('nombre')->get();
+    $roles = Role::orderBy('nombre')->get();
+
+    // Retornamos todo al blade
+    return view('vistas.usuarios.index', compact(
+        'usuarios',
+        'busqueda',
+        'departamentos',
+        'roles',
+        'filtroDepartamento',
+        'filtroEstatus',
+        'filtroRol'
+    ));
 }
+
 
     /**
      * Show the form for creating a new resource.
