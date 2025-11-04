@@ -22,30 +22,61 @@ class SolicitudesController extends Controller
         return view('diplomados.admin.solicitudes', compact('solicitudes'));
     }
 
-    public function solicitudes()
+    public function solicitudes(Request $request)
     {
         $user = auth()->user();
 
         // Inicializar las variables para evitar errores de referencia
-        $solicitudesParticipante = [];
-        $solicitudesInstructor = [];
+        $solicitudesParticipante = collect();
+        $solicitudesInstructor = collect();
 
-        // Verificar si el usuario es participante
-        if ($user->participante) {
-            $solicitudesParticipante = solicitud_docente::where('participante_id', $user->participante->id)
-                ->with('diplomado')
-                ->get();
+        // Obtener términos de búsqueda y filtros
+        $search = $request->get('q');
+        $estatus = $request->get('estatus');
+        $tipo = $request->get('tipo');
+        $rol = $request->get('rol');
+
+        // Función para aplicar filtros comunes
+        $applyCommonFilters = function($query) use ($search, $estatus, $tipo) {
+            if ($search) {
+                $query->whereHas('diplomado', function($q) use ($search) {
+                    $q->where('nombre', 'LIKE', "%{$search}%")
+                      ->orWhere('tipo', 'LIKE', "%{$search}%")
+                      ->orWhere('sede', 'LIKE', "%{$search}%");
+                });
+            }
+
+            if ($estatus !== null && $estatus !== '') {
+                $query->where('estatus', $estatus);
+            }
+
+            if ($tipo) {
+                $query->whereHas('diplomado', function($q) use ($tipo) {
+                    $q->where('tipo', $tipo);
+                });
+            }
+        };
+
+        // Verificar si el usuario es participante y si el filtro de rol lo permite
+        if ($user->participante && (!$rol || $rol === 'participante')) {
+            $query = solicitud_docente::where('participante_id', $user->participante->id)
+                ->with('diplomado');
+
+            $applyCommonFilters($query);
+            $solicitudesParticipante = $query->paginate(10)->withQueryString();
         }
 
-        // Verificar si el usuario es instructor
-        if ($user->instructor) {
-            $solicitudesInstructor = solicitud_instructore::where('instructore_id', $user->instructor->id)
-                ->with('diplomado')
-                ->get();
+        // Verificar si el usuario es instructor y si el filtro de rol lo permite
+        if ($user->instructor && (!$rol || $rol === 'instructor')) {
+            $query = solicitud_instructore::where('instructore_id', $user->instructor->id)
+                ->with('diplomado');
+
+            $applyCommonFilters($query);
+            $solicitudesInstructor = $query->paginate(10)->withQueryString();
         }
 
         // Pasar las solicitudes con los datos relacionados a la vista
-        return view('diplomados.solicitudes', compact('solicitudesParticipante', 'solicitudesInstructor', 'user'));
+        return view('diplomados.solicitudes', compact('solicitudesParticipante', 'solicitudesInstructor', 'user', 'search', 'estatus'));
     }
 
     public function store(Request $request) {}

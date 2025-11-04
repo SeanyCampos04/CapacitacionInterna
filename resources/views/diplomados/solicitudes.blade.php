@@ -42,8 +42,62 @@
     </style>
 
     <div class="solicitudes-container bg-white shadow-lg rounded-lg">
+        <!-- Buscador y filtros -->
+        <div class="mb-6">
+            <form id="searchForm" method="GET" class="space-y-4">
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Campo de búsqueda -->
+                    <div class="flex-1">
+                        <input
+                            type="text"
+                            name="q"
+                            id="searchInput"
+                            placeholder="Buscar por nombre del diplomado o sede"
+                            value="{{ request('q') }}"
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        >
+                    </div>
 
-        <table class="min-w-full table-auto border-collapse border border-gray-200">
+                     <!-- Filtro por tipo de diplomado -->
+                    <select name="tipo" id="tipoSelect"
+    class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+    <option value="">--Todos los tipos--</option>
+    <option value="Interno" {{ request('tipo') == 'Interno' ? 'selected' : '' }}>Interno</option>
+    <option value="Externo" {{ request('tipo') == 'Externo' ? 'selected' : '' }}>Externo</option>
+</select>
+
+
+                    <!-- Filtro por estatus -->
+                    <select name="estatus" id="estatusSelect"
+                        class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="">--Todos los estatus--</option>
+                        <option value="0" {{ request('estatus') == '0' ? 'selected' : '' }}>En espera</option>
+                        <option value="1" {{ request('estatus') == '1' ? 'selected' : '' }}>Negado</option>
+                        <option value="2" {{ request('estatus') == '2' ? 'selected' : '' }}>Aceptado</option>
+                    </select>
+
+
+
+                    <!-- Filtro por rol -->
+                    <select name="rol" id="rolSelect"
+                        class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="">--Todos los roles--</option>
+                        <option value="participante" {{ request('rol') == 'participante' ? 'selected' : '' }}>Participante</option>
+                        <option value="instructor" {{ request('rol') == 'instructor' ? 'selected' : '' }}>Instructor</option>
+                    </select>
+
+                    <button type="submit"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        Buscar
+                    </button>
+                </div>
+
+                <!-- Contador de resultados -->
+                <div class="text-sm text-gray-600">
+                    Resultados: <strong>{{ ($solicitudesParticipante->count() ?? 0) + ($solicitudesInstructor->count() ?? 0) }}</strong> solicitudes
+                </div>
+            </form>
+        </div>        <table class="min-w-full table-auto border-collapse border border-gray-200">
             <thead>
                 <tr>
                     <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-left text-sm font-semibold">Nombre</th>
@@ -228,4 +282,50 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            const estatusSelect = document.getElementById('estatusSelect');
+            const tipoSelect = document.getElementById('tipoSelect');
+            const rolSelect = document.getElementById('rolSelect');
+            const form = document.getElementById('searchForm');
+            let timeoutId;
+
+            // Función para realizar la búsqueda
+            function submitSearch() {
+                clearTimeout(timeoutId);
+                form.submit();
+            }
+
+            // Función para agregar evento de cambio a un selector
+            function addChangeListener(element) {
+                if (element) {
+                    element.addEventListener('change', function() {
+                        submitSearch();
+                    });
+                }
+            }
+
+            // Manejar cambios en el campo de búsqueda con debounce
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(submitSearch, 500);
+                });
+
+                // Manejar cuando se limpia el campo de búsqueda
+                searchInput.addEventListener('change', function() {
+                    if (this.value === '') {
+                        submitSearch();
+                    }
+                });
+            }
+
+            // Agregar eventos de cambio a todos los selectores
+            addChangeListener(estatusSelect);
+            addChangeListener(tipoSelect);
+            addChangeListener(rolSelect);
+        });
+    </script>
 </x-app-diplomados-layout>

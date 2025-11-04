@@ -20,12 +20,42 @@ class DiplomadosController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $diplomados = Diplomado::all();
+    public function index(Request $request)
+{
+    $user = Auth::user();
 
-        return view('diplomados.admin.diplomadosregistrados', compact('diplomados'));
+    // Verificación de roles permitidos
+    $roles_permitidos = ['admin', 'CAD', 'jefe_departamento', 'subdirector'];
+    $user_roles = method_exists($user, 'getRoleNames') ? $user->getRoleNames()->toArray() : [];
+
+
+    //  Filtros de búsqueda
+    $query = Diplomado::query();
+
+    if ($request->filled('nombre')) {
+        $query->where('nombre', 'like', '%' . $request->nombre . '%');
     }
+
+    if ($request->filled('tipo')) {
+        $query->where('tipo', $request->tipo);
+    }
+
+    if ($request->filled('sede')) {
+        $query->where('sede', 'like', '%' . $request->sede . '%');
+    }
+
+    if ($request->filled('inicio_oferta')) {
+        $query->whereDate('inicio_oferta', '>=', $request->inicio_oferta);
+    }
+
+    if ($request->filled('termino_realizacion')) {
+        $query->whereDate('termino_realizacion', '<=', $request->termino_realizacion);
+    }
+
+    $diplomados = $query->orderBy('inicio_oferta', 'desc')->get();
+
+    return view('diplomados.admin.diplomadosregistrados', compact('diplomados', 'user_roles'));
+}
 
     public function detalles($id)
     {
