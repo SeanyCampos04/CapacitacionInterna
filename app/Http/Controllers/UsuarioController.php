@@ -56,8 +56,15 @@ class UsuarioController extends Controller
                 $sub->where('nombre', $filtroRol);
             });
         })
-        ->orderBy('id', 'desc')
-        ->get();
+        ->whereHas('datos_generales')
+        ->get()
+        ->sortBy(function ($usuario) {
+            return strtolower(
+                ($usuario->datos_generales->nombre ?? '') . ' ' . 
+                ($usuario->datos_generales->apellido_paterno ?? '') . ' ' . 
+                ($usuario->datos_generales->apellido_materno ?? '')
+            );
+        });
 
     // Variables necesarias para los selects
     $departamentos = Departamento::orderBy('nombre')->get();
