@@ -77,8 +77,8 @@
                     </x-nav-link>
                 </div>
 
-                <!-- Visualizar Capacitaciones - Oculto para Instructores -->
-                @if (!$is_instructor)
+                <!-- Visualizar Capacitaciones - Solo para Admin y CAD -->
+                @if ($is_admin or $is_cad)
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
                         <x-nav-link :href="route('externa.datos')" :active="request()->routeIs('externa.datos')">
                             {{ __('Visualizar') }}
@@ -86,35 +86,19 @@
                     </div>
                 @endif
 
-                <!-- Registrar Capacitación - Visible para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
-                @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
-                     in_array('Instructor', $user_roles) or
-                     in_array('Docente', $user_roles) or
-                     in_array('admin', $user_roles) or
-                     in_array('CAD', $user_roles) or
-                     in_array('Jefe Departamento', $user_roles) or
-                     in_array('Subdirector Academico', $user_roles))
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
-                        <x-nav-link :href="route('externa.formulario')" :active="request()->routeIs('externa.formulario')">
-                            {{ __('Registrar') }}
-                        </x-nav-link>
-                    </div>
-                @endif
+                <!-- Registrar Capacitación - Visible para todos los usuarios autenticados -->
+                <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
+                    <x-nav-link :href="route('externa.formulario')" :active="request()->routeIs('externa.formulario')">
+                        {{ __('Registrar') }}
+                    </x-nav-link>
+                </div>
 
-                <!-- Mis Capacitaciones - Visible para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
-                @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
-                     in_array('Instructor', $user_roles) or
-                     in_array('Docente', $user_roles) or
-                     in_array('admin', $user_roles) or
-                     in_array('CAD', $user_roles) or
-                     in_array('Jefe Departamento', $user_roles) or
-                     in_array('Subdirector Academico', $user_roles))
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
-                        <x-nav-link :href="route('externa.mis_capacitaciones')" :active="request()->routeIs('externa.mis_capacitaciones')">
-                            {{ __('Mis Capacitaciones') }}
-                        </x-nav-link>
-                    </div>
-                @endif
+                <!-- Mis Capacitaciones - Visible para todos los usuarios autenticados -->
+                <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
+                    <x-nav-link :href="route('externa.mis_capacitaciones')" :active="request()->routeIs('externa.mis_capacitaciones')">
+                        {{ __('Mis Capacitaciones') }}
+                    </x-nav-link>
+                </div>
 
             </div>
 
@@ -171,26 +155,19 @@
                 {{ __('Inicio') }}
             </x-responsive-nav-link>
 
-            @if (!$is_instructor)
+            @if ($is_admin or $is_cad)
                 <x-responsive-nav-link :href="route('externa.datos')" :active="request()->routeIs('externa.datos')">
                     {{ __('Visualizar') }}
                 </x-responsive-nav-link>
             @endif
 
-            @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
-                 in_array('Instructor', $user_roles) or
-                 in_array('Docente', $user_roles) or
-                 in_array('admin', $user_roles) or
-                 in_array('CAD', $user_roles) or
-                 in_array('Jefe Departamento', $user_roles) or
-                 in_array('Subdirector Academico', $user_roles))
-                <x-responsive-nav-link :href="route('externa.formulario')" :active="request()->routeIs('externa.formulario')">
-                    {{ __('Registrar') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('externa.mis_capacitaciones')" :active="request()->routeIs('externa.mis_capacitaciones')">
-                    {{ __('Mis Capacitaciones') }}
-                </x-responsive-nav-link>
-            @endif
+            <x-responsive-nav-link :href="route('externa.formulario')" :active="request()->routeIs('externa.formulario')">
+                {{ __('Registrar') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('externa.mis_capacitaciones')" :active="request()->routeIs('externa.mis_capacitaciones')">
+                {{ __('Mis Capacitaciones') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->

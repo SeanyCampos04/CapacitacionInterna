@@ -168,9 +168,13 @@
             <label for="anio">Año en que se realizó <span class="text-danger">*</span></label>
             <select class="form-control" id="anio" name="anio" required>
                 <option value="">Seleccione un año</option>
-                <option value="2022">2022</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
+                @php
+                    $currentYear = date('Y');
+                    $startYear = $currentYear - 5;
+                @endphp
+                @for($year = $currentYear; $year >= $startYear; $year--)
+                    <option value="{{ $year }}">{{ $year }}</option>
+                @endfor
             </select>
         </div>
 

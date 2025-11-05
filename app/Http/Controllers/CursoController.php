@@ -126,10 +126,14 @@ class CursoController extends Controller
     {
         $participante = $request->user()->participante;
 
-        // Obtener cursos donde el docente no está inscrito
+        // Obtener cursos donde el docente no está inscrito, que estén activos y tengan cupo disponible
         $cursos = Curso::whereDoesntHave('cursos_participantes', function ($query) use ($participante) {
             $query->where('participante_id', $participante->id);
-        })->get();
+        })
+        ->where('estatus', 1) // Solo cursos activos
+        ->whereRaw('(SELECT COUNT(*) FROM cursos_participantes WHERE curso_id = cursos.id) < limite_participantes') // Con cupo disponible
+        ->get();
+
         return view('vistas.cursos.docente.index', compact('cursos'));
     }
 
