@@ -14,6 +14,18 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <!-- Forzar modo claro siempre -->
+        <script>
+            // Remover cualquier clase dark del documento
+            document.documentElement.classList.remove('dark');
+            // Asegurar que no se añada modo oscuro
+            localStorage.setItem('darkMode', 'false');
+            // Prevenir cambios automáticos por preferencias del sistema
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+            }
+        </script>
+
         <!-- Variables para pasar a las vistas -->
         @php
             $user_roles = auth()->user()->user_roles->pluck('role.name')->toArray();
@@ -21,7 +33,7 @@
         @endphp
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen bg-gray-100">
             <!-- Logo/Banner del Tecnológico -->
             <div class="bg-white">
                 <x-logo />
@@ -31,7 +43,7 @@
 
             <!-- Page Heading -->
             @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
+                <header class="bg-white shadow">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
