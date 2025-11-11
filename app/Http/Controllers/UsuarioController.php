@@ -52,16 +52,16 @@ class UsuarioController extends Controller
             $query->where('estatus', $filtroEstatus);
         })
         ->when($filtroRol, function ($query, $filtroRol) {
-            $query->whereHas('roles', function ($sub) use ($filtroRol) {
-                $sub->where('nombre', $filtroRol);
-            });
-        })
+    $query->whereHas('roles', function ($sub) use ($filtroRol) {
+        $sub->where('roles.id', $filtroRol);
+    });
+})
         ->whereHas('datos_generales')
         ->get()
         ->sortBy(function ($usuario) {
             return strtolower(
-                ($usuario->datos_generales->nombre ?? '') . ' ' . 
-                ($usuario->datos_generales->apellido_paterno ?? '') . ' ' . 
+                ($usuario->datos_generales->nombre ?? '') . ' ' .
+                ($usuario->datos_generales->apellido_paterno ?? '') . ' ' .
                 ($usuario->datos_generales->apellido_materno ?? '')
             );
         });
