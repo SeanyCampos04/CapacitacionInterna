@@ -57,6 +57,7 @@
         .btn-edit { background-color: #FF9800; color: white; }
         .btn-delete { background-color: #F44336; color: white; }
         .btn-requests { background-color: #4CAF50; color: white; }
+        .btn-inscribed { background-color: #673AB7; color: white; }
         .btn-action:hover {
             transform: translateY(-2px);
             transition: all 0.3s;
@@ -66,6 +67,7 @@
         .btn-edit:hover { background-color: #F57C00; color: white; }
         .btn-delete:hover { background-color: #D32F2F; color: white; }
         .btn-requests:hover { background-color: #388E3C; color: white; }
+        .btn-inscribed:hover { background-color: #512DA8; color: white; }
     </style>
 
     <div class="container-fluid px-4 py-4">
@@ -177,6 +179,13 @@
                                                    class="btn-action btn-requests"
                                                    title="Ver solicitudes">
                                                     <i class="fas fa-file-alt"></i>
+                                                </a>
+
+                                                <!-- Botón Docentes Inscritos -->
+                                                <a href="{{ route('diplomados.docentes_inscritos', $diplomado->id) }}"
+                                                   class="btn-action btn-inscribed"
+                                                   title="Docentes inscritos">
+                                                    <i class="fas fa-user"></i>
                                                 </a>
                                             @endif
                                         </div>

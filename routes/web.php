@@ -241,6 +241,12 @@ Route::middleware('auth')->group(function () {
             Route::put('/solicitud-instructor/negar/{id}', [SolicitudesController::class, 'negar_instructor'])->name('solicitudes_negar_instructor');
         });
 
+        // Rutas exclusivas para admin y CAD
+        Route::middleware(['role:admin,CAD'])->group(function () {
+            // Docentes inscritos por diplomado
+            Route::get('/docentes-inscritos/{id}', [DiplomadosController::class, 'docentesInscritos'])->name('docentes_inscritos');
+        });
+
         // Vistas estáticas adicionales (temporal)
         Route::get('/en-curso', function () {
             return view('diplomados.participante.en_curso');
