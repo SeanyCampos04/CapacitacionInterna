@@ -120,79 +120,72 @@
             <div class="d-flex align-items-center mb-4">
                 <i class="fas fa-users fa-2x text-primary me-3"></i>
                 <div>
-                    <h3 class="mb-1">Docentes Inscritos por Diplomado</h3>
-                    <p class="text-muted mb-0">Vista completa de participantes e instructores aceptados en cada diplomado</p>
+                    <h3 class="mb-1">Docentes Inscritos en: {{ $diplomado->nombre }}</h3>
+                    <p class="text-muted mb-0">Participantes e instructores aceptados en este diplomado</p>
                 </div>
             </div>
 
-            @if($diplomados->isEmpty())
-                <div class="no-inscriptions">
-                    <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
-                    <h5>No hay inscripciones aceptadas</h5>
-                    <p>Aún no existen diplomados con participantes o instructores aceptados.</p>
+            <!-- Información del diplomado específico -->
+            <div class="diplomado-card">
+                <div class="diplomado-header">
+                    <div class="diplomado-title">{{ $diplomado->nombre }}</div>
+                    <div class="diplomado-info">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Duración: {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->format('d/m/Y') }} -
+                        {{ \Carbon\Carbon::parse($diplomado->termino_realizacion)->format('d/m/Y') }}
+                        <span class="ms-3">
+                            <i class="fas fa-map-marker-alt me-1"></i>{{ $diplomado->sede }}
+                        </span>
+                        <span class="ms-3">
+                            <i class="fas fa-tag me-1"></i>{{ $diplomado->tipo }}
+                        </span>
+                    </div>
                 </div>
-            @else
-                <!-- Lista de diplomados con sus inscripciones -->
-                @foreach($diplomados as $diplomado)
-                    <div class="diplomado-card">
-                        <div class="diplomado-header">
-                            <div class="diplomado-title">{{ $diplomado->nombre }}</div>
-                            <div class="diplomado-info">
-                                <i class="fas fa-calendar-alt me-2"></i>
-                                Duración: {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->format('d/m/Y') }} -
-                                {{ \Carbon\Carbon::parse($diplomado->termino_realizacion)->format('d/m/Y') }}
-                                <span class="ms-3">
-                                    <i class="fas fa-map-marker-alt me-1"></i>{{ $diplomado->sede }}
-                                </span>
-                                <span class="ms-3">
-                                    <i class="fas fa-tag me-1"></i>{{ $diplomado->tipo }}
-                                </span>
-                            </div>
+
+                <div class="table-container p-0">
+                    @php
+                        // Combinar participantes e instructores
+                        $inscritos = collect();
+
+                        // Agregar participantes
+                        foreach($diplomado->solicitudesParticipantes as $solicitud) {
+                            $user = $solicitud->participante->user;
+                            $nombre = $user->datos_generales ?
+                                "{$user->datos_generales->nombre} {$user->datos_generales->apellido_paterno} {$user->datos_generales->apellido_materno}" :
+                                'Sin datos generales';
+
+                            $inscritos->push([
+                                'nombre' => $nombre,
+                                'email' => $user->email,
+                                'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
+                                'estatus' => $solicitud->estatus == 2 ? 'Aceptado' : 'Denegado',
+                                'registro' => 'Participante'
+                            ]);
+                        }
+
+                        // Agregar instructores
+                        foreach($diplomado->solicitudesInstructores as $solicitud) {
+                            $user = $solicitud->instructore->user;
+                            $nombre = $user->datos_generales ?
+                                "{$user->datos_generales->nombre} {$user->datos_generales->apellido_paterno} {$user->datos_generales->apellido_materno}" :
+                                'Sin datos generales';
+
+                            $inscritos->push([
+                                'nombre' => $nombre,
+                                'email' => $user->email,
+                                'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
+                                'estatus' => $solicitud->estatus == 2 ? 'Aceptado' : 'Denegado',
+                                'registro' => 'Instructor'
+                            ]);
+                        }
+                    @endphp
+
+                    @if($inscritos->isEmpty())
+                        <div class="no-inscriptions">
+                            <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                            <h5>No hay participantes en este diplomado</h5>
+                            <p class="text-muted">Aún no hay docentes inscritos como participantes o instructores.</p>
                         </div>
-
-                        <div class="table-container p-0">
-                            @php
-                                // Combinar participantes e instructores
-                                $inscritos = collect();
-
-                                // Agregar participantes
-                                foreach($diplomado->solicitudesParticipantes as $solicitud) {
-                                    $user = $solicitud->participante->user;
-                                    $nombre = $user->datos_generales ?
-                                        "{$user->datos_generales->nombre} {$user->datos_generales->apellido_paterno} {$user->datos_generales->apellido_materno}" :
-                                        'Sin datos generales';
-
-                                    $inscritos->push([
-                                        'nombre' => $nombre,
-                                        'email' => $user->email,
-                                        'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
-                                        'estatus' => $solicitud->estatus == 2 ? 'Aceptado' : 'Denegado',
-                                        'registro' => 'Participante'
-                                    ]);
-                                }
-
-                                // Agregar instructores
-                                foreach($diplomado->solicitudesInstructores as $solicitud) {
-                                    $user = $solicitud->instructore->user;
-                                    $nombre = $user->datos_generales ?
-                                        "{$user->datos_generales->nombre} {$user->datos_generales->apellido_paterno} {$user->datos_generales->apellido_materno}" :
-                                        'Sin datos generales';
-
-                                    $inscritos->push([
-                                        'nombre' => $nombre,
-                                        'email' => $user->email,
-                                        'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
-                                        'estatus' => $solicitud->estatus == 2 ? 'Aceptado' : 'Denegado',
-                                        'registro' => 'Instructor'
-                                    ]);
-                                }
-                            @endphp
-
-                            @if($inscritos->isEmpty())
-                                <div class="no-inscriptions">
-                                    <i class="fas fa-user-slash fa-2x text-muted mb-2"></i>
-                                    <p>No hay inscripciones para este diplomado</p>
-                                </div>
                             @else
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-0">
@@ -234,20 +227,18 @@
                                     </table>
                                 </div>
 
-                                <!-- Resumen -->
-                                <div class="p-3 bg-light border-top">
-                                    <small class="text-muted">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Total de inscritos: <strong>{{ $inscritos->count() }}</strong> |
-                                        Participantes: <strong>{{ $inscritos->where('registro', 'Participante')->count() }}</strong> |
-                                        Instructores: <strong>{{ $inscritos->where('registro', 'Instructor')->count() }}</strong>
-                                    </small>
-                                </div>
-                            @endif
+                        <!-- Resumen -->
+                        <div class="p-3 bg-light border-top">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Total de inscritos: <strong>{{ $inscritos->count() }}</strong> |
+                                Participantes: <strong>{{ $inscritos->where('registro', 'Participante')->count() }}</strong> |
+                                Instructores: <strong>{{ $inscritos->where('registro', 'Instructor')->count() }}</strong>
+                            </small>
                         </div>
-                    </div>
-                @endforeach
-            @endif
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 

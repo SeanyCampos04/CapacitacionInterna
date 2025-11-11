@@ -248,12 +248,12 @@ class DiplomadosController extends Controller
     }
 
     /**
-     * Mostrar todos los docentes inscritos organizados por diplomado
+     * Mostrar los docentes inscritos de un diplomado específico
      */
-    public function docentesInscritos()
+    public function docentesInscritos($id)
     {
-        // Obtener todos los diplomados que tienen solicitudes aceptadas
-        $diplomados = Diplomado::with([
+        // Obtener el diplomado específico con sus solicitudes aceptadas
+        $diplomado = Diplomado::with([
             'solicitudesParticipantes' => function ($query) {
                 $query->where('estatus', 2) // Solo solicitudes aceptadas
                       ->with([
@@ -272,16 +272,8 @@ class DiplomadosController extends Controller
                           }
                       ]);
             }
-        ])
-        ->whereHas('solicitudesParticipantes', function ($query) {
-            $query->where('estatus', 2);
-        })
-        ->orWhereHas('solicitudesInstructores', function ($query) {
-            $query->where('estatus', 2);
-        })
-        ->orderBy('nombre')
-        ->get();
+        ])->findOrFail($id);
 
-        return view('diplomados.admin.docentes-inscritos', compact('diplomados'));
+        return view('diplomados.admin.docentes-inscritos', compact('diplomado'));
     }
 }
