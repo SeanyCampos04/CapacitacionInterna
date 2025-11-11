@@ -107,7 +107,7 @@
         <!-- Encabezado con logos -->
         <div class="header">
             <img src="{{ public_path('edu.png') }}" alt="Logo izquierdo">
-            <img src="{{ public_path('linea.png') }}" alt="Logo medio">  
+            <img src="{{ public_path('linea.png') }}" alt="Logo medio">
             <img src="{{ public_path('logo_tecnm.png') }}" alt="Logo derecho">
         </div>
 
@@ -120,25 +120,25 @@
         <p class="title">Reconocimiento</p>
         <p class="subtitle">A</p>
         <p class="recipient-name">
-            {{ $participante->user->datos_generales->nombre }} 
-            {{ $participante->user->datos_generales->apellido_paterno }} 
+            {{ $participante->user->datos_generales->nombre }}
+            {{ $participante->user->datos_generales->apellido_paterno }}
             {{ $participante->user->datos_generales->apellido_materno }}
         </p>
 
         <!-- Detalles del curso -->
         <p class="details">
-            Por participar y acreditar satisfactoriamente el curso de capacitación 
+            Por participar y acreditar satisfactoriamente el curso de capacitación
             <strong>"{{ strtoupper($curso->nombre) }}"</strong>
-            impartido por 
+            impartido por
             @foreach($curso->instructores as $instructor)
-                {{ $instructor->user->datos_generales->nombre }} 
-                {{ $instructor->user->datos_generales->apellido_paterno }} 
+                {{ $instructor->user->datos_generales->nombre }}
+                {{ $instructor->user->datos_generales->apellido_paterno }}
                 {{ $instructor->user->datos_generales->apellido_materno }}@if(!$loop->last), @endif
             @endforeach
             del {{ \Carbon\Carbon::parse($curso->fdi)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdi)->translatedFormat('F') }}
-            al {{ \Carbon\Carbon::parse($curso->fdf)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdf)->translatedFormat('F') }} 
-            del {{ \Carbon\Carbon::parse($curso->fdi)->format('Y') }}, 
-            con una duración de {{ $curso->duracion }} horas, con la modalidad {{ strtoupper($curso->modalidad) }}, 
+            al {{ \Carbon\Carbon::parse($curso->fdf)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdf)->translatedFormat('F') }}
+            del {{ \Carbon\Carbon::parse($curso->fdi)->format('Y') }},
+            con una duración de {{ $curso->duracion }} horas, con la modalidad {{ strtoupper($curso->modalidad) }},
             realizado en {{ strtoupper($curso->lugar) }}, en el departamento de {{ strtoupper($curso->departamento->nombre) }}@if($calificacion), con la calificación obtenida de {{ $calificacion }}@endif.
         </p>
 

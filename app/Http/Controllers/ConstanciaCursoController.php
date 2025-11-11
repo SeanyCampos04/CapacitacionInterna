@@ -39,8 +39,8 @@ class ConstanciaCursoController extends Controller
         $pdf = Pdf::loadView('vistas.cursos.pdf.constancia', $datos);
 
         // Nombre del archivo
-        $nombreArchivo = 'Constancia_' . 
-            str_replace(' ', '_', $curso->nombre) . '_' . 
+        $nombreArchivo = 'Constancia_' .
+            str_replace(' ', '_', $curso->nombre) . '_' .
             str_replace(' ', '_', $participanteInscrito->participante->user->datos_generales->nombre) . '.pdf';
 
         // Retornar el PDF para descargar o visualizar
