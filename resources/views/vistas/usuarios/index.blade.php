@@ -12,22 +12,22 @@
 
                    <!-- Buscador con filtros -->
 <form method="GET" action="{{ route('usuarios.index') }}" class="mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
+    <div class="flex justify-center items-center space-x-6 px-4">
 
         <!-- Input de búsqueda -->
-        <div class="md:col-span-2">
+        <div class="w-64"> <!-- Ancho fijo para el input de búsqueda -->
             <input
                 type="text"
                 name="busqueda"
                 value="{{ old('busqueda', $busqueda ?? '') }}"
-                placeholder="Buscar por nombre, email o departamento..."
+                placeholder="Buscar..."
                 class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
         </div>
 
         <!-- Filtro por Departamento -->
-        <div>
-            <select name="departamento" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <div class="w-72"> <!-- Ancho fijo más amplio para los departamentos -->
+            <select name="departamento" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <option value="">Todos los departamentos</option>
                 @foreach($departamentos as $dep)
                     <option value="{{ $dep->id }}" {{ request('departamento') == $dep->id ? 'selected' : '' }}>
@@ -38,8 +38,8 @@
         </div>
 
         <!-- Filtro por Estatus -->
-        <div>
-            <select name="estatus" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <div class="w-52"> <!-- Ancho fijo para el estatus -->
+            <select name="estatus" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <option value="">Todos los estatus</option>
                 <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>Activo</option>
                 <option value="0" {{ request('estatus') === '0' ? 'selected' : '' }}>Inactivo</option>
@@ -47,12 +47,12 @@
         </div>
 
         <!-- Filtro por Rol -->
-        <div>
-            <select name="rol" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <div class="w-52"> <!-- Ancho fijo para los roles -->
+            <select name="rol" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <option value="">Todos los roles</option>
                 @foreach($roles as $rol)
-                    <option value="{{ $rol }}" {{ request('rol') == $rol ? 'selected' : '' }}>
-                        {{ ucfirst($rol) }}
+                    <option value="{{ $rol->id }}" {{ request('rol') == $rol->id ? 'selected' : '' }}>
+                        {{ $rol->nombre }}
                     </option>
                 @endforeach
             </select>
