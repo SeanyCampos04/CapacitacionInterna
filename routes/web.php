@@ -17,6 +17,7 @@ use App\Http\Controllers\DiplomadosController;
 use App\Http\Controllers\ModuloController;
 use App\Http\Controllers\SolicitudesController;
 use App\Http\Controllers\SolicitudInstructorController;
+use App\Http\Controllers\ConstanciaCursoController;
 use App\Models\cursos_instructore;
 use App\Models\Instructore;
 use App\Models\User;
@@ -95,6 +96,9 @@ Route::middleware(['auth', 'role:admin,CAD'])->group(function (){
     Route::get('/curso/{curso_id}/pdf', [CursoController::class, 'generarPDF'])->name('curso.pdf');
     Route::get('/cursos/estadisticas', [CursoController::class, 'estadisticas_index'])->name('cursos_estadisticas.index');
     Route::get('/cursos/estadisticas/{anio}', [CursoController::class, 'estadisticas_show'])->name('cursos_estadisticas.show');
+    
+    // Constancias de Cursos
+    Route::get('/curso/{curso_id}/constancia/{participante_id}', [ConstanciaCursoController::class, 'generarPDF'])->name('curso.constancia');
 
 
     //Encuesta
