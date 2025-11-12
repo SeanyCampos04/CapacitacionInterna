@@ -12,10 +12,9 @@
 
                    <!-- Buscador con filtros -->
 <form method="GET" action="{{ route('usuarios.index') }}" class="mb-6">
-    <div class="flex justify-center items-center space-x-6 px-4">
-
-        <!-- Input de búsqueda -->
-        <div class="w-64"> <!-- Ancho fijo para el input de búsqueda -->
+    <div class="flex flex-row flex-wrap gap-4 w-full items-center">
+    <!-- Input de búsqueda -->
+    <div class="flex-1 min-w-[260px]">
             <input
                 type="text"
                 name="busqueda"
@@ -24,9 +23,8 @@
                 class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
         </div>
-
         <!-- Filtro por Departamento -->
-        <div class="w-72"> <!-- Ancho fijo más amplio para los departamentos -->
+        <div class="flex-1 min-w-[180px]">
             <select name="departamento" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <option value="">Todos los departamentos</option>
                 @foreach($departamentos as $dep)
@@ -36,18 +34,18 @@
                 @endforeach
             </select>
         </div>
-
-        <!-- Filtro por Estatus -->
-        <div class="w-52"> <!-- Ancho fijo para el estatus -->
-            <select name="estatus" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
-                <option value="">Todos los estatus</option>
-                <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>Activo</option>
-                <option value="0" {{ request('estatus') === '0' ? 'selected' : '' }}>Inactivo</option>
-            </select>
-        </div>
+    <!-- Filtro por Estatus -->
+    <div class="flex-none w-[140px]">
+    <select name="estatus"
+        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+        <option value="">Todos los estatus</option>
+        <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>Activo</option>
+        <option value="0" {{ request('estatus') === '0' ? 'selected' : '' }}>Inactivo</option>
+    </select>
+</div>
 
         <!-- Filtro por Rol -->
-        <div class="w-52"> <!-- Ancho fijo para los roles -->
+        <div class="flex-none w-[140px]">
             <select name="rol" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <option value="">Todos los roles</option>
                 @foreach($roles as $rol)
@@ -57,13 +55,12 @@
                 @endforeach
             </select>
         </div>
-    </div>
-
-    <!-- Botón buscar -->
-    <div class="mt-4 text-right">
-        <x-primary-button class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800">
-            Buscar
-        </x-primary-button>
+        <!-- Botón buscar -->
+        <div class="flex-none">
+            <x-primary-button class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800">
+                Buscar
+            </x-primary-button>
+        </div>
     </div>
 </form>
 
