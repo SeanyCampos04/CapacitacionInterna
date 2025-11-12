@@ -64,14 +64,16 @@
 
         .footer {
             position: absolute;
-            bottom: 120px;
+            /* aumentar bottom para subir la firma hacia arriba del documento */
+            bottom: 290px;
             left: 0;
             width: 100%;
             text-align: center;
         }
 
         .footer .director {
-            margin-top: 100px;
+            /* eliminar margen extra para que la firma quede más compacta y más arriba */
+            margin: 0;
             font-size: 16px;
             font-weight: bold;
             text-transform: uppercase;
@@ -79,7 +81,7 @@
 
         .date-location {
             position: absolute;
-            bottom: 80px;
+            bottom: 120px;
             left: 0;
             width: 100%;
             text-align: center;
@@ -87,18 +89,20 @@
             text-transform: uppercase;
         }
 
+        /* Logos en la parte inferior izquierda */
         .bottom-logos {
             position: absolute;
             bottom: 20px;
-            left: 0;
-            width: 100%;
-            text-align: center;
+            left: 40px; /* desplazar a la izquierda con un pequeño padding */
+            width: auto;
+            text-align: left;
         }
 
         .bottom-logos img {
-            height: 40px;
-            margin: 0 10px;
+            height: 60px; /* logos más grandes */
+            margin-right: 8px; /* más juntos */
             vertical-align: middle;
+            display: inline-block;
         }
     </style>
 </head>
