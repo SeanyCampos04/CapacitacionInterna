@@ -11,7 +11,7 @@
                 <div class="p-6">
 
                    <!-- Buscador con filtros -->
-<form method="GET" action="{{ route('usuarios.index') }}" class="mb-6">
+<form method="GET" action="{{ route('usuarios.index') }}" class="mb-6" id="buscarForm">
     <div class="flex flex-row flex-wrap gap-4 w-full items-center">
     <!-- Input de búsqueda -->
     <div class="flex-1 min-w-[260px]">
@@ -19,7 +19,7 @@
                 type="text"
                 name="busqueda"
                 value="{{ old('busqueda', $busqueda ?? '') }}"
-                placeholder="Buscar..."
+                placeholder="Buscar por nombre del usuario o email..."
                 class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
         </div>
@@ -64,6 +64,52 @@
     </div>
 </form>
 
+
+<!-- Javascript: submit automático (input con debounce y cambios en selects) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('buscarForm');
+        if (!form) return;
+
+        const input = form.querySelector('input[name="busqueda"]');
+        const selects = Array.from(form.querySelectorAll('select[name="departamento"], select[name="estatus"], select[name="rol"]'));
+
+        // Debounce helper
+        function debounce(fn, delay) {
+            let t;
+            return function (...args) {
+                clearTimeout(t);
+                t = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        if (input) {
+            // Enviar tras 500ms sin teclear
+            const submitDebounced = debounce(() => form.submit(), 500);
+            input.addEventListener('input', submitDebounced);
+        }
+
+        // Enviar inmediatamente cuando cambie cualquiera de los selects
+        selects.forEach(s => s.addEventListener('change', () => form.submit()));
+    });
+</script>
+
+                    <!-- Resultados -->
+<div class="mb-4 flex items-center justify-between">
+    <div class="text-sm text-gray-600">
+        @php
+            $__results_count = method_exists($usuarios, 'total') ? $usuarios->total() : $usuarios->count();
+        @endphp
+        Resultados:
+        <span class="font-medium text-gray-800">
+            {{ $__results_count }}
+        </span>
+        {{ $__results_count === 1 ? 'usuario' : 'usuarios' }}
+    </div>
+    <div></div>
+</div>
+
+                    </div>
 
                     <!-- Tabla -->
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
