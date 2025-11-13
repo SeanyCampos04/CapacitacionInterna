@@ -155,6 +155,7 @@
                                 'Sin datos generales';
 
                             $inscritos->push([
+                                'id' => $solicitud->id,
                                 'nombre' => $nombre,
                                 'email' => $user->email,
                                 'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
@@ -171,6 +172,7 @@
                                 'Sin datos generales';
 
                             $inscritos->push([
+                                'id' => $solicitud->id,
                                 'nombre' => $nombre,
                                 'email' => $user->email,
                                 'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
@@ -196,6 +198,7 @@
                                                 <th>Duración del Diplomado</th>
                                                 <th>Estatus</th>
                                                 <th>Como se Registró</th>
+                                                <th>Constancia</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -220,6 +223,21 @@
                                                             <i class="fas {{ $inscrito['registro'] == 'Participante' ? 'fa-user-graduate' : 'fa-chalkboard-teacher' }} me-1"></i>
                                                             {{ $inscrito['registro'] }}
                                                         </span>
+                                                    </td>
+                                                    <td>
+                                                        @if($inscrito['estatus'] == 'Aceptado')
+                                                            <a href="{{ route('diplomados.constancia', [
+                                                                'diplomado_id' => $diplomado->id,
+                                                                'participante_id' => $inscrito['id'],
+                                                                'tipo' => strtolower($inscrito['registro'])
+                                                            ]) }}"
+                                                            target="_blank"
+                                                            class="btn btn-success btn-sm">
+                                                                <i class="fas fa-file-pdf me-1"></i>Constancia
+                                                            </a>
+                                                        @else
+                                                            <span class="text-muted small">No disponible</span>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach

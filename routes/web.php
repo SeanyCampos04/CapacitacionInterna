@@ -18,6 +18,7 @@ use App\Http\Controllers\ModuloController;
 use App\Http\Controllers\SolicitudesController;
 use App\Http\Controllers\SolicitudInstructorController;
 use App\Http\Controllers\ConstanciaCursoController;
+use App\Http\Controllers\ConstanciaDiplomadoController;
 use App\Models\cursos_instructore;
 use App\Models\Instructore;
 use App\Models\User;
@@ -249,6 +250,9 @@ Route::middleware('auth')->group(function () {
         Route::middleware(['role:admin,CAD'])->group(function () {
             // Docentes inscritos por diplomado
             Route::get('/docentes-inscritos/{id}', [DiplomadosController::class, 'docentesInscritos'])->name('docentes_inscritos');
+
+            // Constancias de diplomados
+            Route::get('/constancia/{diplomado_id}/{participante_id}/{tipo}', [ConstanciaDiplomadoController::class, 'generarPDF'])->name('constancia');
         });
 
         // Vistas estáticas adicionales (temporal)
