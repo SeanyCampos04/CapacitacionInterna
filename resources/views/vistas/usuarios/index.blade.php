@@ -11,23 +11,21 @@
                 <div class="p-6">
 
                    <!-- Buscador con filtros -->
-<form method="GET" action="{{ route('usuarios.index') }}" class="mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
-
-        <!-- Input de búsqueda -->
-        <div class="md:col-span-2">
+<form method="GET" action="{{ route('usuarios.index') }}" class="mb-6" id="buscarForm">
+    <div class="flex flex-row flex-wrap gap-4 w-full items-center">
+    <!-- Input de búsqueda -->
+    <div class="flex-1 min-w-[260px]">
             <input
                 type="text"
                 name="busqueda"
                 value="{{ old('busqueda', $busqueda ?? '') }}"
-                placeholder="Buscar por nombre, email o departamento..."
+                placeholder="Buscar por nombre del usuario o email..."
                 class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
         </div>
-
         <!-- Filtro por Departamento -->
-        <div>
-            <select name="departamento" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <div class="flex-1 min-w-[180px]">
+            <select name="departamento" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <option value="">Todos los departamentos</option>
                 @foreach($departamentos as $dep)
                     <option value="{{ $dep->id }}" {{ request('departamento') == $dep->id ? 'selected' : '' }}>
@@ -36,37 +34,82 @@
                 @endforeach
             </select>
         </div>
-
-        <!-- Filtro por Estatus -->
-        <div>
-            <select name="estatus" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <option value="">Todos los estatus</option>
-                <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>Activo</option>
-                <option value="0" {{ request('estatus') === '0' ? 'selected' : '' }}>Inactivo</option>
-            </select>
-        </div>
+    <!-- Filtro por Estatus -->
+    <div class="flex-none w-[140px]">
+    <select name="estatus"
+        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+        <option value="">Todos los estatus</option>
+        <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>Activo</option>
+        <option value="0" {{ request('estatus') === '0' ? 'selected' : '' }}>Inactivo</option>
+    </select>
+</div>
 
         <!-- Filtro por Rol -->
-        <div>
-            <select name="rol" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <div class="flex-none w-[140px]">
+            <select name="rol" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <option value="">Todos los roles</option>
                 @foreach($roles as $rol)
-                    <option value="{{ $rol }}" {{ request('rol') == $rol ? 'selected' : '' }}>
-                        {{ ucfirst($rol) }}
+                    <option value="{{ $rol->id }}" {{ request('rol') == $rol->id ? 'selected' : '' }}>
+                        {{ $rol->nombre }}
                     </option>
                 @endforeach
             </select>
         </div>
-    </div>
-
-    <!-- Botón buscar -->
-    <div class="mt-4 text-right">
-        <x-primary-button class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800">
-            Buscar
-        </x-primary-button>
+        <!-- Botón buscar -->
+        <div class="flex-none">
+            <x-primary-button class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800">
+                Buscar
+            </x-primary-button>
+        </div>
     </div>
 </form>
 
+
+<!-- Javascript: submit automático (input con debounce y cambios en selects) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('buscarForm');
+        if (!form) return;
+
+        const input = form.querySelector('input[name="busqueda"]');
+        const selects = Array.from(form.querySelectorAll('select[name="departamento"], select[name="estatus"], select[name="rol"]'));
+
+        // Debounce helper
+        function debounce(fn, delay) {
+            let t;
+            return function (...args) {
+                clearTimeout(t);
+                t = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        if (input) {
+            // Enviar tras 500ms sin teclear
+            const submitDebounced = debounce(() => form.submit(), 500);
+            input.addEventListener('input', submitDebounced);
+        }
+
+        // Enviar inmediatamente cuando cambie cualquiera de los selects
+        selects.forEach(s => s.addEventListener('change', () => form.submit()));
+    });
+</script>
+
+                    <!-- Resultados -->
+<div class="mb-4 flex items-center justify-between">
+    <div class="text-sm text-gray-600">
+        @php
+            $__results_count = method_exists($usuarios, 'total') ? $usuarios->total() : $usuarios->count();
+        @endphp
+        Resultados:
+        <span class="font-medium text-gray-800">
+            {{ $__results_count }}
+        </span>
+        {{ $__results_count === 1 ? 'usuario' : 'usuarios' }}
+    </div>
+    <div></div>
+</div>
+
+                    </div>
 
                     <!-- Tabla -->
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
