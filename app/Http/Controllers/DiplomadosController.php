@@ -8,6 +8,7 @@ use App\Models\Modulo;
 use App\Models\Participante;
 use App\Models\solicitud_docente;
 use App\Models\solicitud_instructore;
+use App\Models\cursos_instructore;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -168,23 +169,45 @@ class DiplomadosController extends Controller
     }
 
 
-    public function curso_docente()
-    {
-        $user = Auth::user();
-        $hoy = Carbon::today();
+    public function curso_docente(Request $request)
+{
+    $user = Auth::user();
+    $hoy = Carbon::today();
 
-        // Obtener los diplomados en curso asociados al participante autenticado
-        $diplomados = solicitud_docente::where('participante_id', $user->participante->id)
-            ->where('estatus', 2)
-            ->whereHas('diplomado', function ($query) use ($hoy) {
-                $query->where('inicio_realizacion', '<=', $hoy)
-                    ->where('termino_realizacion', '>=', $hoy);
-            })
-            ->with('diplomado')
-            ->get();
+    $query = solicitud_docente::where('participante_id', $user->participante->id)
+        ->where('estatus', 2)
+        ->whereHas('diplomado', function ($q) use ($hoy) {
+            $q->where('inicio_realizacion', '<=', $hoy)
+              ->where('termino_realizacion', '>=', $hoy);
+        })
+        ->with('diplomado');
 
-        return view('diplomados.participante.en_curso', compact('diplomados'));
+    // FILTRO: Nombre
+    if ($request->filled('nombre')) {
+        $query->whereHas('diplomado', function ($q) use ($request) {
+            $q->where('nombre', 'LIKE', '%' . $request->nombre . '%');
+        });
     }
+
+    // FILTRO: Fecha inicio
+    if ($request->filled('fecha_inicio')) {
+        $query->whereHas('diplomado', function ($q) use ($request) {
+            $q->whereDate('inicio_realizacion', '>=', $request->fecha_inicio);
+        });
+    }
+
+    // FILTRO: Fecha fin
+    if ($request->filled('fecha_fin')) {
+        $query->whereHas('diplomado', function ($q) use ($request) {
+            $q->whereDate('termino_realizacion', '<=', $request->fecha_fin);
+        });
+    }
+
+    $diplomados = $query->get();
+
+    return view('diplomados.participante.en_curso', compact('diplomados'));
+}
+
 
     public function terminado_docente()
     {
@@ -203,23 +226,45 @@ class DiplomadosController extends Controller
         return view('diplomados.participante.terminado', compact('diplomados'));
     }
 
-    public function curso_instructor()
-    {
-        $user = Auth::user();
-        $hoy = Carbon::today();
+    public function curso_instructor(Request $request)
+{
+    $user = Auth::user();
+    $hoy = Carbon::today();
 
-        // Obtener los diplomados en curso asociados al instructor autenticado
-        $diplomados = solicitud_instructore::where('instructore_id', $user->instructor->id)
-            ->where('estatus', 2)
-            ->whereHas('diplomado', function ($query) use ($hoy) {
-                $query->where('inicio_realizacion', '<=', $hoy)
-                    ->where('termino_realizacion', '>=', $hoy);
-            })
-            ->with('diplomado')
-            ->get();
+    // Diplomados asignados al instructor actual que están en curso
+    $query = cursos_instructore::where('instructor_id', $user->id)
+        ->whereHas('diplomado', function ($q) use ($hoy) {
+            $q->where('inicio_realizacion', '<=', $hoy)
+              ->where('termino_realizacion', '>=', $hoy);
+        })
+        ->with('diplomado');
 
-        return view('diplomados.instructor.en_curso', compact('diplomados'));
+    // Filtro: Nombre del diplomado
+    if ($request->filled('nombre')) {
+        $query->whereHas('diplomado', function ($q) use ($request) {
+            $q->where('nombre', 'LIKE', '%' . $request->nombre . '%');
+        });
     }
+
+    // Filtro: Fecha inicio
+    if ($request->filled('fecha_inicio')) {
+        $query->whereHas('diplomado', function ($q) use ($request) {
+            $q->whereDate('inicio_realizacion', '>=', $request->fecha_inicio);
+        });
+    }
+
+    // Filtro: Fecha término
+    if ($request->filled('fecha_fin')) {
+        $query->whereHas('diplomado', function ($q) use ($request) {
+            $q->whereDate('termino_realizacion', '<=', $request->fecha_fin);
+        });
+    }
+
+    $diplomados = $query->get();
+
+    return view('diplomados.instructor.en_curso', compact('diplomados'));
+}
+
 
     public function terminado_instructor()
     {
