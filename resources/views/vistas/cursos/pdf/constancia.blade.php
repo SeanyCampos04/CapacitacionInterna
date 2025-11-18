@@ -120,8 +120,20 @@
         <p class="title">A través del Instituto Tecnológico de Ciudad Valles</p>
 
         <!-- Texto de la constancia -->
-        <p class="subtitle">Otorga el presente</p>
-        <p class="title">Reconocimiento</p>
+        <p class="subtitle">Otorga
+        @if($tipoUsuario === 'Instructor')
+            el presente
+        @else
+            la presente
+        @endif
+        </p>
+        <p class="title">
+        @if($tipoUsuario === 'Instructor')
+            Reconocimiento
+        @else
+            Constancia
+        @endif
+        </p>
         <p class="subtitle">A</p>
         <p class="recipient-name">
             {{ $participante->user->datos_generales->nombre }}

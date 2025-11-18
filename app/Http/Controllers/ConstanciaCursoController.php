@@ -32,7 +32,8 @@ class ConstanciaCursoController extends Controller
             'curso' => $curso,
             'participante' => $participanteInscrito->participante,
             'calificacion' => $participanteInscrito->calificacion,
-            'fecha_actual' => Carbon::now()
+            'fecha_actual' => Carbon::now(),
+            'tipoUsuario' => 'Participante' // En cursos siempre son participantes
         ];
 
         // Generar el PDF con la vista y los datos

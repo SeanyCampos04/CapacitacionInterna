@@ -109,11 +109,11 @@
 
     <div class="container-fluid px-4 py-4">
         <!-- Botón de regreso -->
-        <div class="back-button">
+        {{-- <div class="back-button">
             <a href="{{ route('diplomados.diplomados.index') }}" class="btn btn-outline-primary">
                 <i class="fas fa-arrow-left me-2"></i>Regresar a Diplomados
             </a>
-        </div>
+        </div> --}}
 
         <!-- Título principal -->
         <div class="card-container">
