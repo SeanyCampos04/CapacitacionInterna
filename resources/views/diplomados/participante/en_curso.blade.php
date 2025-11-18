@@ -15,6 +15,63 @@
     </style>
 
     <div class="optimized-container bg-white shadow-lg rounded-lg">
+        <!-- Buscador -->
+        <form method="GET" action="{{ route('diplomados.curso_docente') }}" class="mb-6" id="buscarFormDiplomados">
+            <div class="flex flex-row flex-wrap gap-4 w-full items-end">
+                <!-- Input de búsqueda por nombre -->
+                <div class="flex-1 min-w-[280px]">
+                    <input
+                        type="text"
+                        name="nombre"
+                        value="{{ old('nombre', $nombre ?? '') }}"
+                        placeholder="Buscar diplomado..."
+                        class="w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2"
+                    >
+                </div>
+                 <!-- Fecha inicio -->
+            <div>
+                <label class="font-semibold text-gray-700">Fecha de inicio</label>
+                <input type="date" name="fecha_inicio"
+                       value="{{ request('fecha_inicio') }}"
+                       class="w-full border-gray-300 rounded-lg shadow-sm"
+                       placeholder="dd/mm/aaaa">
+            </div>
+
+            <!-- Fecha fin -->
+            <div>
+                <label class="font-semibold text-gray-700">Fecha de término</label>
+                <input type="date" name="fecha_fin"
+                       value="{{ request('fecha_fin') }}"
+                       class="w-full border-gray-300 rounded-lg shadow-sm"
+                       placeholder="dd/mm/aaaa">
+            </div>
+
+
+
+                <!-- Botón buscar -->
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-700 text-white rounded-md shadow hover:bg-indigo-800"> Buscar </button>
+
+
+            </div>
+
+
+
+
+        <!-- Resultados -->
+@php
+    $totalResultados = $diplomados ? $diplomados->count() : 0;
+@endphp
+
+<p class="text-sm text-gray-500 mt-2">
+    Resultados: <strong>{{ $totalResultados }}</strong> diplomados
+</p>
+</form>
+
+
+
+
+
+        <!-- Tabla -->
         <table class="w-full table-auto border-collapse border border-gray-200">
             <thead>
                 <tr>
@@ -54,4 +111,36 @@
             </tbody>
         </table>
     </div>
+    </div>
+
+
+
+    <!-- Javascript: submit automático con debounce -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('buscarFormDiplomados');
+            if (!form) return;
+
+            const input = form.querySelector('input[name="nombre"]');
+            const dateInputs = Array.from(form.querySelectorAll('input[name="inicio_realizacion"], input[name="termino_realizacion"]'));
+
+            // Debounce helper
+            function debounce(fn, delay) {
+                let t;
+                return function (...args) {
+                    clearTimeout(t);
+                    t = setTimeout(() => fn.apply(this, args), delay);
+                };
+            }
+
+            if (input) {
+                // Enviar tras 500ms sin teclear
+                const submitDebounced = debounce(() => form.submit(), 500);
+                input.addEventListener('input', submitDebounced);
+            }
+
+            // Enviar inmediatamente cuando cambien los inputs de fecha
+            dateInputs.forEach(input => input.addEventListener('change', () => form.submit()));
+        });
+    </script>
 </x-app-diplomados-layout>
