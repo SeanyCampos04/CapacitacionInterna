@@ -17,12 +17,12 @@ class ConstanciaController extends Controller
         // Determinar tipo de usuario basado en el rol del usuario que registró la capacitación
         $user = User::where('email', $capacitacion->correo)->first();
         $esInstructor = false;
-        
+
         if ($user && $user->roles) {
             $rolesUsuario = $user->roles->pluck('nombre')->toArray();
             $esInstructor = in_array('Instructor', $rolesUsuario);
         }
-        
+
         $tipoUsuario = $esInstructor ? 'Instructor' : 'Participante';
 
         // Generar el PDF con la vista y los datos
