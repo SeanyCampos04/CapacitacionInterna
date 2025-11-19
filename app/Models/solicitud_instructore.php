@@ -9,11 +9,18 @@ class solicitud_instructore extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['diplomado_id', 'instructore_id', 'estatus', 'carta_terminacion'];
+    protected $table = 'solicitud_instructores';
+
+    protected $fillable = [
+        'diplomado_id',
+        'instructore_id',
+        'estatus',
+        'carta_terminacion'
+    ];
 
     public function diplomado()
     {
-        return $this->belongsTo(Diplomado::class);
+        return $this->belongsTo(Diplomado::class, 'diplomado_id');
     }
 
     public function instructore()
