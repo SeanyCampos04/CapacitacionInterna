@@ -14,7 +14,7 @@
 <form method="GET" action="{{ route('usuarios.index') }}" class="mb-6" id="buscarForm">
     <div class="flex flex-row flex-wrap gap-4 w-full items-center">
     <!-- Input de búsqueda -->
-    <div class="flex-1 min-w-[260px]">
+    <div class="flex-1 min-w-[350px]">
             <input
                 type="text"
                 name="busqueda"
@@ -35,7 +35,7 @@
             </select>
         </div>
     <!-- Filtro por Estatus -->
-    <div class="flex-none w-[140px]">
+    <div class="flex-none w-[180px]">
     <select name="estatus"
         class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
         <option value="">Todos los estatus</option>
@@ -45,7 +45,7 @@
 </div>
 
         <!-- Filtro por Rol -->
-        <div class="flex-none w-[140px]">
+        <div class="flex-none w-[230px]">
             <select name="rol" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <option value="">Todos los roles</option>
                 @foreach($roles as $rol)
