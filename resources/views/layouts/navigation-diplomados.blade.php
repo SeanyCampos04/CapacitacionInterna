@@ -110,8 +110,8 @@
                 </div>
 
                 <!-- Opciones específicas para roles -->
-                <!-- En Curso y Terminado - Participante (Para Admin, CAD, Jefe, Subdirector) -->
-                @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
+                <!-- En Curso y Terminado - Participante (Para Admin, CAD, Jefe, Subdirector y usuarios sin rol) -->
+                @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector || empty($user_role_ids))
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex sm:items-center">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
@@ -235,7 +235,7 @@
                 {{ __('Mis Solicitudes') }}
             </x-responsive-nav-link>
 
-            @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
+            @if ($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector || empty($user_role_ids))
                 <x-responsive-nav-link :href="route('diplomados.curso_docente')">
                     {{ __('En Curso - Participante') }}
                 </x-responsive-nav-link>
