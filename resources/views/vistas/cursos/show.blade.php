@@ -160,6 +160,9 @@
                                 </th>
                                 @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
                                     <th scope="col" class="px-6 py-3 text-center">
+                                        Constancia
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center">
                                         Acciones
                                     </th>
                                 @endif
@@ -201,6 +204,18 @@
                                         <td class="text-center text-blue-600">Sin Calificar</td>
                                     @endif
                                     @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
+                        <!-- Columna Constancia -->
+                        <td class="text-center">
+                            @if ($participanteInscrito->acreditado == 2)
+                                <a href="{{ route('curso.constancia', ['curso_id' => $curso->id, 'participante_id' => $participanteInscrito->id]) }}" target="_blank">
+                                    <x-primary-button class="bg-green-600 hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-0">
+                                        📄 Constancia
+                                    </x-primary-button>
+                                </a>
+                            @else
+                                <span class="text-gray-400">No disponible</span>
+                            @endif
+                        </td>                                        <!-- Columna Acciones -->
                                         @if ($curso->estatus == 1 || $curso->estado_calificacion == 0)
                                             <td class="text-center">
                                                 <form
@@ -213,6 +228,8 @@
                                                         onclick="return confirm('¿Estás seguro de que quieres eliminar este docente del curso?');">Eliminar</x-primary-button>
                                                 </form>
                                             </td>
+                                        @else
+                                            <td class="text-center">-</td>
                                         @endif
                                     @endif
                                 </tr>

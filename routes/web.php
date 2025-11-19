@@ -17,6 +17,8 @@ use App\Http\Controllers\DiplomadosController;
 use App\Http\Controllers\ModuloController;
 use App\Http\Controllers\SolicitudesController;
 use App\Http\Controllers\SolicitudInstructorController;
+use App\Http\Controllers\ConstanciaCursoController;
+use App\Http\Controllers\ConstanciaDiplomadoController;
 use App\Models\cursos_instructore;
 use App\Models\Instructore;
 use App\Models\User;
@@ -95,6 +97,9 @@ Route::middleware(['auth', 'role:admin,CAD'])->group(function (){
     Route::get('/curso/{curso_id}/pdf', [CursoController::class, 'generarPDF'])->name('curso.pdf');
     Route::get('/cursos/estadisticas', [CursoController::class, 'estadisticas_index'])->name('cursos_estadisticas.index');
     Route::get('/cursos/estadisticas/{anio}', [CursoController::class, 'estadisticas_show'])->name('cursos_estadisticas.show');
+
+    // Constancias de Cursos
+    Route::get('/curso/{curso_id}/constancia/{participante_id}', [ConstanciaCursoController::class, 'generarPDF'])->name('curso.constancia');
 
 
     //Encuesta
@@ -239,6 +244,15 @@ Route::middleware('auth')->group(function () {
             Route::put('/solicitud-docente/negar/{id}', [SolicitudesController::class, 'negar_docente'])->name('solicitudes_negar_docente');
             Route::put('/solicitud-instructor/aceptar/{id}', [SolicitudesController::class, 'aceptar_instructor'])->name('solicitudes_aceptar_instructor');
             Route::put('/solicitud-instructor/negar/{id}', [SolicitudesController::class, 'negar_instructor'])->name('solicitudes_negar_instructor');
+        });
+
+        // Rutas exclusivas para admin y CAD
+        Route::middleware(['role:admin,CAD'])->group(function () {
+            // Docentes inscritos por diplomado
+            Route::get('/docentes-inscritos/{id}', [DiplomadosController::class, 'docentesInscritos'])->name('docentes_inscritos');
+
+            // Constancias de diplomados
+            Route::get('/constancia/{diplomado_id}/{participante_id}/{tipo}', [ConstanciaDiplomadoController::class, 'generarPDF'])->name('constancia');
         });
 
         // Vistas estáticas adicionales (temporal)

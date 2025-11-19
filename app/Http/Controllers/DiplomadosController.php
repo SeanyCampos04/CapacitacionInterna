@@ -293,4 +293,34 @@ class DiplomadosController extends Controller
 
         return redirect()->route('diplomados.diplomados.index')->with('success', 'Diplomado eliminado correctamente.');
     }
+
+    /**
+     * Mostrar los docentes inscritos de un diplomado específico
+     */
+    public function docentesInscritos($id)
+    {
+        // Obtener el diplomado específico con sus solicitudes aceptadas
+        $diplomado = Diplomado::with([
+            'solicitudesParticipantes' => function ($query) {
+                $query->where('estatus', 2) // Solo solicitudes aceptadas
+                      ->with([
+                          'participante.user.datos_generales',
+                          'participante.user' => function ($q) {
+                              $q->select('id', 'email');
+                          }
+                      ]);
+            },
+            'solicitudesInstructores' => function ($query) {
+                $query->where('estatus', 2) // Solo solicitudes aceptadas
+                      ->with([
+                          'instructore.user.datos_generales',
+                          'instructore.user' => function ($q) {
+                              $q->select('id', 'email');
+                          }
+                      ]);
+            }
+        ])->findOrFail($id);
+
+        return view('diplomados.admin.docentes-inscritos', compact('diplomado'));
+    }
 }

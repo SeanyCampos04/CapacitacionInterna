@@ -72,7 +72,83 @@
                             $is_subdirector = in_array(3, $user_role_ids); // Subdirector Academico
                             $is_cad = in_array(4, $user_role_ids); // CAD
                             $is_instructor = in_array(5, $user_role_ids); // Instructor
-                        @endphp                        <!-- USUARIOS - Admin, CAD, Jefe Departamento, Subdirector -->
+
+                            // Usuario sin rol específico (usuario regular)
+                            $is_regular_user = empty($user_role_ids);
+                        @endphp
+
+                        <!-- PARA USUARIOS SIN ROL ESPECÍFICO - Solo mostrar opciones de cursos -->
+                        @if($is_regular_user)
+                            <!-- CURSOS DISPONIBLES -->
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-list-alt fa-3x text-primary"></i>
+                                        </div>
+                                        <h5 class="card-title">Disponibles</h5>
+                                        <p class="card-text">Cursos disponibles para inscripción</p>
+                                        <a href="{{ route('cursos_disponibles.index') }}" class="btn btn-primary">
+                                            Ver Disponibles
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CURSOS CURSANDO -->
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-play-circle fa-3x text-warning"></i>
+                                        </div>
+                                        <h5 class="card-title">Cursando</h5>
+                                        <p class="card-text">Los cursos que está cursando actualmente</p>
+                                        <a href="{{ route('cursos_cursando.index') }}" class="btn btn-warning">
+                                            Ver Cursando
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CURSOS TERMINADOS -->
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-check-circle fa-3x text-success"></i>
+                                        </div>
+                                        <h5 class="card-title">Terminados</h5>
+                                        <p class="card-text">Cursos ya finalizados por el usuario</p>
+                                        <a href="{{ route('cursos_terminados.index') }}" class="btn btn-success">
+                                            Ver Terminados
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- PARA INSTRUCTORES - Solo mostrar opción de Instructor -->
+                        @if($is_instructor)
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-chalkboard-teacher fa-3x text-info"></i>
+                                        </div>
+                                        <h5 class="card-title">Instructor</h5>
+                                        <p class="card-text">Gestión de cursos como instructor</p>
+                                        <a href="{{ route('instructor.index') }}" class="btn btn-info">
+                                            Ver Cursos
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- PARA USUARIOS CON ROLES ESPECÍFICOS (EXCEPTO INSTRUCTOR) -->
+                        @if(!$is_regular_user && !$is_instructor)
+                            <!-- USUARIOS - Admin, CAD, Jefe Departamento, Subdirector -->
                         @if($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
                             <div class="col-md-4 mb-4">
                                 <div class="card border-0 shadow-sm">
@@ -126,21 +202,23 @@
                             </div>
                         @endif
 
-                        <!-- CURSOS - Todos los roles tienen acceso -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-graduation-cap fa-3x text-info"></i>
+                        <!-- CURSOS - Admin, CAD, Jefe Departamento, Subdirector (NO Instructores) -->
+                        @if($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
+                            <div class="col-md-4 mb-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-graduation-cap fa-3x text-info"></i>
+                                        </div>
+                                        <h5 class="card-title">Cursos</h5>
+                                        <p class="card-text">Gestión y consulta de cursos</p>
+                                        <a href="{{ route('cursos.index') }}" class="btn btn-info">
+                                            Ver Cursos
+                                        </a>
                                     </div>
-                                    <h5 class="card-title">Cursos</h5>
-                                    <p class="card-text">Gestión y consulta de cursos</p>
-                                    <a href="{{ route('cursos.index') }}" class="btn btn-info">
-                                        Ver Cursos
-                                    </a>
                                 </div>
                             </div>
-                        </div>
+                        @endif
 
                         <!-- PERIODOS - Admin, CAD, Jefe Departamento, Subdirector -->
                         @if($is_admin || $is_cad || $is_jefe_departamento || $is_subdirector)
@@ -159,6 +237,8 @@
                                 </div>
                             </div>
                         @endif
+
+                        @endif <!-- Fin del condicional para usuarios con roles específicos -->
 
                     </div>
                 </div>
