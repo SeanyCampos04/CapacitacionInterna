@@ -16,52 +16,37 @@
 
     <!-- BUSCADOR -->
 <div class="optimized-container mb-4 p-4 rounded-lg shadow bg-white">
-    <form method="GET">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+   <form id="buscarFormDiplomadosInstructor" method="GET">
+    <div class="flex flex-col md:flex-row items-center gap-4 w-full">
 
-            <!-- Nombre del Diplomado -->
-            <div>
-                <label class="font-semibold text-gray-700">Nombre del diplomado</label>
-                <input type="text" name="nombre"
-                       value="{{ request('nombre') }}"
-                       class="w-full border-gray-300 rounded-lg shadow-sm"
-                       placeholder="Buscar por nombre...">
-            </div>
-
-            <!-- Fecha de Inicio -->
-            <div>
-                <label class="font-semibold text-gray-700">Fecha de inicio</label>
-                <input type="date" name="fecha_inicio"
-                       value="{{ request('fecha_inicio') }}"
-                       class="w-full border-gray-300 rounded-lg shadow-sm">
-            </div>
-
-            <!-- Fecha de Término -->
-            <div>
-                <label class="font-semibold text-gray-700">Fecha de término</label>
-                <input type="date" name="fecha_fin"
-                       value="{{ request('fecha_fin') }}"
-                       class="w-full border-gray-300 rounded-lg shadow-sm">
-            </div>
-
+        <!-- Input -->
+        <div class="w-full md:w-2/3">
+            <input type="text" name="nombre"
+                value="{{ request('nombre') }}"
+                class="w-full border-gray-300 rounded-lg shadow-sm"
+                placeholder="Buscar por nombre del diplomado...">
         </div>
 
-        <div class="mt-4 flex justify-end gap-2">
-            <button type="submit"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">
-                Buscar
-            </button>
 
-            <a href="{{ route('diplomados.curso_instructor') }}">
-               class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg shadow hover:bg-gray-400">
-                Limpiar
-            </a>
-        </div>
+        <!-- Botón buscar -->
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-700 text-white rounded-md shadow hover:bg-indigo-800"> Buscar </button>
+
+    </div>
+
+
+ <!-- Resultados -->
+@php
+    $totalResultados = $diplomados ? $diplomados->count() : 0;
+@endphp
+
+<p class="text-sm text-gray-500 mt-2 mb-4">
+    Resultados: <strong>{{ $totalResultados }}</strong> diplomados
+</p>
     </form>
-</div>
 
 
-    <div class="optimized-container bg-white shadow-lg rounded-lg">
+        <!-- Tabla -->
+
         <table class="w-full table-auto border-collapse border border-gray-200">
             <thead>
                 <tr>
@@ -96,4 +81,28 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('buscarFormDiplomadosInstructor');
+        if (!form) return;
+
+        const input = form.querySelector('input[name="nombre"]');
+        if (!input) return;
+
+        function debounce(fn, delay) {
+            let t;
+            return function (...args) {
+                clearTimeout(t);
+                t = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        const submitDebounced = debounce(() => form.submit(), 500);
+        input.addEventListener('input', submitDebounced);
+    });
+</script>
+
+
+
 </x-app-diplomados-layout>

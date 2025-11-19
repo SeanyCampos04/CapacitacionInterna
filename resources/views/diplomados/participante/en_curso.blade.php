@@ -24,7 +24,7 @@
                         type="text"
                         name="nombre"
                         value="{{ old('nombre', $nombre ?? '') }}"
-                        placeholder="Buscar diplomado..."
+                        placeholder="Buscar por nombre del diplomado..."
                         class="w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2"
                     >
                 </div>
