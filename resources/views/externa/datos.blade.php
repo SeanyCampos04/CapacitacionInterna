@@ -78,7 +78,7 @@
     in_array('Jefe Departamento', $user_roles) ||
     in_array('Subdirector Academico', $user_roles) ||
     in_array('Docente', $user_roles) ||
-    empty($user_roles) ||  
+    empty($user_roles) ||
     (isset($is_mis_capacitaciones) && $is_mis_capacitaciones)
 )
 
