@@ -135,6 +135,51 @@
         </div>
     </div>
 
+    <!-- Tabla de Instructores -->
+    @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
+        <div class="py-6">
+            <h1 class="text-center text-xl"><strong>Instructor del curso</strong></h1>
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+                            <thead class="text-xm text-gray-700 bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-center">Correo</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Nombre</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Departamento</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Reconocimiento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($curso->instructores as $instructor)
+                                    <tr class="bg-white border-b">
+                                        <td class="text-center px-6 py-4">{{ $instructor->user->email }}</td>
+                                        <td class="text-center px-6 py-4">
+                                            {{ $instructor->user->datos_generales->nombre }}
+                                            {{ $instructor->user->datos_generales->apellido_paterno }}
+                                            {{ $instructor->user->datos_generales->apellido_materno }}
+                                        </td>
+                                        <td class="text-center px-6 py-4">
+                                            {{ $instructor->user->datos_generales->departamento->nombre }}
+                                        </td>
+                                        <td class="text-center px-6 py-4">
+                                            <a href="{{ route('curso.reconocimiento.instructor', ['curso_id' => $curso->id, 'instructor_id' => $instructor->id]) }}" target="_blank">
+                                                <x-primary-button class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-0">
+                                                    🏆 Reconocimiento
+                                                </x-primary-button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="py-12">
         <h1 class="text-center text-xl"><strong>Docentes inscritos</strong></h1>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

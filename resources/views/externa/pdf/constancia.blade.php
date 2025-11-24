@@ -87,10 +87,27 @@
             height: 80px;
         }
 
+        .numero-registro {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            background-color: #f9f9f9;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Número de registro - DESACTIVADO TEMPORALMENTE -->
+        {{-- <div class="numero-registro">
+            No. Registro: {{ $numeroRegistro ?? 'N/A' }}
+        </div> --}}
+
         <!-- Encabezado con logos -->
         <div class="header">
             <img src="{{ public_path('edu.png') }}" alt="Logo izquierdo">
@@ -143,7 +160,7 @@
         </div>
         <div class="status">
             <p>Número de registro:</p>
-            <p>{{ $capacitacion->folio }}</p>
+            <p>{{ $capacitacion->folio ? $capacitacion->folio : 'Sin asignar' }}</p>
             <img src="{{ public_path('libre.png') }}" style="width: 100px; height: auto;">
         </div>
 

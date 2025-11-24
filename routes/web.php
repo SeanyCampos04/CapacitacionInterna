@@ -100,6 +100,7 @@ Route::middleware(['auth', 'role:admin,CAD'])->group(function (){
 
     // Constancias de Cursos
     Route::get('/curso/{curso_id}/constancia/{participante_id}', [ConstanciaCursoController::class, 'generarPDF'])->name('curso.constancia');
+    Route::get('/curso/{curso_id}/reconocimiento-instructor/{instructor_id}', [ConstanciaCursoController::class, 'generarReconocimientoInstructor'])->name('curso.reconocimiento.instructor');
 
 
     //Encuesta

@@ -53,6 +53,20 @@
                 text-align: left;
                 display: block; /* Asegura que la etiqueta tome toda la línea */
             }
+            .input-group-text {
+                background-color: #e9ecef;
+                border: 1px solid #ced4da;
+                color: #495057;
+                font-weight: 500;
+                white-space: nowrap;
+            }
+            .input-group .form-control {
+                border-left: 0;
+            }
+            .input-group .form-control:focus {
+                box-shadow: none;
+                border-color: #ced4da;
+            }
 
         </style>
     </head>
@@ -185,7 +199,15 @@
                                 <td class="text-center">
                                     <!-- Mostrar el folio de la capacitación -->
                                     @if($capacitacion->folio)
-                                        {{ $capacitacion->folio }}
+                                        @if($capacitacion->folio == 'Rechazado')
+                                            {{ $capacitacion->folio }}
+                                        @else
+                                            @if(str_starts_with($capacitacion->folio, 'TNM-169-'))
+                                                {{ $capacitacion->folio }}
+                                            @else
+                                                TNM-169-{{ $capacitacion->folio }}
+                                            @endif
+                                        @endif
                                     @else
                                         No asignado
                                     @endif
@@ -244,8 +266,12 @@
                                                                 </div>
                                                                 <!-- Input para folio -->
                                                                 <div class="mb-3">
-                                                                    <label for="numero_folio_{{ $capacitacion->id }}" class="form-label label-left">Folio</label>
-                                                                    <input type="text" name="numero_folio" id="numero_folio_{{ $capacitacion->id }}" class="form-control" placeholder="Escribe el folio...">
+                                                                    <label for="numero_folio_{{ $capacitacion->id }}" class="form-label label-left">Número de Registro</label>
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-text">TNM-169-</span>
+                                                                        <input type="text" name="numero_folio" id="numero_folio_{{ $capacitacion->id }}" class="form-control" placeholder="Ej: XX-YYYY/XX" value="{{ $capacitacion->folio ? str_replace('TNM-169-', '', $capacitacion->folio) : '' }}">
+                                                                    </div>
+                                                                    <small class="form-text text-muted">Formato sugerido: XX-YYYY/XX</small>
                                                                 </div>
                                                                 <!-- Botón de guardar -->
                                                                 <div class="d-flex justify-content-end">

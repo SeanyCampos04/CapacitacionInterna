@@ -229,7 +229,9 @@ class RegistroCapacitacionesExtController extends Controller
 
         // Actualizar el campo status dependiendo del botón seleccionado
         if ($request->has('action') && $request->action === 'numero_folio') {
-            $capacitacion->folio = $request->input('numero_folio');
+            // Concatenar el prefijo TNM-169- con la parte ingresada por el admin
+            $numero_ingresado = $request->input('numero_folio');
+            $capacitacion->folio = !empty($numero_ingresado) ? 'TNM-169-' . $numero_ingresado : null;
         } elseif ($request->has('rechazado') && $request->rechazado === 'rechazado') {
             $capacitacion->folio = 'Rechazado';
         }

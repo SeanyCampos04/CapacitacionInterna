@@ -104,10 +104,27 @@
             vertical-align: middle;
             display: inline-block;
         }
+
+        .numero-registro {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Número de registro -->
+        <div class="numero-registro">
+            No. Registro: {{ $numeroRegistro }}
+        </div>
+
         <!-- Encabezado con logos -->
         <div class="header">
             <img src="{{ public_path('edu.png') }}" alt="Logo izquierdo">
@@ -136,26 +153,34 @@
         </p>
         <p class="subtitle">A</p>
         <p class="recipient-name">
-            {{ $participante->user->datos_generales->nombre }}
-            {{ $participante->user->datos_generales->apellido_paterno }}
-            {{ $participante->user->datos_generales->apellido_materno }}
+            @if($tipoUsuario === 'Instructor')
+                {{ $instructor->user->datos_generales->nombre }}
+                {{ $instructor->user->datos_generales->apellido_paterno }}
+                {{ $instructor->user->datos_generales->apellido_materno }}
+            @else
+                {{ $participante->user->datos_generales->nombre }}
+                {{ $participante->user->datos_generales->apellido_paterno }}
+                {{ $participante->user->datos_generales->apellido_materno }}
+            @endif
         </p>
 
         <!-- Detalles del curso -->
         <p class="details">
-            Por participar y acreditar satisfactoriamente el curso de capacitación
+            Por {{ $tipoUsuario === 'Instructor' ? 'impartir' : 'participar y acreditar satisfactoriamente' }} el curso de capacitación
             <strong>"{{ strtoupper($curso->nombre) }}"</strong>
-            impartido por
-            @foreach($curso->instructores as $instructor)
-                {{ $instructor->user->datos_generales->nombre }}
-                {{ $instructor->user->datos_generales->apellido_paterno }}
-                {{ $instructor->user->datos_generales->apellido_materno }}@if(!$loop->last), @endif
-            @endforeach
+            @if($tipoUsuario === 'Participante')
+                impartido por
+                @foreach($curso->instructores as $instructorCurso)
+                    {{ $instructorCurso->user->datos_generales->nombre }}
+                    {{ $instructorCurso->user->datos_generales->apellido_paterno }}
+                    {{ $instructorCurso->user->datos_generales->apellido_materno }}@if(!$loop->last), @endif
+                @endforeach
+            @endif
             del {{ \Carbon\Carbon::parse($curso->fdi)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdi)->translatedFormat('F') }}
             al {{ \Carbon\Carbon::parse($curso->fdf)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdf)->translatedFormat('F') }}
             del {{ \Carbon\Carbon::parse($curso->fdi)->format('Y') }},
             con una duración de {{ $curso->duracion }} horas, con la modalidad {{ strtoupper($curso->modalidad) }},
-            realizado en {{ strtoupper($curso->lugar) }}, en el departamento de {{ strtoupper($curso->departamento->nombre) }}@if($calificacion), con la calificación obtenida de {{ $calificacion }}@endif.
+            realizado en {{ strtoupper($curso->lugar) }}, en el departamento de {{ strtoupper($curso->departamento->nombre) }}@if($tipoUsuario === 'Participante' && isset($calificacion)), con la calificación obtenida de {{ $calificacion }}@endif.
         </p>
 
         <!-- Pie de página con firma y director -->

@@ -11,6 +11,74 @@ use Carbon\Carbon;
 
 class ConstanciaDiplomadoController extends Controller
 {
+    private function calcularNumeroDiplomado($diplomado)
+    {
+        if (!$diplomado->created_at instanceof Carbon) {
+            $diplomado->created_at = Carbon::parse($diplomado->created_at);
+        }
+
+        $diplomadosDelAnio = Diplomado::whereYear('created_at', $diplomado->created_at->format('Y'))
+            ->orderBy('created_at')
+            ->get();
+
+        $numeroDiplomado = $diplomadosDelAnio->search(function ($d) use ($diplomado) {
+            return $d->id === $diplomado->id;
+        });
+
+        if ($numeroDiplomado === false) {
+            throw new \Exception('No se pudo calcular el número del diplomado dentro del año.');
+        }
+
+        return $numeroDiplomado + 1;
+    }
+
+    private function generarNumeroRegistroDiplomado($diplomado, $tipoRegistro, $participante_id)
+    {
+        $numeroDiplomado = $this->calcularNumeroDiplomado($diplomado);
+        $año = Carbon::parse($diplomado->created_at)->format('Y');
+
+        if ($tipoRegistro === 'Instructor') {
+            // Para instructores, obtener el número secuencial
+            $solicitudesInstructores = solicitud_instructore::where('diplomado_id', $diplomado->id)
+                ->where('estatus', 2)
+                ->orderBy('id')
+                ->get();
+
+            $numeroInstructor = $solicitudesInstructores->search(function ($s) use ($participante_id) {
+                return $s->id == $participante_id;
+            });
+
+            if ($numeroInstructor === false) {
+                throw new \Exception('Instructor no encontrado entre los aprobados.');
+            }
+
+            return sprintf('TNM-169-%02d-%s/I-%02d',
+                $numeroDiplomado,
+                $año,
+                $numeroInstructor + 1
+            );
+        } else {
+            // Para participantes
+            $solicitudesParticipantes = solicitud_docente::where('diplomado_id', $diplomado->id)
+                ->where('estatus', 2)
+                ->orderBy('id')
+                ->get();
+
+            $numeroParticipante = $solicitudesParticipantes->search(function ($s) use ($participante_id) {
+                return $s->id == $participante_id;
+            });
+
+            if ($numeroParticipante === false) {
+                throw new \Exception('Participante no encontrado entre los aprobados.');
+            }
+
+            return sprintf('TNM-169-%02d-%s/%02d',
+                $numeroDiplomado,
+                $año,
+                $numeroParticipante + 1
+            );
+        }
+    }
     public function generarPDF($diplomado_id, $participante_id, $tipo)
     {
         // Obtener el diplomado
@@ -48,6 +116,9 @@ class ConstanciaDiplomadoController extends Controller
         // Fecha actual
         $fecha_actual = Carbon::now();
 
+        // Generar número de registro
+        $numeroRegistro = $this->generarNumeroRegistroDiplomado($diplomado, $tipoRegistro, $participante_id);
+
         // Generar el PDF
         $pdf = PDF::loadView('vistas.diplomados.pdf.constancia', compact(
             'diplomado',
@@ -55,7 +126,8 @@ class ConstanciaDiplomadoController extends Controller
             'tipoRegistro',
             'duracionTotalHoras',
             'duracionDias',
-            'fecha_actual'
+            'fecha_actual',
+            'numeroRegistro'
         ));
 
         // Nombre del archivo

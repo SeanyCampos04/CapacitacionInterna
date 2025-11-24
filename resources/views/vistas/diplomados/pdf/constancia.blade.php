@@ -103,10 +103,27 @@
             margin: 15px 0;
             text-align: center;
         }
+
+        .numero-registro {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Número de registro -->
+        <div class="numero-registro">
+            No. Registro: {{ $numeroRegistro }}
+        </div>
+
         <!-- Encabezado con logos -->
         <div class="header">
             <img src="{{ public_path('edu.png') }}" alt="Logo izquierdo">
