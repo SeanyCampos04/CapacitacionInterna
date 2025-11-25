@@ -41,13 +41,17 @@ class ConstanciaCursoController extends Controller
             ->orderBy('id')
             ->get();
 
-        $numeroParticipante = $participantesAcreditados->search(function ($p) use ($participanteId) {
-            return $p->id === $participanteId;
-        });
-
-        if ($numeroParticipante === false) {
-            throw new \Exception('Participante no encontrado entre los acreditados.');
+        // Verificar si existe el participante en los acreditados
+        $participanteEncontrado = $participantesAcreditados->where('id', $participanteId)->first();
+        
+        if (!$participanteEncontrado) {
+            $idsDisponibles = $participantesAcreditados->pluck('id')->toArray();
+            throw new \Exception('Participante no encontrado entre los acreditados. ID buscado: ' . $participanteId . '. IDs disponibles: ' . implode(', ', $idsDisponibles) . '. Total acreditados: ' . $participantesAcreditados->count());
         }
+
+        $numeroParticipante = $participantesAcreditados->search(function ($p) use ($participanteId) {
+            return $p->id == $participanteId;
+        });
 
         return sprintf('TNM-169-%02d-%s/%02d',
             $numeroDelCurso,
@@ -63,13 +67,17 @@ class ConstanciaCursoController extends Controller
         // Obtener instructores del curso ordenados por ID
         $instructores = $curso->instructores->sortBy('id');
 
-        $numeroInstructor = $instructores->search(function ($i) use ($instructorId) {
-            return $i->id === $instructorId;
-        });
-
-        if ($numeroInstructor === false) {
-            throw new \Exception('Instructor no encontrado en el curso.');
+        // Verificar si existe el instructor en el curso
+        $instructorEncontrado = $instructores->where('id', $instructorId)->first();
+        
+        if (!$instructorEncontrado) {
+            $idsDisponibles = $instructores->pluck('id')->toArray();
+            throw new \Exception('Instructor no encontrado en el curso. ID buscado: ' . $instructorId . '. IDs disponibles: ' . implode(', ', $idsDisponibles) . '. Total instructores: ' . $instructores->count());
         }
+
+        $numeroInstructor = $instructores->search(function ($i) use ($instructorId) {
+            return $i->id == $instructorId;
+        });
 
         return sprintf('TNM-169-%02d-%s/I-%02d',
             $numeroDelCurso,
