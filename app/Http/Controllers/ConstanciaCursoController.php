@@ -43,7 +43,7 @@ class ConstanciaCursoController extends Controller
 
         // Verificar si existe el participante en los acreditados
         $participanteEncontrado = $participantesAcreditados->where('id', $participanteId)->first();
-        
+
         if (!$participanteEncontrado) {
             $idsDisponibles = $participantesAcreditados->pluck('id')->toArray();
             throw new \Exception('Participante no encontrado entre los acreditados. ID buscado: ' . $participanteId . '. IDs disponibles: ' . implode(', ', $idsDisponibles) . '. Total acreditados: ' . $participantesAcreditados->count());
@@ -69,7 +69,7 @@ class ConstanciaCursoController extends Controller
 
         // Verificar si existe el instructor en el curso
         $instructorEncontrado = $instructores->where('id', $instructorId)->first();
-        
+
         if (!$instructorEncontrado) {
             $idsDisponibles = $instructores->pluck('id')->toArray();
             throw new \Exception('Instructor no encontrado en el curso. ID buscado: ' . $instructorId . '. IDs disponibles: ' . implode(', ', $idsDisponibles) . '. Total instructores: ' . $instructores->count());
