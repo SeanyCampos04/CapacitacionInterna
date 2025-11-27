@@ -35,6 +35,7 @@ class PeriodoController extends Controller
             'periodo' => 'required|string|max:255', // El periodo es obligatorio y debe ser una cadena
             'anio' => 'required|integer|digits:4', // El año es obligatorio, debe ser un número de 4 dígitos
             'trimestre' => 'required|integer|in:1,2,3,4', // El trimestre debe ser un valor entre 1 y 4
+            'archivo' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5048',
         ]);
 
         // Crear y guardar el nuevo periodo
@@ -43,6 +44,12 @@ class PeriodoController extends Controller
         $periodos->anio = $request->anio;
         $periodos->trimestre = $request->trimestre;
         $periodos->save();
+        if ($request->hasFile('archivo')) { // Guardar archivo si se subió
+    $ruta = $request->file('archivo')->store('periodos/'.$periodos->id, 'public');
+
+    session(['archivo_periodo_'.$periodos->id => $ruta]); // Guardar ruta en sesión (ya que no usamos BD)
+}
+
 
         // Redirigir al listado de periodos
         return redirect(route('periodos.index'))->with('success', 'Periodo creado exitosamente.');

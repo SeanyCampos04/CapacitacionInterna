@@ -7,7 +7,7 @@
     </x-slot>
 
     <div class="min-h-screen flex flex-col  items-center pt-6  bg-gray-100">
-        <form action="{{ route('periodos.store') }}" method="POST"
+        <form action="{{ route('periodos.store') }}" method="POST" enctype="multipart/form-data"
             class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
             @csrf
             <!-- Periodo -->
@@ -37,6 +37,16 @@
                         <option value="4">Octubre - Diciembre</option>
                 </select>
             </div>
+            <div class="mt-4">
+    <x-input-label for="archivo" value="Subir plantilla oficial del periodo (PDF o Imagen))" />
+    <input
+        type="file"
+        id="archivo"
+        name="archivo"
+        accept=".pdf,.jpg,.jpeg,.png"
+        class="block mt-1 w-full border-black focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+/>
+</div>
 
             <div class="flex items-center justify-end mt-4">
                 <x-primary-button class="ms-4">
