@@ -67,6 +67,14 @@
                 box-shadow: none;
                 border-color: #ced4da;
             }
+            .form-control.is-invalid {
+                border-color: #dc3545;
+            }
+            .text-danger {
+                color: #dc3545 !important;
+                font-size: 0.875em;
+                margin-top: 0.25rem;
+            }
 
         </style>
     </head>
@@ -269,9 +277,10 @@
                                                                     <label for="numero_folio_{{ $capacitacion->id }}" class="form-label label-left">Número de Registro</label>
                                                                     <div class="input-group">
                                                                         <span class="input-group-text">TNM-169-</span>
-                                                                        <input type="text" name="numero_folio" id="numero_folio_{{ $capacitacion->id }}" class="form-control" placeholder="Ej: XX-YYYY/XX" value="{{ $capacitacion->folio ? str_replace('TNM-169-', '', $capacitacion->folio) : '' }}">
+                                                                        <input type="text" name="numero_folio" id="numero_folio_{{ $capacitacion->id }}" class="form-control" placeholder="Ej: XX-YYYY/XX" value="{{ $capacitacion->folio ? str_replace('TNM-169-', '', $capacitacion->folio) : '' }}" onkeyup="validarNumeroRegistro(this)">
                                                                     </div>
-                                                                    <small class="form-text text-muted">Formato sugerido: XX-YYYY/XX</small>
+                                                                    <small class="form-text text-muted">Formato sugerido: XX-YYYY/XX (No se permite formato de instructor /I-)</small>
+                                                                    <div id="error_{{ $capacitacion->id }}" class="text-danger" style="display: none;">No se permite el formato de instructor (/I-) en capacitaciones externas</div>
                                                                 </div>
                                                                 <!-- Botón de guardar -->
                                                                 <div class="d-flex justify-content-end">
@@ -324,6 +333,23 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script>
+            // Función para validar el número de registro
+            function validarNumeroRegistro(input) {
+                const valor = input.value.toUpperCase();
+                const errorDiv = document.getElementById('error_' + input.id.split('_')[2]);
+                const submitBtn = input.closest('form').querySelector('button[type="submit"]');
+                
+                if (valor.includes('/I-')) {
+                    errorDiv.style.display = 'block';
+                    input.classList.add('is-invalid');
+                    submitBtn.disabled = true;
+                } else {
+                    errorDiv.style.display = 'none';
+                    input.classList.remove('is-invalid');
+                    submitBtn.disabled = false;
+                }
+            }
+
             document.addEventListener('DOMContentLoaded', function () {
                 if ("{{ session('success') }}") {
                     var successModal = new bootstrap.Modal(document.getElementById('successModal'));

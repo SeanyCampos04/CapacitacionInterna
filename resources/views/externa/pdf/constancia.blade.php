@@ -160,7 +160,21 @@
         </div>
         <div class="status">
             <p>Número de registro:</p>
-            <p>{{ $capacitacion->folio ? $capacitacion->folio : 'Sin asignar' }}</p>
+            <p>
+                @if($capacitacion->folio)
+                    @if($capacitacion->folio == 'Rechazado')
+                        {{ $capacitacion->folio }}
+                    @else
+                        @if(str_starts_with($capacitacion->folio, 'TNM-169-'))
+                            {{ $capacitacion->folio }}
+                        @else
+                            TNM-169-{{ $capacitacion->folio }}
+                        @endif
+                    @endif
+                @else
+                    Sin asignar
+                @endif
+            </p>
             <img src="{{ public_path('libre.png') }}" style="width: 100px; height: auto;">
         </div>
 
