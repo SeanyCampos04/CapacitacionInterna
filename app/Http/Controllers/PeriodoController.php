@@ -71,11 +71,13 @@ class PeriodoController extends Controller
      */
     public function update(Request $request, Periodo $periodo)
     {
-        // Validación de entrada
+
+        // Validación de entrada y archivo
         $request->validate([
             'periodo' => 'required|string|max:255', // El periodo es obligatorio y debe ser una cadena
             'anio' => 'required|integer|digits:4', // El año es obligatorio, debe ser un número de 4 dígitos
             'trimestre' => 'required|integer|in:1,2,3,4', // El trimestre debe ser un valor entre 1 y 4
+            'archivo' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5048',
         ]);
 
         // Actualizar el periodo
@@ -83,6 +85,18 @@ class PeriodoController extends Controller
         $periodo->anio = $request->anio;
         $periodo->trimestre = $request->trimestre;
         $periodo->save();
+
+         // Guardar archivo si se envía
+    if ($request->hasFile('archivo')) {
+        // Lo guarda en storage/app/public/periodos/{id}/archivo.pdf
+        $ruta = $request->file('archivo')->store(
+            "periodos/" . $periodo->id,
+            "public"
+        );
+
+        // Guardamos en sesión sin tocar la BD
+        session(['archivo_periodo_' . $periodo->id => $ruta]);
+    }
 
         // Redirigir al listado de periodos con mensaje de éxito
         return redirect(route('periodos.index'))->with('success', 'Periodo actualizado exitosamente.');
