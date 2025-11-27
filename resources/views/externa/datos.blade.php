@@ -338,7 +338,7 @@
                 const valor = input.value.toUpperCase();
                 const errorDiv = document.getElementById('error_' + input.id.split('_')[2]);
                 const submitBtn = input.closest('form').querySelector('button[type="submit"]');
-                
+
                 if (valor.includes('/I-')) {
                     errorDiv.style.display = 'block';
                     input.classList.add('is-invalid');

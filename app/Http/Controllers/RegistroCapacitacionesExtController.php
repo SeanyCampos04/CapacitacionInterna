@@ -231,12 +231,12 @@ class RegistroCapacitacionesExtController extends Controller
         if ($request->has('action') && $request->action === 'numero_folio') {
             // Concatenar el prefijo TNM-169- con la parte ingresada por el admin
             $numero_ingresado = $request->input('numero_folio');
-            
+
             // Validar que no contenga formato de instructor (/I-)
             if (!empty($numero_ingresado) && strpos(strtoupper($numero_ingresado), '/I-') !== false) {
                 return redirect()->back()->withErrors(['numero_folio' => 'No se permite el formato de instructor (/I-) en capacitaciones externas.']);
             }
-            
+
             $capacitacion->folio = !empty($numero_ingresado) ? 'TNM-169-' . $numero_ingresado : null;
         } elseif ($request->has('rechazado') && $request->rechazado === 'rechazado') {
             $capacitacion->folio = 'Rechazado';
