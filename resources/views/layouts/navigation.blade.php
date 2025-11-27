@@ -175,7 +175,9 @@
                             </button>
                         </x-slot>
                         <x-slot name="content">
-                            @if ($tipo_usuario == 1)
+                            <!--Cursos para cualquier usuario autenticado-->
+                             @if (Auth::check())
+
                                 @if ($estatus_usuario == 1)
                                     <x-dropdown-link :href="route('cursos_disponibles.index')">
                                         {{ __('Disponibles') }}
