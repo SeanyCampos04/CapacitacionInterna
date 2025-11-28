@@ -13,14 +13,19 @@
         }
 
         .container {
-            margin: 40px;
+            margin-top: 1.5cm;
+            margin-bottom: 1.5cm;
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            padding: 0;
+            height: auto;
+            margin-bottom: 1cm;
         }
 
         .header img {
@@ -28,103 +33,145 @@
         }
 
         .title {
-            font-size: 20px;
-            margin-top: 20px;
+            font-size: 18px;
+            margin: 0.15cm 0;
             text-transform: uppercase;
             font-weight: bold;
+        }
+
+        .title-main {
+            font-size: 20px;
+            margin: 0.2cm 0;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .title-institute {
+            font-size: 16px;
+            margin: 0.1cm 0;
+            text-transform: uppercase;
+            font-weight: normal;
+            line-height: 1.2;
         }
 
         .subtitle {
             font-size: 16px;
-            margin-top: 10px;
+            margin: 0.2cm 0;
             text-transform: uppercase;
         }
 
+        .subtitle-large {
+            font-size: 36px;
+            margin: 0.4cm 0;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .title-section {
+            margin-bottom: 0.3cm;
+        }
+
+        .recognition-section {
+            margin: 0.5cm 0;
+        }
+
+        .a-section {
+            margin: 0.4cm 0;
+        }
+
         .recipient-name {
-            font-size: 24px;
-            margin: 20px 0;
+            font-size: 28px;
+            margin: 0.6cm 0;
             font-weight: bold;
             text-transform: uppercase;
-            color: #2c3e50;
+            line-height: 1.1;
+            word-wrap: break-word;
+            hyphens: auto;
         }
 
         .details {
             font-size: 16px;
-            margin-top: 10px;
+            margin: 0.6cm 0;
+            padding: 0.3cm 0;
             text-align: justify;
             text-transform: uppercase;
         }
-
         .date {
+            position: absolute;
+            bottom: 2cm;
+            left: 0;
+            right: 0;
             font-size: 16px;
-            margin-top: 10px;
             text-align: center;
             text-transform: uppercase;
+            width: 100%;
+        }
+        .status {
+            position: absolute;
+            bottom: 3cm;
+            right: 1.5cm;
+            font-size: 12px;
+            text-align: right;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .status p {
+            margin: 0;
+            padding: 0;
+            display: inline;
+        }
+
+        .signature-section {
+            position: relative;
+            margin-top: 3.5cm;
+            margin-bottom: 1cm;
+            height: 3cm;
         }
 
         .footer {
-            position: absolute;
-            /* aumentar bottom para subir la firma hacia arriba del documento */
-            bottom: 290px;
-            left: 0;
             width: 100%;
             text-align: center;
         }
 
         .footer .director {
-            /* eliminar margen extra para que la firma quede más compacta y más arriba */
-            margin: 0;
+            margin-top: 1.5cm;
             font-size: 16px;
             font-weight: bold;
             text-transform: uppercase;
         }
 
-        .date-location {
-            position: absolute;
-            bottom: 120px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            font-size: 16px;
-            text-transform: uppercase;
+        .footer .sign {
+            height: 80px;
         }
 
-        /* Logos en la parte inferior izquierda */
-        .bottom-logos {
+        .logos-afiliaciones {
             position: absolute;
-            bottom: 20px;
-            left: 40px; /* desplazar a la izquierda con un pequeño padding */
-            width: auto;
+            bottom: 0.5cm;
+            left: 0;
             text-align: left;
         }
 
-        .bottom-logos img {
-            height: 60px; /* logos más grandes */
-            margin-right: 8px; /* más juntos */
-            vertical-align: middle;
-            display: inline-block;
+        .qr-placeholder {
+            position: absolute;
+            bottom: 4cm;
+            right: 1.5cm;
+            width: 2cm;
+            height: 2cm;
+            border: 1px dashed #ccc;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .numero-registro {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #666;
-            border: 1px solid #ccc;
-            padding: 5px 10px;
-            background-color: #f9f9f9;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Número de registro -->
-        <div class="numero-registro">
-            No. Registro: {{ $numeroRegistro }}
-        </div>
-
         <!-- Encabezado con logos -->
         <div class="header">
             <img src="{{ public_path('edu.png') }}" alt="Logo izquierdo">
@@ -132,50 +179,56 @@
             <img src="{{ public_path('logo_tecnm.png') }}" alt="Logo derecho">
         </div>
 
-        <!-- Título principal -->
-        <p class="title">El Tecnológico Nacional de México</p>
-        <p class="title">A través del Instituto Tecnológico de Ciudad Valles</p>
+        <!-- Título principal (parte roja - reducida) -->
+        <div class="title-section">
+            <p class="title-main">El Tecnológico Nacional de México</p>
+        </div>
 
-        <!-- Texto de la constancia -->
-        <p class="subtitle">Otorga
-        @if($tipoUsuario === 'Instructor')
-            el presente
-        @else
-            la presente
-        @endif
-        </p>
-        <p class="title">
-        @if($tipoUsuario === 'Instructor')
-            Reconocimiento
-        @else
-            Constancia
-        @endif
-        </p>
-        <p class="subtitle">A</p>
-        <p class="recipient-name">
+        <!-- Instituto (parte verde - sin negritas, un solo renglón) -->
+        <div>
+            <p class="title-institute">A través del Instituto Tecnológico de Ciudad Valles</p>
+        </div>
+
+        <!-- Otorga presente (parte azul) -->
+        <div class="recognition-section">
+            <p class="subtitle">Otorga
             @if($tipoUsuario === 'Instructor')
-                {{ $instructor->user->datos_generales->nombre }}
-                {{ $instructor->user->datos_generales->apellido_paterno }}
-                {{ $instructor->user->datos_generales->apellido_materno }}
+                el presente
             @else
-                {{ $participante->user->datos_generales->nombre }}
-                {{ $participante->user->datos_generales->apellido_paterno }}
-                {{ $participante->user->datos_generales->apellido_materno }}
+                la presente
             @endif
-        </p>
+            </p>
+        </div>
+
+        <!-- Constancia/Reconocimiento/Diploma (parte rosa - grande) -->
+        <div>
+            <p class="subtitle-large">
+            @if($tipoUsuario === 'Instructor')
+                Reconocimiento
+            @else
+                Constancia
+            @endif
+            </p>
+        </div>
+
+        <!-- Sección A -->
+        <div class="a-section">
+            <p class="subtitle">A</p>
+        </div>
+
+        <!-- Nombre completo -->
+        <p class="recipient-name">{{ $participante->user->datos_generales->nombre }} {{ $participante->user->datos_generales->apellido_paterno }} {{ $participante->user->datos_generales->apellido_materno }}</p>
 
         <!-- Detalles del curso -->
         <p class="details">
             Por {{ $tipoUsuario === 'Instructor' ? 'impartir' : 'participar y acreditar satisfactoriamente' }} el curso de capacitación
             <strong>"{{ strtoupper($curso->nombre) }}"</strong>
-            @if($tipoUsuario === 'Participante')
-                impartido por
-                @foreach($curso->instructores as $instructorCurso)
-                    {{ $instructorCurso->user->datos_generales->nombre }}
-                    {{ $instructorCurso->user->datos_generales->apellido_paterno }}
-                    {{ $instructorCurso->user->datos_generales->apellido_materno }}@if(!$loop->last), @endif
-                @endforeach
-            @endif
+            impartido por
+            @foreach($curso->instructores as $instructorCurso)
+                {{ $instructorCurso->user->datos_generales->nombre }}
+                {{ $instructorCurso->user->datos_generales->apellido_paterno }}
+                {{ $instructorCurso->user->datos_generales->apellido_materno }}@if(!$loop->last), @endif
+            @endforeach
             del {{ \Carbon\Carbon::parse($curso->fdi)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdi)->translatedFormat('F') }}
             al {{ \Carbon\Carbon::parse($curso->fdf)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdf)->translatedFormat('F') }}
             del {{ \Carbon\Carbon::parse($curso->fdi)->format('Y') }},
@@ -184,26 +237,37 @@
         </p>
 
         <!-- Pie de página con firma y director -->
-        <div class="footer">
-            <p class="director">MAP. Héctor Aguilar Ponce<br>Director</p>
+        <div class="signature-section">
+            <div class="footer">
+                <p class="director">MAP. Héctor Aguilar Ponce<br>Director</p>
+            </div>
         </div>
 
-        <!-- Fecha y ubicación -->
-        <div class="date-location">
+        <!-- Placeholder para código QR -->
+        <div class="qr-placeholder">
+            <span>QR Code</span>
+        </div>
+
+        <!-- Número de registro -->
+        <div class="status">
+            <p>{{ $numeroRegistro ?? 'Sin asignar' }}</p>
+        </div>
+
+        <!-- Fecha y lugar -->
+        <div class="date">
             @php
                 use Carbon\Carbon;
                 Carbon::setLocale('es');
-                $fecha = $fecha_actual;
+                $fecha = Carbon::now();
             @endphp
             <p>Ciudad Valles, San Luis Potosí, a {{ $fecha->day }} de {{ $fecha->translatedFormat('F') }} del {{ $fecha->year }}</p>
         </div>
 
-        <!-- Logos inferiores -->
-        <div class="bottom-logos">
-            <img src="{{ public_path('bottom_logo1.png') }}" alt="Logo inferior 1">
-            <img src="{{ public_path('bottom_logo2.png') }}" alt="Logo inferior 2">
-            <img src="{{ public_path('bottom_logo3.png') }}" alt="Logo inferior 3">
+        <!-- Logos de afiliaciones -->
+        <div class="logos-afiliaciones">
+            <img src="{{ public_path('libre.png') }}" style="width: 100px; height: auto;">
         </div>
+
     </div>
 </body>
 </html>

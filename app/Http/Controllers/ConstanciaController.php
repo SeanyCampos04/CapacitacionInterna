@@ -48,7 +48,9 @@ class ConstanciaController extends Controller
             $esInstructor = in_array('Instructor', $rolesUsuario);
         }
 
-        $tipoUsuario = $esInstructor ? 'Instructor' : 'Participante';
+        // En capacitaciones externas SIEMPRE es Participante (genera Constancia)
+        // No importa si el usuario es instructor en el sistema
+        $tipoUsuario = 'Participante';
 
         // Generar número de registro - DESACTIVADO TEMPORALMENTE
         // $numeroRegistro = $this->generarNumeroRegistroExterno($capacitacion, $tipoUsuario);

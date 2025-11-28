@@ -119,11 +119,15 @@ class ConstanciaDiplomadoController extends Controller
         // Generar número de registro
         $numeroRegistro = $this->generarNumeroRegistroDiplomado($diplomado, $tipoRegistro, $participante_id);
 
+        // Preparar datos para la vista
+        $tipoUsuario = $tipoRegistro; // Para compatibilidad con la plantilla
+        $participante = $usuario->datos_generales; // Los datos del participante
+
         // Generar el PDF
         $pdf = PDF::loadView('vistas.diplomados.pdf.constancia', compact(
             'diplomado',
-            'usuario',
-            'tipoRegistro',
+            'participante',
+            'tipoUsuario',
             'duracionTotalHoras',
             'duracionDias',
             'fecha_actual',
