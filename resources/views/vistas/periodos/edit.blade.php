@@ -45,7 +45,7 @@
         id="archivo"
         name="archivo"
         accept=".pdf,.jpg,.jpeg,.png"
-        class="block mt-1 w-full border-black focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+        class="block mt-1 w-full p-2 border-black focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
 </div>
 @if (session('archivo_periodo_'.$periodo->id))
     <div class="mt-4">

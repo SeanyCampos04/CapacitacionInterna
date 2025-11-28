@@ -38,13 +38,13 @@
                 </select>
             </div>
             <div class="mt-4">
-    <x-input-label for="archivo" value="Subir plantilla oficial del periodo (PDF o Imagen))" />
+    <x-input-label for="archivo" value="Subir plantilla oficial del periodo (PDF o Imagen)" />
     <input
         type="file"
         id="archivo"
         name="archivo"
         accept=".pdf,.jpg,.jpeg,.png"
-        class="block mt-1 w-full border-black focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+        class="block mt-1 w-full p-2 border-black focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
 />
 </div>
 
