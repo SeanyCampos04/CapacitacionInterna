@@ -38,14 +38,14 @@
             text-transform: uppercase;
             font-weight: bold;
         }
-        
+
         .title-main {
             font-size: 20px;
             margin: 0.2cm 0;
             text-transform: uppercase;
             font-weight: bold;
         }
-        
+
         .title-institute {
             font-size: 16px;
             margin: 0.1cm 0;
@@ -59,7 +59,7 @@
             margin: 0.2cm 0;
             text-transform: uppercase;
         }
-        
+
         .subtitle-large {
             font-size: 36px;
             margin: 0.4cm 0;
@@ -67,7 +67,7 @@
             font-weight: bold;
             letter-spacing: 2px;
         }
-        
+
         .title-section {
             margin-bottom: 0.3cm;
         }
@@ -75,7 +75,7 @@
         .recognition-section {
             margin: 0.5cm 0;
         }
-        
+
         .a-section {
             margin: 0.4cm 0;
         }
@@ -116,7 +116,7 @@
             text-transform: uppercase;
             white-space: nowrap;
         }
-        
+
         .status p {
             margin: 0;
             padding: 0;
@@ -145,14 +145,14 @@
         .footer .sign {
             height: 80px;
         }
-        
+
         .logos-afiliaciones {
             position: absolute;
             bottom: 0.5cm;
             left: 0;
             text-align: left;
         }
-        
+
         .qr-placeholder {
             position: absolute;
             bottom: 4cm;
@@ -199,7 +199,7 @@
             @endif
             </p>
         </div>
-        
+
         <!-- Constancia/Reconocimiento/Diploma (parte rosa - grande) -->
         <div>
             <p class="subtitle-large">
@@ -210,12 +210,12 @@
             @endif
             </p>
         </div>
-        
+
         <!-- Sección A -->
         <div class="a-section">
             <p class="subtitle">A</p>
         </div>
-        
+
         <!-- Nombre completo -->
         <p class="recipient-name">{{ $participante->user->datos_generales->nombre }} {{ $participante->user->datos_generales->apellido_paterno }} {{ $participante->user->datos_generales->apellido_materno }}</p>
 
@@ -223,7 +223,7 @@
         <p class="details">
             Por {{ $tipoUsuario === 'Instructor' ? 'impartir' : 'participar y acreditar satisfactoriamente' }} el curso de capacitación
             <strong>"{{ strtoupper($curso->nombre) }}"</strong>
-            impartido por 
+            impartido por
             @foreach($curso->instructores as $instructorCurso)
                 {{ $instructorCurso->user->datos_generales->nombre }}
                 {{ $instructorCurso->user->datos_generales->apellido_paterno }}
