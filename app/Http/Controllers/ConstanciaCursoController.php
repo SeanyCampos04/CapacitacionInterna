@@ -109,7 +109,7 @@ class ConstanciaCursoController extends Controller
         // Datos para la constancia
         $datos = [
             'curso' => $curso,
-            'participante' => $participanteInscrito->participante,
+            'participante' => $participanteInscrito, // Para compatibilidad con la plantilla
             'calificacion' => $participanteInscrito->calificacion,
             'fecha_actual' => Carbon::now(),
             'tipoUsuario' => 'Participante', // En cursos siempre son participantes
@@ -150,7 +150,7 @@ class ConstanciaCursoController extends Controller
         // Datos para el reconocimiento
         $datos = [
             'curso' => $curso,
-            'instructor' => $instructorCurso,
+            'participante' => $instructorCurso, // Para compatibilidad con la plantilla (instructor como "participante")
             'fecha_actual' => Carbon::now(),
             'tipoUsuario' => 'Instructor', // Para instructores es reconocimiento
             'numeroRegistro' => $numeroRegistro
