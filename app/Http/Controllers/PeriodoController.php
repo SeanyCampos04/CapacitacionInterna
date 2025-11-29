@@ -43,12 +43,14 @@ class PeriodoController extends Controller
         $periodos->periodo = $request->periodo;
         $periodos->anio = $request->anio;
         $periodos->trimestre = $request->trimestre;
-        $periodos->save();
-        if ($request->hasFile('archivo')) { // Guardar archivo si se subió
-    $ruta = $request->file('archivo')->store('periodos/'.$periodos->id, 'public');
 
-    session(['archivo_periodo_'.$periodos->id => $ruta]); // Guardar ruta en sesión (ya que no usamos BD)
-}
+        // Guardar archivo si se subió
+        if ($request->hasFile('archivo')) {
+            $ruta = $request->file('archivo')->store('periodos/'.$periodos->id, 'public');
+            $periodos->archivo_fondo = $ruta;
+        }
+
+        $periodos->save();
 
 
         // Redirigir al listado de periodos
@@ -91,19 +93,17 @@ class PeriodoController extends Controller
         $periodo->periodo = $request->periodo;
         $periodo->anio = $request->anio;
         $periodo->trimestre = $request->trimestre;
+
+        // Guardar archivo si se envía
+        if ($request->hasFile('archivo')) {
+            $ruta = $request->file('archivo')->store(
+                "periodos/" . $periodo->id,
+                "public"
+            );
+            $periodo->archivo_fondo = $ruta;
+        }
+
         $periodo->save();
-
-         // Guardar archivo si se envía
-    if ($request->hasFile('archivo')) {
-        // Lo guarda en storage/app/public/periodos/{id}/archivo.pdf
-        $ruta = $request->file('archivo')->store(
-            "periodos/" . $periodo->id,
-            "public"
-        );
-
-        // Guardamos en sesión sin tocar la BD
-        session(['archivo_periodo_' . $periodo->id => $ruta]);
-    }
 
         // Redirigir al listado de periodos con mensaje de éxito
         return redirect(route('periodos.index'))->with('success', 'Periodo actualizado exitosamente.');

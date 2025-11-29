@@ -116,6 +116,42 @@ class ConstanciaDiplomadoController extends Controller
         // Fecha actual
         $fecha_actual = Carbon::now();
 
+        // Obtener imagen de fondo del periodo que coincide con el trimestre de la fecha de término
+        $imagenFondo = null;
+        $fechaTermino = Carbon::parse($diplomado->termino_realizacion);
+
+        // Determinar el trimestre basado en el mes
+        $mes = $fechaTermino->month;
+        $trimestreCorrespondiente = 1; // Por defecto Enero-Marzo
+
+        if ($mes >= 1 && $mes <= 3) {
+            $trimestreCorrespondiente = 1; // Enero - Marzo
+        } elseif ($mes >= 4 && $mes <= 6) {
+            $trimestreCorrespondiente = 2; // Abril - Junio
+        } elseif ($mes >= 7 && $mes <= 9) {
+            $trimestreCorrespondiente = 3; // Julio - Septiembre
+        } elseif ($mes >= 10 && $mes <= 12) {
+            $trimestreCorrespondiente = 4; // Octubre - Diciembre
+        }
+
+        // Buscar el periodo más cercano al año de término con el trimestre correspondiente
+        $añoTermino = $fechaTermino->year;
+        $periodo = \App\Models\Periodo::where('anio', $añoTermino)
+            ->where('trimestre', $trimestreCorrespondiente)
+            ->first();
+
+        // Si no hay periodo del mismo año, buscar en años cercanos
+        if (!$periodo) {
+            // Buscar en año anterior o posterior con el mismo trimestre
+            $periodo = \App\Models\Periodo::where('trimestre', $trimestreCorrespondiente)
+                ->orderByRaw("ABS(anio - $añoTermino)")
+                ->first();
+        }
+
+        if ($periodo && $periodo->archivo_fondo) {
+            $imagenFondo = public_path('storage/' . $periodo->archivo_fondo);
+        }
+
         // Generar número de registro
         $numeroRegistro = $this->generarNumeroRegistroDiplomado($diplomado, $tipoRegistro, $participante_id);
 
@@ -131,7 +167,8 @@ class ConstanciaDiplomadoController extends Controller
             'duracionTotalHoras',
             'duracionDias',
             'fecha_actual',
-            'numeroRegistro'
+            'numeroRegistro',
+            'imagenFondo'
         ));
 
         // Nombre del archivo
