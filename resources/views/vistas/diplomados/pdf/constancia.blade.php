@@ -21,7 +21,7 @@
             background-repeat: no-repeat;
             @endif
         }
-        
+
         @if(isset($imagenFondo) && $imagenFondo && file_exists($imagenFondo))
         /* Overlay para mejorar legibilidad del texto sobre la imagen */
         .container::before {
