@@ -52,11 +52,18 @@ class ConstanciaController extends Controller
         // No importa si el usuario es instructor en el sistema
         $tipoUsuario = 'Participante';
 
+        // Obtener imagen de fondo del periodo más reciente (último registrado)
+        $imagenFondo = null;
+        $periodoReciente = \App\Models\Periodo::orderBy('id', 'desc')->first();
+        if ($periodoReciente && $periodoReciente->archivo_fondo) {
+            $imagenFondo = public_path('storage/' . $periodoReciente->archivo_fondo);
+        }
+
         // Generar número de registro - DESACTIVADO TEMPORALMENTE
         // $numeroRegistro = $this->generarNumeroRegistroExterno($capacitacion, $tipoUsuario);
 
         // Generar el PDF con la vista y los datos
-        $pdf = Pdf::loadView('externa.pdf.constancia', compact('capacitacion', 'tipoUsuario'));
+        $pdf = Pdf::loadView('externa.pdf.constancia', compact('capacitacion', 'tipoUsuario', 'imagenFondo'));
 
         // Retornar el PDF para descargar o visualizar
         return $pdf->stream('constancia.pdf');

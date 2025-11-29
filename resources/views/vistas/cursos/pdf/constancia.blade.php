@@ -14,13 +14,35 @@
             text-align: center;
             margin: 0;
             padding: 0;
+            @if(isset($imagenFondo) && $imagenFondo && file_exists($imagenFondo))
+            background-image: url('{{ $imagenFondo }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            @endif
         }
+        
+        @if(isset($imagenFondo) && $imagenFondo && file_exists($imagenFondo))
+        /* Overlay para mejorar legibilidad del texto sobre la imagen */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.85);
+            z-index: -1;
+        }
+        @endif
 
         .container {
             margin-top: 0.5cm;
             margin-bottom: 0.5cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
+            position: relative;
+            z-index: 1;
         }
 
         .header {

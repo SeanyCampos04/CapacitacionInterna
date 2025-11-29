@@ -106,6 +106,12 @@ class ConstanciaCursoController extends Controller
         // Generar número de registro
         $numeroRegistro = $this->generarNumeroRegistroParticipante($curso, $participante_id);
 
+        // Obtener imagen de fondo del periodo asociado al curso
+        $imagenFondo = null;
+        if ($curso->periodo && $curso->periodo->archivo_fondo) {
+            $imagenFondo = public_path('storage/' . $curso->periodo->archivo_fondo);
+        }
+
         // Datos para la constancia
         $datos = [
             'curso' => $curso,
@@ -113,7 +119,8 @@ class ConstanciaCursoController extends Controller
             'calificacion' => $participanteInscrito->calificacion,
             'fecha_actual' => Carbon::now(),
             'tipoUsuario' => 'Participante', // En cursos siempre son participantes
-            'numeroRegistro' => $numeroRegistro
+            'numeroRegistro' => $numeroRegistro,
+            'imagenFondo' => $imagenFondo
         ];
 
         // Generar el PDF con la vista y los datos
@@ -147,13 +154,20 @@ class ConstanciaCursoController extends Controller
         // Generar número de registro
         $numeroRegistro = $this->generarNumeroRegistroInstructor($curso, $instructor_id);
 
+        // Obtener imagen de fondo del periodo asociado al curso
+        $imagenFondo = null;
+        if ($curso->periodo && $curso->periodo->archivo_fondo) {
+            $imagenFondo = public_path('storage/' . $curso->periodo->archivo_fondo);
+        }
+
         // Datos para el reconocimiento
         $datos = [
             'curso' => $curso,
             'participante' => $instructorCurso, // Para compatibilidad con la plantilla (instructor como "participante")
             'fecha_actual' => Carbon::now(),
             'tipoUsuario' => 'Instructor', // Para instructores es reconocimiento
-            'numeroRegistro' => $numeroRegistro
+            'numeroRegistro' => $numeroRegistro,
+            'imagenFondo' => $imagenFondo
         ];
 
         // Generar el PDF con la vista y los datos
