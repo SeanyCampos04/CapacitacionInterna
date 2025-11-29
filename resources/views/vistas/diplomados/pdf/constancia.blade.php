@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>Constancia de Diplomado</title>
     <style>
+        @page {
+        size: letter portrait; /* también puede ser: letter landscape */
+        margin: 1cm;
+    }
         /* Estilos generales */
         body {
             font-family: Arial, sans-serif;
@@ -13,8 +17,8 @@
         }
 
         .container {
-            margin-top: 1.5cm;
-            margin-bottom: 1.5cm;
+            margin-top: 0.5cm;
+            margin-bottom: 0.5cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
         }
@@ -99,7 +103,7 @@
         }
         .date {
             position: absolute;
-            bottom: 2cm;
+            bottom: 1.5cm;
             left: 0;
             right: 0;
             font-size: 16px;
@@ -109,7 +113,7 @@
         }
         .status {
             position: absolute;
-            bottom: 3cm;
+            bottom: 2.5cm;
             right: 1.5cm;
             font-size: 12px;
             text-align: right;
@@ -125,9 +129,9 @@
 
         .signature-section {
             position: relative;
-            margin-top: 3.5cm;
-            margin-bottom: 1cm;
-            height: 3cm;
+            margin-top: 2.5cm;
+            margin-bottom: 0.5cm;
+            height: 2.5cm;
         }
 
         .footer {
@@ -148,14 +152,14 @@
 
         .logos-afiliaciones {
             position: absolute;
-            bottom: 0.5cm;
+            bottom: 0.3cm;
             left: 0;
             text-align: left;
         }
 
         .qr-placeholder {
             position: absolute;
-            bottom: 4cm;
+            bottom: 3.5cm;
             right: 1.5cm;
             width: 2cm;
             height: 2cm;
@@ -166,9 +170,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-    </style>
+        }    </style>
 </head>
 <body>
     <div class="container">

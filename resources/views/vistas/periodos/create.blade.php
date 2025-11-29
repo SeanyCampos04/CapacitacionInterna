@@ -38,15 +38,61 @@
                 </select>
             </div>
             <div class="mt-4">
-    <x-input-label for="archivo" value="Subir plantilla oficial del periodo (PDF o Imagen))" />
+    <x-input-label for="archivo" value="Subir plantilla oficial del periodo (PDF o Imagen)" />
     <input
         type="file"
         id="archivo"
         name="archivo"
         accept=".pdf,.jpg,.jpeg,.png"
         class="block mt-1 w-full border-black focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-/>
+        onchange="previewFile()"
+    />
+    
+    <!-- Vista previa del archivo seleccionado -->
+    <div id="preview-container" class="mt-4 p-4 border rounded-lg bg-gray-50" style="display: none;">
+        <h4 class="font-semibold text-sm text-gray-700 mb-2">Vista previa:</h4>
+        <div id="preview-content" class="text-center"></div>
+    </div>
 </div>
+
+<script>
+function previewFile() {
+    const fileInput = document.getElementById('archivo');
+    const previewContainer = document.getElementById('preview-container');
+    const previewContent = document.getElementById('preview-content');
+    
+    if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const fileType = file.type;
+        const fileName = file.name;
+        
+        previewContainer.style.display = 'block';
+        
+        if (fileType.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewContent.innerHTML = `
+                    <img src="${e.target.result}" style="max-width: 300px; max-height: 400px;" class="mx-auto rounded shadow-md" />
+                    <p class="text-sm text-gray-600 mt-2">Archivo seleccionado: ${fileName}</p>
+                `;
+            };
+            reader.readAsDataURL(file);
+        } else if (fileType === 'application/pdf') {
+            previewContent.innerHTML = `
+                <div class="p-4">
+                    <svg class="mx-auto h-16 w-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <p class="text-sm text-gray-600 mt-2">PDF seleccionado: ${fileName}</p>
+                    <p class="text-xs text-gray-500">Se podrá ver después de guardar</p>
+                </div>
+            `;
+        }
+    } else {
+        previewContainer.style.display = 'none';
+    }
+}
+</script>
 
             <div class="flex items-center justify-end mt-4">
                 <x-primary-button class="ms-4">
