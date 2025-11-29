@@ -25,13 +25,13 @@
         }
 
         .container {
-            margin-top: 0.5cm;
+            margin-top: 1.5cm;
             margin-bottom: 0.5cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
             position: relative;
             z-index: 1;
-            min-height: calc(100vh - 1cm); /* Asegurar que ocupe toda la altura */
+            min-height: calc(100vh - 2cm); /* Asegurar que ocupe toda la altura */
         }
 
         .header {
@@ -174,13 +174,16 @@
             right: 1.5cm;
             width: 2cm;
             height: 2cm;
-            border: 1px dashed #ccc;
             text-align: center;
             font-size: 10px;
             color: #999;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        .qr-placeholder svg {
+            width: 2cm;
+            height: 2cm;
         }    </style>
 </head>
 <body>

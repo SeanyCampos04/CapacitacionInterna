@@ -7,6 +7,7 @@ use App\Models\RegistroCapacitacionesExt;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ConstanciaController extends Controller
 {
@@ -52,6 +53,13 @@ class ConstanciaController extends Controller
         // No importa si el usuario es instructor en el sistema
         $tipoUsuario = 'Participante';
 
+        // Generar código QR si tiene folio asignado
+        $codigoQR = null;
+        if ($capacitacion->folio && $capacitacion->folio !== 'Rechazado') {
+            $urlVerificacion = route('verificacion.constancia', $capacitacion->folio);
+            $codigoQR = QrCode::format('svg')->size(200)->generate($urlVerificacion);
+        }
+
         // Obtener imagen de fondo del periodo más reciente (último registrado)
         $imagenFondo = null;
         $periodoReciente = \App\Models\Periodo::orderBy('id', 'desc')->first();
@@ -63,7 +71,7 @@ class ConstanciaController extends Controller
         // $numeroRegistro = $this->generarNumeroRegistroExterno($capacitacion, $tipoUsuario);
 
         // Generar el PDF con la vista y los datos
-        $pdf = Pdf::loadView('externa.pdf.constancia', compact('capacitacion', 'tipoUsuario', 'imagenFondo'));
+        $pdf = Pdf::loadView('externa.pdf.constancia', compact('capacitacion', 'tipoUsuario', 'codigoQR', 'imagenFondo'));
 
         // Retornar el PDF para descargar o visualizar
         return $pdf->stream('constancia.pdf');

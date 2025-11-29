@@ -7,6 +7,7 @@ use App\Models\Curso;
 use App\Models\cursos_participante;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ConstanciaCursoController extends Controller
 {
@@ -106,6 +107,10 @@ class ConstanciaCursoController extends Controller
         // Generar número de registro
         $numeroRegistro = $this->generarNumeroRegistroParticipante($curso, $participante_id);
 
+        // Generar código QR con URL de verificación
+        $urlVerificacion = route('verificacion.constancia', $numeroRegistro);
+        $codigoQR = QrCode::format('svg')->size(200)->generate($urlVerificacion);
+
         // Obtener imagen de fondo del periodo asociado al curso
         $imagenFondo = null;
         if ($curso->periodo && $curso->periodo->archivo_fondo) {
@@ -120,6 +125,7 @@ class ConstanciaCursoController extends Controller
             'fecha_actual' => Carbon::now(),
             'tipoUsuario' => 'Participante', // En cursos siempre son participantes
             'numeroRegistro' => $numeroRegistro,
+            'codigoQR' => $codigoQR,
             'imagenFondo' => $imagenFondo
         ];
 
@@ -154,6 +160,10 @@ class ConstanciaCursoController extends Controller
         // Generar número de registro
         $numeroRegistro = $this->generarNumeroRegistroInstructor($curso, $instructor_id);
 
+        // Generar código QR con URL de verificación
+        $urlVerificacion = route('verificacion.reconocimiento', $numeroRegistro);
+        $codigoQR = QrCode::format('svg')->size(200)->generate($urlVerificacion);
+
         // Obtener imagen de fondo del periodo asociado al curso
         $imagenFondo = null;
         if ($curso->periodo && $curso->periodo->archivo_fondo) {
@@ -167,6 +177,7 @@ class ConstanciaCursoController extends Controller
             'fecha_actual' => Carbon::now(),
             'tipoUsuario' => 'Instructor', // Para instructores es reconocimiento
             'numeroRegistro' => $numeroRegistro,
+            'codigoQR' => $codigoQR,
             'imagenFondo' => $imagenFondo
         ];
 
