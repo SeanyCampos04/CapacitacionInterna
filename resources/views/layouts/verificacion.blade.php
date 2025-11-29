@@ -13,11 +13,11 @@
 
     <!-- Tailwind CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -93,7 +93,7 @@
                 <div class="text-white opacity-75">
                     <img class="mx-auto h-12 mb-2" src="{{ asset('edu.png') }}" alt="SEP">
                     <p class="text-sm">
-                        <i class="fas fa-calendar-alt"></i> 
+                        <i class="fas fa-calendar-alt"></i>
                         Verificación realizada el {{ \Carbon\Carbon::now()->format('d/m/Y H:i:s') }}
                     </p>
                 </div>

@@ -49,23 +49,23 @@
 <body>
     <div class="test-container">
         <h1 class="mb-4">🧪 Prueba de Código QR</h1>
-        
+
         <div class="alert alert-info">
             <strong>Número de Registro:</strong> {{ $numeroRegistro }}<br>
             @if(isset($status))
                 <strong>Estado:</strong> {{ $status }}
             @endif
         </div>
-        
+
         <div class="qr-code">
             {!! $qrCode !!}
         </div>
-        
+
         <div class="url-info">
             <strong>URL generada:</strong><br>
             {{ $url }}
         </div>
-        
+
         <div class="instructions">
             <h5><i class="fas fa-mobile-alt"></i> Instrucciones para probar:</h5>
             <ol>
@@ -75,21 +75,21 @@
                 <li><strong>IP local:</strong> Solo funcionará si el dispositivo está en la misma red</li>
             </ol>
         </div>
-        
+
         <div class="mt-4">
             <a href="{{ $url }}" class="btn btn-primary btn-lg" target="_blank">
                 <i class="fas fa-external-link-alt"></i> Probar Verificación
             </a>
         </div>
-        
+
         <div class="mt-3">
             <small class="text-muted">
-                <i class="fas fa-info-circle"></i> 
+                <i class="fas fa-info-circle"></i>
                 Esta es una página de prueba. Los datos mostrados son de ejemplo.
             </small>
         </div>
     </div>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>
 </html>

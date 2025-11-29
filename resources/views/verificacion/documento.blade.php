@@ -37,64 +37,64 @@
                 <h4 class="text-center mb-4" style="color: rgb(27, 57, 107);">
                     <i class="fas fa-certificate"></i> {{ $documento['tipo_documento'] }}
                 </h4>
-                
+
                 <div class="row">
                     <div class="col-md-6">
                         <div class="info-row">
                             <strong class="text-muted">Participante:</strong><br>
                             <span class="h6">{{ $documento['nombre_completo'] }}</span>
                         </div>
-                        
+
                         <div class="info-row">
                             <strong class="text-muted">Programa:</strong><br>
                             <span>{{ $documento['nombre_programa'] }}</span>
                         </div>
-                        
+
                         <div class="info-row">
                             <strong class="text-muted">Descripción:</strong><br>
                             <span>{{ $documento['descripcion'] }}</span>
                         </div>
-                        
+
                         <div class="info-row">
                             <strong class="text-muted">Duración:</strong><br>
                             <span><i class="fas fa-clock"></i> {{ $documento['horas'] }} horas</span>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-6">
                         <div class="info-row">
                             <strong class="text-muted">Modalidad:</strong><br>
                             <span><i class="fas fa-desktop"></i> {{ $documento['modalidad'] }}</span>
                         </div>
-                        
+
                         @if(isset($documento['lugar']))
                             <div class="info-row">
                                 <strong class="text-muted">Lugar:</strong><br>
                                 <span><i class="fas fa-map-marker-alt"></i> {{ $documento['lugar'] }}</span>
                             </div>
                         @endif
-                        
+
                         @if(isset($documento['departamento']))
                             <div class="info-row">
                                 <strong class="text-muted">Departamento:</strong><br>
                                 <span>{{ $documento['departamento'] }}</span>
                             </div>
                         @endif
-                        
+
                         @if(isset($documento['organismo']))
                             <div class="info-row">
                                 <strong class="text-muted">Organismo:</strong><br>
                                 <span>{{ $documento['organismo'] }}</span>
                             </div>
                         @endif
-                        
+
                         @if(isset($documento['instructores']))
                             <div class="info-row">
                                 <strong class="text-muted">Instructor(es):</strong><br>
                                 <span><i class="fas fa-user-tie"></i> {{ $documento['instructores'] }}</span>
                             </div>
                         @endif
-                        
+
                         @if(isset($documento['calificacion']))
                             <div class="info-row">
                                 <strong class="text-muted">Calificación:</strong><br>
@@ -103,25 +103,25 @@
                         @endif
                     </div>
                 </div>
-                
+
                 @if(isset($documento['fecha_inicio']) && isset($documento['fecha_termino']))
                     <div class="info-row text-center">
                         <strong class="text-muted">Período de realización:</strong><br>
                         <span class="badge bg-primary">
                             <i class="fas fa-calendar-alt"></i>
-                            {{ \Carbon\Carbon::parse($documento['fecha_inicio'])->format('d/m/Y') }} - 
+                            {{ \Carbon\Carbon::parse($documento['fecha_inicio'])->format('d/m/Y') }} -
                             {{ \Carbon\Carbon::parse($documento['fecha_termino'])->format('d/m/Y') }}
                         </span>
                     </div>
                 @endif
-                
+
                 @if(isset($documento['anio']))
                     <div class="info-row text-center">
                         <strong class="text-muted">Año:</strong><br>
                         <span class="badge bg-secondary">{{ $documento['anio'] }}</span>
                     </div>
                 @endif
-                
+
                 <div class="verification-code mt-4">
                     <i class="fas fa-shield-alt"></i> NÚMERO DE REGISTRO: {{ $numeroRegistro }}
                 </div>
@@ -136,7 +136,7 @@
                         <div class="verification-code mt-2">{{ $numeroRegistro }}</div>
                     </div>
                     <p class="text-muted">
-                        <i class="fas fa-info-circle"></i> 
+                        <i class="fas fa-info-circle"></i>
                         Verifique que el número de registro sea correcto o contacte con la institución emisora.
                     </p>
                 </div>

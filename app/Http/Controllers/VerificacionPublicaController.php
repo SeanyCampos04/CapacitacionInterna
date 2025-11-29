@@ -19,7 +19,7 @@ class VerificacionPublicaController extends Controller
     {
         // Buscar en capacitaciones externas primero
         $capacitacionExterna = RegistroCapacitacionesExt::where('folio', $numeroRegistro)->first();
-        
+
         if ($capacitacionExterna) {
             $documento = [
                 'tipo_documento' => 'Constancia de Capacitación Externa',
@@ -34,7 +34,7 @@ class VerificacionPublicaController extends Controller
                 'fecha_inicio' => $capacitacionExterna->fecha_inicio,
                 'fecha_termino' => $capacitacionExterna->fecha_termino,
             ];
-            
+
             return view('verificacion.documento', [
                 'documento' => $documento,
                 'numeroRegistro' => $numeroRegistro,
@@ -45,7 +45,7 @@ class VerificacionPublicaController extends Controller
 
         // Buscar en cursos internos
         $participante = $this->buscarEnCursosInternos($numeroRegistro);
-        
+
         if ($participante) {
             // Obtener datos del participante
             $datosParticipante = DB::table('participantes')
@@ -54,12 +54,12 @@ class VerificacionPublicaController extends Controller
                 ->where('participantes.id', $participante->participante_id)
                 ->select('datos_generales.nombre', 'datos_generales.apellido_paterno', 'datos_generales.apellido_materno')
                 ->first();
-            
+
             $nombreCompleto = 'Sin datos';
             if ($datosParticipante) {
                 $nombreCompleto = trim($datosParticipante->nombre . ' ' . $datosParticipante->apellido_paterno . ' ' . $datosParticipante->apellido_materno);
             }
-            
+
             $documento = [
                 'tipo_documento' => 'Constancia de Curso',
                 'nombre_completo' => $nombreCompleto,
@@ -75,7 +75,7 @@ class VerificacionPublicaController extends Controller
                 'calificacion' => $participante->calificacion,
                 'instructores' => 'Información de instructores disponible'
             ];
-            
+
             return view('verificacion.documento', [
                 'documento' => $documento,
                 'numeroRegistro' => $numeroRegistro,
@@ -100,15 +100,15 @@ class VerificacionPublicaController extends Controller
     {
         // Buscar instructor en cursos internos
         $instructor = $this->buscarInstructorEnCursosInternos($numeroRegistro);
-        
+
         if ($instructor) {
             $nombreInstructor = 'Sin datos';
             if ($instructor['instructor_datos']) {
-                $nombreInstructor = trim($instructor['instructor_datos']->nombre . ' ' . 
-                                       $instructor['instructor_datos']->apellido_paterno . ' ' . 
+                $nombreInstructor = trim($instructor['instructor_datos']->nombre . ' ' .
+                                       $instructor['instructor_datos']->apellido_paterno . ' ' .
                                        $instructor['instructor_datos']->apellido_materno);
             }
-            
+
             $documento = [
                 'tipo_documento' => 'Reconocimiento de Instructor',
                 'nombre_completo' => $nombreInstructor,
@@ -122,7 +122,7 @@ class VerificacionPublicaController extends Controller
                 'fecha_inicio' => $instructor['curso']->fdi,
                 'fecha_termino' => $instructor['curso']->fdf,
             ];
-            
+
             return view('verificacion.documento', [
                 'documento' => $documento,
                 'numeroRegistro' => $numeroRegistro,
@@ -164,7 +164,7 @@ class VerificacionPublicaController extends Controller
         if (strpos($numeroRegistro, '/I-') !== false) {
             return $this->verificarReconocimiento($numeroRegistro);
         }
-        
+
         // Si no, es constancia
         return $this->verificarConstancia($numeroRegistro);
     }
@@ -228,16 +228,16 @@ class VerificacionPublicaController extends Controller
         }
 
         $curso = Curso::with('departamento')->find($cursosDelAnio[$numeroCurso - 1]->id);
-        
+
         // Buscar instructor en la tabla cursos_instructores
         $instructorRelacion = DB::table('cursos_instructores')
             ->where('curso_id', $curso->id)
             ->first();
-            
+
         if (!$instructorRelacion) {
             return null;
         }
-        
+
         // Obtener datos del instructor
         $datosInstructor = DB::table('instructores')
             ->join('users', 'instructores.user_id', '=', 'users.id')
