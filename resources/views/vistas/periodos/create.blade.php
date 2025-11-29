@@ -47,7 +47,7 @@
         class="block mt-1 w-full border-black focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
         onchange="previewFile()"
     />
-    
+
     <!-- Vista previa del archivo seleccionado -->
     <div id="preview-container" class="mt-4 p-4 border rounded-lg bg-gray-50" style="display: none;">
         <h4 class="font-semibold text-sm text-gray-700 mb-2">Vista previa:</h4>
@@ -60,14 +60,14 @@ function previewFile() {
     const fileInput = document.getElementById('archivo');
     const previewContainer = document.getElementById('preview-container');
     const previewContent = document.getElementById('preview-content');
-    
+
     if (fileInput.files && fileInput.files[0]) {
         const file = fileInput.files[0];
         const fileType = file.type;
         const fileName = file.name;
-        
+
         previewContainer.style.display = 'block';
-        
+
         if (fileType.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = function(e) {

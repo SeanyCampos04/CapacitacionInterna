@@ -43,13 +43,13 @@ class PeriodoController extends Controller
         $periodos->periodo = $request->periodo;
         $periodos->anio = $request->anio;
         $periodos->trimestre = $request->trimestre;
-        
+
         // Guardar archivo si se subió
         if ($request->hasFile('archivo')) {
             $ruta = $request->file('archivo')->store('periodos/'.$periodos->id, 'public');
             $periodos->archivo_fondo = $ruta;
         }
-        
+
         $periodos->save();
 
 
@@ -93,7 +93,7 @@ class PeriodoController extends Controller
         $periodo->periodo = $request->periodo;
         $periodo->anio = $request->anio;
         $periodo->trimestre = $request->trimestre;
-        
+
         // Guardar archivo si se envía
         if ($request->hasFile('archivo')) {
             $ruta = $request->file('archivo')->store(
@@ -102,7 +102,7 @@ class PeriodoController extends Controller
             );
             $periodo->archivo_fondo = $ruta;
         }
-        
+
         $periodo->save();
 
         // Redirigir al listado de periodos con mensaje de éxito
