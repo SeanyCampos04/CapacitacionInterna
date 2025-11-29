@@ -5,15 +5,17 @@
     <title>Constancia de Capacitación</title>
     <style>
         @page {
-        size: letter portrait; /* también puede ser: letter landscape */
-        margin: 1cm;
-    }
+            size: letter portrait; /* también puede ser: letter landscape */
+            margin: 0; /* Sin márgenes para que la imagen de fondo cubra toda la página */
+        }
         /* Estilos generales */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100vh;
             @if(isset($imagenFondo) && $imagenFondo && file_exists($imagenFondo))
             background-image: url('{{ $imagenFondo }}');
             background-size: cover;
@@ -22,20 +24,6 @@
             @endif
         }
 
-        @if(isset($imagenFondo) && $imagenFondo && file_exists($imagenFondo))
-        /* Overlay para mejorar legibilidad del texto sobre la imagen */
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.85);
-            z-index: -1;
-        }
-        @endif
-
         .container {
             margin-top: 0.5cm;
             margin-bottom: 0.5cm;
@@ -43,6 +31,7 @@
             margin-right: 1.5cm;
             position: relative;
             z-index: 1;
+            min-height: calc(100vh - 1cm); /* Asegurar que ocupe toda la altura */
         }
 
         .header {
