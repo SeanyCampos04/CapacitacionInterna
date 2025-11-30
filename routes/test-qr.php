@@ -216,3 +216,145 @@ Route::get('/datos-simples', function() {
            "ACREDITADO: " . ($participante ? $participante->acreditado : "N/A") . "<br>" .
            "NUMERO_REGISTRO: " . ($participante ? ($participante->numero_registro ?: "SIN ASIGNAR") : "N/A");
 });
+
+// Probar generación de constancia
+Route::get('/test-constancia', function() {
+    $participante = \App\Models\cursos_participante::with([
+        'participante.user.datos_generales',
+        'curso'
+    ])->where('acreditado', 2)->first();
+
+    if (!$participante) {
+        return "No hay participantes acreditados";
+    }
+
+    $datos = [
+        'participante_id' => $participante->id,
+        'curso_id' => $participante->curso_id,
+        'tiene_participante' => $participante->participante ? 'SÍ' : 'NO',
+        'tiene_user' => ($participante->participante && $participante->participante->user) ? 'SÍ' : 'NO',
+        'tiene_datos_generales' => ($participante->participante && $participante->participante->user && $participante->participante->user->datos_generales) ? 'SÍ' : 'NO'
+    ];
+
+    if ($participante->participante && $participante->participante->user && $participante->participante->user->datos_generales) {
+        $datos['nombre'] = $participante->participante->user->datos_generales->nombre;
+    }
+
+    return $datos;
+});
+
+// Debug para verificar generación de QR
+Route::get('/debug-qr-generation', function() {
+    $participante = \App\Models\cursos_participante::with(['curso', 'participante.user.datos_generales'])
+        ->where('acreditado', 2)
+        ->first();
+
+    if (!$participante) {
+        return ['error' => 'No hay participantes acreditados'];
+    }
+
+    // Simular la generación del número como en el controlador
+    $curso = $participante->curso;
+    $numeroDelCurso = 1; // Simplificado para debug
+    $numeroRegistro = sprintf('TNM-169-%02d-%s/%02d',
+        $numeroDelCurso,
+        $curso->created_at->format('Y'),
+        1
+    );
+
+    // Generar QR
+    $urlVerificacion = route('verificacion.constancia', $numeroRegistro);
+    $codigoQR = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(200)->generate($urlVerificacion);
+    $codigoQRBase64 = base64_encode($codigoQR);
+
+    return [
+        'participante_id' => $participante->id,
+        'curso_nombre' => $curso->nombre,
+        'numero_registro_generado' => $numeroRegistro,
+        'url_verificacion' => $urlVerificacion,
+        'qr_generado' => !empty($codigoQR) ? 'SÍ' : 'NO',
+        'qr_length' => strlen($codigoQR),
+        'qr_base64_length' => strlen($codigoQRBase64),
+        'numero_registro_en_bd' => $participante->numero_registro
+    ];
+});
+
+// Debug del QR en el contexto real del controlador
+Route::get('/debug-qr-real', function() {
+    $participante = \App\Models\cursos_participante::with(['curso', 'participante.user.datos_generales'])
+        ->where('acreditado', 2)
+        ->first();
+
+    if (!$participante) {
+        return ['error' => 'No hay participantes acreditados'];
+    }
+
+    // Simular exactamente lo que hace el controlador
+    $numeroRegistro = 'TNM-169-01-2025/01'; // Usar un número fijo para debug
+    $urlVerificacion = route('verificacion.constancia', $numeroRegistro);
+
+    $codigoQRBase64 = null;
+    $errorMsg = null;
+
+    try {
+        $codigoQRData = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(200)->backgroundColor(255,255,255)->color(0,0,0)->generate($urlVerificacion);
+        $codigoQRBase64 = base64_encode($codigoQRData);
+    } catch (\Exception $e) {
+        $errorMsg = $e->getMessage();
+        try {
+            $codigoQRData = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(200)->generate($urlVerificacion);
+            $codigoQRBase64 = base64_encode($codigoQRData);
+        } catch (\Exception $e2) {
+            $errorMsg .= ' | SVG Error: ' . $e2->getMessage();
+        }
+    }
+
+    return [
+        'url_verificacion' => $urlVerificacion,
+        'qr_base64_existe' => !empty($codigoQRBase64),
+        'qr_base64_length' => $codigoQRBase64 ? strlen($codigoQRBase64) : 0,
+        'error_msg' => $errorMsg,
+        'qr_preview' => $codigoQRBase64 ? substr($codigoQRBase64, 0, 100) . '...' : 'VACÍO'
+    ];
+});
+
+// Debug del nuevo método con API externa
+Route::get('/debug-qr-api', function() {
+    $numeroRegistro = 'TNM-169-01-2025/01';
+    $urlVerificacion = route('verificacion.constancia', $numeroRegistro);
+    $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($urlVerificacion);
+
+    return [
+        'numero_registro' => $numeroRegistro,
+        'url_verificacion' => $urlVerificacion,
+        'qr_api_url' => $qrApiUrl,
+        'url_encoded' => urlencode($urlVerificacion),
+        'mensaje' => 'Visita qr_api_url en tu navegador para ver si genera el QR'
+    ];
+});
+
+// Debug del método final con descarga
+Route::get('/debug-qr-final', function() {
+    $numeroRegistro = 'TNM-169-01-2025/01';
+    $urlVerificacion = route('verificacion.constancia', $numeroRegistro);
+    $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($urlVerificacion);
+
+    try {
+        $qrImageData = file_get_contents($qrApiUrl);
+        $codigoQR = 'data:image/png;base64,' . base64_encode($qrImageData);
+        $success = true;
+        $error = null;
+    } catch (\Exception $e) {
+        $codigoQR = null;
+        $success = false;
+        $error = $e->getMessage();
+    }
+
+    return [
+        'success' => $success,
+        'error' => $error,
+        'qr_api_url' => $qrApiUrl,
+        'data_uri_length' => $codigoQR ? strlen($codigoQR) : 0,
+        'data_uri_preview' => $codigoQR ? substr($codigoQR, 0, 100) . '...' : null
+    ];
+});

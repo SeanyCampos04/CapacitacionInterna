@@ -104,12 +104,34 @@ class ConstanciaCursoController extends Controller
           ->where('acreditado', 2) // Solo participantes acreditados
           ->firstOrFail();
 
+        // Verificar que las relaciones existan
+        if (!$participanteInscrito->participante) {
+            throw new \Exception('No se encontraron datos del participante.');
+        }
+        if (!$participanteInscrito->participante->user) {
+            throw new \Exception('No se encontraron datos del usuario del participante.');
+        }
+        if (!$participanteInscrito->participante->user->datos_generales) {
+            throw new \Exception('No se encontraron datos generales del participante.');
+        }
+
         // Generar número de registro
         $numeroRegistro = $this->generarNumeroRegistroParticipante($curso, $participante_id);
 
-        // Generar código QR con URL de verificación
+        // Actualizar el número de registro en la base de datos
+        $participanteInscrito->update(['numero_registro' => $numeroRegistro]);
+
+        // Generar código QR descargando imagen de API externa
         $urlVerificacion = route('verificacion.constancia', $numeroRegistro);
-        $codigoQR = QrCode::format('svg')->size(200)->generate($urlVerificacion);
+        $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' . urlencode($urlVerificacion);
+
+        // Descargar la imagen QR y convertirla a base64
+        try {
+            $qrImageData = file_get_contents($qrApiUrl);
+            $codigoQR = 'data:image/png;base64,' . base64_encode($qrImageData);
+        } catch (\Exception $e) {
+            $codigoQR = null; // Si falla, no mostrar QR
+        }
 
         // Obtener imagen de fondo del periodo asociado al curso
         $imagenFondo = null;
@@ -132,10 +154,11 @@ class ConstanciaCursoController extends Controller
         // Generar el PDF con la vista y los datos
         $pdf = Pdf::loadView('vistas.cursos.pdf.constancia', $datos);
 
-        // Nombre del archivo
+        // Nombre del archivo con verificación segura
+        $nombreParticipante = $participanteInscrito->participante->user->datos_generales->nombre ?? 'Participante';
         $nombreArchivo = 'Constancia_' .
             str_replace(' ', '_', $curso->nombre) . '_' .
-            str_replace(' ', '_', $participanteInscrito->participante->user->datos_generales->nombre) . '.pdf';
+            str_replace(' ', '_', $nombreParticipante) . '.pdf';
 
         // Retornar el PDF para descargar o visualizar
         return $pdf->stream($nombreArchivo);
@@ -157,12 +180,28 @@ class ConstanciaCursoController extends Controller
             abort(404, 'Instructor no encontrado en este curso');
         }
 
+        // Verificar que las relaciones del instructor existan
+        if (!$instructorCurso->user) {
+            throw new \Exception('No se encontraron datos del usuario del instructor.');
+        }
+        if (!$instructorCurso->user->datos_generales) {
+            throw new \Exception('No se encontraron datos generales del instructor.');
+        }
+
         // Generar número de registro
         $numeroRegistro = $this->generarNumeroRegistroInstructor($curso, $instructor_id);
 
-        // Generar código QR con URL de verificación
+        // Generar código QR descargando imagen de API externa
         $urlVerificacion = route('verificacion.reconocimiento', $numeroRegistro);
-        $codigoQR = QrCode::format('svg')->size(200)->generate($urlVerificacion);
+        $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' . urlencode($urlVerificacion);
+
+        // Descargar la imagen QR y convertirla a base64
+        try {
+            $qrImageData = file_get_contents($qrApiUrl);
+            $codigoQR = 'data:image/png;base64,' . base64_encode($qrImageData);
+        } catch (\Exception $e) {
+            $codigoQR = null; // Si falla, no mostrar QR
+        }
 
         // Obtener imagen de fondo del periodo asociado al curso
         $imagenFondo = null;
@@ -184,10 +223,11 @@ class ConstanciaCursoController extends Controller
         // Generar el PDF con la vista y los datos
         $pdf = Pdf::loadView('vistas.cursos.pdf.constancia', $datos);
 
-        // Nombre del archivo
+        // Nombre del archivo con verificación segura
+        $nombreInstructor = $instructorCurso->user->datos_generales->nombre ?? 'Instructor';
         $nombreArchivo = 'Reconocimiento_' .
             str_replace(' ', '_', $curso->nombre) . '_' .
-            str_replace(' ', '_', $instructorCurso->user->datos_generales->nombre) . '.pdf';
+            str_replace(' ', '_', $nombreInstructor) . '.pdf';
 
         // Retornar el PDF para descargar o visualizar
         return $pdf->stream($nombreArchivo);

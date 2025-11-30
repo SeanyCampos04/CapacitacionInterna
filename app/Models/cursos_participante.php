@@ -14,7 +14,8 @@ class cursos_participante extends Model
         'curso_id',
         'acreditado',
         'calificacion',
-        'comentarios'
+        'comentarios',
+        'numero_registro'
     ];
 
     public function curso()

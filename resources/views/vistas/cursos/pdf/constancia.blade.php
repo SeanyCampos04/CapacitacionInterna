@@ -233,7 +233,11 @@
         </div>
 
         <!-- Nombre completo -->
-        <p class="recipient-name">{{ $participante->user->datos_generales->nombre }} {{ $participante->user->datos_generales->apellido_paterno }} {{ $participante->user->datos_generales->apellido_materno }}</p>
+        @if($tipoUsuario === 'Instructor')
+            <p class="recipient-name">{{ $participante->user->datos_generales->nombre ?? 'Sin nombre' }} {{ $participante->user->datos_generales->apellido_paterno ?? '' }} {{ $participante->user->datos_generales->apellido_materno ?? '' }}</p>
+        @else
+            <p class="recipient-name">{{ $participante->participante->user->datos_generales->nombre ?? 'Sin nombre' }} {{ $participante->participante->user->datos_generales->apellido_paterno ?? '' }} {{ $participante->participante->user->datos_generales->apellido_materno ?? '' }}</p>
+        @endif
 
         <!-- Detalles del curso -->
         <p class="details">
@@ -241,9 +245,9 @@
             <strong>"{{ strtoupper($curso->nombre) }}"</strong>
             impartido por
             @foreach($curso->instructores as $instructorCurso)
-                {{ $instructorCurso->user->datos_generales->nombre }}
-                {{ $instructorCurso->user->datos_generales->apellido_paterno }}
-                {{ $instructorCurso->user->datos_generales->apellido_materno }}@if(!$loop->last), @endif
+                {{ $instructorCurso->user->datos_generales->nombre ?? 'Sin nombre' }}
+                {{ $instructorCurso->user->datos_generales->apellido_paterno ?? '' }}
+                {{ $instructorCurso->user->datos_generales->apellido_materno ?? '' }}@if(!$loop->last), @endif
             @endforeach
             del {{ \Carbon\Carbon::parse($curso->fdi)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdi)->translatedFormat('F') }}
             al {{ \Carbon\Carbon::parse($curso->fdf)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdf)->translatedFormat('F') }}
@@ -260,16 +264,18 @@
         </div>
 
         <!-- Código QR para verificación -->
-        <div class="qr-placeholder">
-            @if(isset($codigoQR) && $codigoQR)
-                {!! $codigoQR !!}
+        <div class="qr-placeholder" style="margin-bottom: 0.1cm;">
+            @if(isset($codigoQR) && !empty($codigoQR))
+                <img src="{{ $codigoQR }}" alt="Código QR" width="80" height="80" style="display: block; margin: 0 auto;">
             @else
-                <span style="font-size: 8px; color: #999;">QR no generado</span>
+                <div style="width: 80px; height: 80px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <span style="font-size: 8px; color: #666;">QR no disponible</span>
+                </div>
             @endif
         </div>
 
         <!-- Número de registro -->
-        <div class="status">
+        <div class="status" style="margin-top: -0.1cm;">
             <p>{{ $numeroRegistro ?? 'Sin asignar' }}</p>
         </div>
 
