@@ -23,15 +23,16 @@
 
     <style>
         body {
-            background: linear-gradient(135deg, rgb(27, 57, 107) 0%, rgb(45, 80, 130) 100%);
+            background: white;
             min-height: 100vh;
             font-family: 'Figtree', sans-serif;
         }
         .verification-card {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             overflow: hidden;
+            border: 1px solid #e9ecef;
             margin: 2rem 0;
         }
         .header-section {
@@ -72,55 +73,91 @@
             text-align: center;
             margin-top: 1rem;
         }
-        .main-logo {
-            filter: brightness(0) invert(1);
-            transition: all 0.3s ease;
+        .title-header {
+            background: rgb(27, 57, 107);
+            color: white;
+            padding: 1.5rem 0;
+        }
+        .main-footer {
+            background: rgb(27, 57, 107);
+            color: white;
+            padding: 3rem 0 2rem 0;
+            margin-top: 4rem;
+        }
+        .main-footer h5 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+        .main-footer p, .main-footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+        .main-footer a:hover {
+            color: white;
         }
     </style>
 </head>
 
-<body class="font-sans antialiased">
-    <div class="min-h-screen py-6">
-        <div class="container mx-auto px-4">
-            <!-- Header con logo y título -->
-            <div class="text-center mb-6">
-                <img class="mx-auto h-20 mb-4 main-logo" src="{{ asset('images/logo.png') }}" alt="Logo TecNM">
-                <h1 class="text-white text-3xl font-bold">Tecnológico Nacional de México</h1>
-                <p class="text-white opacity-90 text-lg">Instituto Tecnológico de Ciudad Valles</p>
-                <p class="text-white opacity-75">
-                    <i class="fas fa-shield-check"></i> Sistema de Verificación de Documentos
-                </p>
-            </div>
+<body class="font-sans antialiased bg-white">
+    <div class="min-h-screen">
+        <!-- Header con logos oficiales -->
+        <div class="w-full flex items-center justify-center" style="background:rgb(255, 255, 255);">
+            <img src="/images/banner_tec.jpg" alt="Banner Tecnológico" style="width: 100%; max-width: 1200px; height: auto;">
+        </div>
 
-            <!-- Contenido principal -->
-            <div class="max-w-4xl mx-auto">
-                {{ $slot }}
-            </div>
-
-            <!-- Footer -->
-            <div class="text-center mt-8">
-                <div class="text-white opacity-75">
-                    <div class="d-flex justify-content-center align-items-center mb-3">
-                        @if(file_exists(public_path('edu.png')))
-                            <img class="mx-2" src="{{ asset('edu.png') }}" alt="SEP" style="height: 40px; filter: brightness(0) invert(1);">
-                        @endif
-                        @if(file_exists(public_path('logo_tecnm.png')))
-                            <img class="mx-2" src="{{ asset('logo_tecnm.png') }}" alt="TecNM" style="height: 40px; filter: brightness(0) invert(1);">
-                        @endif
-                        @if(file_exists(public_path('libre.png')))
-                            <img class="mx-2" src="{{ asset('libre.png') }}" alt="Libre" style="height: 30px; filter: brightness(0) invert(1);">
-                        @endif
-                    </div>
-                    <p class="text-sm mb-0">
-                        <i class="fas fa-calendar-alt"></i> 
-                        Verificación realizada el {{ \Carbon\Carbon::now()->format('d/m/Y H:i:s') }}
-                    </p>
-                    <p class="text-xs mt-2 opacity-60">
-                        Sistema de Validación Digital - TecNM Ciudad Valles
-                    </p>
+        <!-- Barra de título -->
+        <div class="title-header">
+            <div class="container mx-auto px-4">
+                <div class="text-center">
+                    <h2 class="font-semibold text-2xl text-white">
+                        Verificación de Documentos
+                    </h2>
                 </div>
             </div>
         </div>
+
+        <!-- Contenido principal -->
+        <div class="py-8">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    {{ $slot }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="container mx-auto px-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Dirección</h5>
+                        <p>Carr. al Ingenio Plan de Ayala Km. 2, Col. Vista Hermosa, Cd. Valles, S.L.P. C.P. 79010</p>
+                        
+                        <h5 class="mt-4">Contacto</h5>
+                        <p>Email: escolares@tecvalles.mx</p>
+                        <p>Conmutador: tel. (481) 381 20 44, 381 46 05 y 383 21 51</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Enlaces</h5>
+                        <p><a href="#" class="text-light">Portal de Obligaciones de Transparencia INAI</a></p>
+                        
+                        <h5 class="mt-4">Buzón de Sugerencias</h5>
+                        <p>Número de Visitas:</p>
+                        
+                        <!-- Mapa -->
+                        <div class="mt-3">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3692.8574561234567!2d-99.01670!3d21.9845!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d65c8a8b5c8b5c%3A0x5c8b5c8b5c8b5c8b!2sTecnol%C3%B3gico%20Nacional%20de%20M%C3%A9xico%20Campus%20Ciudad%20Valles!5e0!3m2!1ses!2smx!4v1638360000000" 
+                                    width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        <p class="mb-0">© Copyright 2024 TecNM/CdValles – Todos los Derechos Reservados</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 </body>
 </html>

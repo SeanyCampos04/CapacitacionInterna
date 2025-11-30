@@ -264,7 +264,7 @@
         </div>
 
         <!-- Código QR para verificación -->
-        <div class="qr-placeholder" style="margin-bottom: 0.1cm;">
+        <div class="qr-placeholder" style="margin-top: 0.3cm; margin-bottom: 0.05cm;">
             @if(isset($codigoQR) && !empty($codigoQR))
                 <img src="{{ $codigoQR }}" alt="Código QR" width="80" height="80" style="display: block; margin: 0 auto;">
             @else
@@ -275,7 +275,7 @@
         </div>
 
         <!-- Número de registro -->
-        <div class="status" style="margin-top: -0.1cm;">
+        <div class="status" style="margin-top: -0.05cm;">
             <p>{{ $numeroRegistro ?? 'Sin asignar' }}</p>
         </div>
 

@@ -2,10 +2,6 @@
     <div class="verification-card">
         <!-- Header -->
         <div class="header-section">
-            <div class="d-flex justify-content-center align-items-center mb-3">
-                <img src="{{ asset('edu.png') }}" alt="SEP" style="height: 40px; margin: 0 10px;">
-                <img src="{{ asset('logo_tecnm.png') }}" alt="TecNM" style="height: 40px; margin: 0 10px;">
-            </div>
             <h2 class="mb-2">Verificación de Documento</h2>
             <p class="mb-0 opacity-90">Sistema de Validación de Constancias y Reconocimientos</p>
         </div>
@@ -46,13 +42,13 @@
                         </div>
 
                         <div class="info-row">
-                            <strong class="text-muted">Programa:</strong><br>
+                            <strong class="text-muted">Curso:</strong><br>
                             <span>{{ $documento['nombre_programa'] }}</span>
                         </div>
 
                         <div class="info-row">
                             <strong class="text-muted">Descripción:</strong><br>
-                            <span>{{ $documento['descripcion'] }}</span>
+                            <span style="text-align: justify; line-height: 1.4;">{{ $documento['descripcion'] }}</span>
                         </div>
 
                         <div class="info-row">
@@ -88,19 +84,21 @@
                             </div>
                         @endif
 
-                        @if(isset($documento['instructores']))
+                        {{-- Instructor(es) - Comentado temporalmente --}}
+                        {{-- @if(isset($documento['instructores']))
                             <div class="info-row">
                                 <strong class="text-muted">Instructor(es):</strong><br>
                                 <span><i class="fas fa-user-tie"></i> {{ $documento['instructores'] }}</span>
                             </div>
-                        @endif
+                        @endif --}}
 
-                        @if(isset($documento['calificacion']))
+                        {{-- Calificación - Comentada temporalmente --}}
+                        {{-- @if(isset($documento['calificacion']))
                             <div class="info-row">
                                 <strong class="text-muted">Calificación:</strong><br>
                                 <span><i class="fas fa-star"></i> {{ $documento['calificacion'] }}</span>
                             </div>
-                        @endif
+                        @endif --}}
                     </div>
                 </div>
 
