@@ -54,12 +54,12 @@ class VerificacionPublicaController extends Controller
                 ->where('participantes.id', $participante->participante_id)
                 ->select('datos_generales.nombre', 'datos_generales.apellido_paterno', 'datos_generales.apellido_materno')
                 ->first();
-            
+
             $nombreCompleto = 'Sin datos';
             if ($datosParticipante) {
                 $nombreCompleto = trim($datosParticipante->nombre . ' ' . $datosParticipante->apellido_paterno . ' ' . $datosParticipante->apellido_materno);
             }
-            
+
             // Obtener datos de instructores
             $instructores = DB::table('cursos_instructores')
                 ->join('instructores', 'cursos_instructores.instructore_id', '=', 'instructores.id')
@@ -68,31 +68,31 @@ class VerificacionPublicaController extends Controller
                 ->where('cursos_instructores.curso_id', $participante->curso->id)
                 ->select('datos_generales.nombre', 'datos_generales.apellido_paterno', 'datos_generales.apellido_materno')
                 ->get();
-            
+
             $nombresInstructores = $instructores->map(function($instructor) {
                 return trim($instructor->nombre . ' ' . $instructor->apellido_paterno . ' ' . $instructor->apellido_materno);
             })->implode(', ');
-            
+
             if (empty($nombresInstructores)) {
                 $nombresInstructores = 'Información de instructores disponible';
             }
-            
+
             // Generar descripción completa como en la constancia
             $fechaInicio = Carbon::parse($participante->curso->fdi);
             $fechaFin = Carbon::parse($participante->curso->fdf);
-            
-            $descripcionCompleta = "POR PARTICIPAR Y ACREDITAR SATISFACTORIAMENTE EL CURSO DE CAPACITACIÓN \"" . 
-                strtoupper($participante->curso->nombre) . "\" IMPARTIDO POR " . 
-                strtoupper($nombresInstructores) . " DEL " . 
-                $fechaInicio->format('d') . " DE " . strtoupper($fechaInicio->translatedFormat('F')) . 
-                " AL " . $fechaFin->format('d') . " DE " . strtoupper($fechaFin->translatedFormat('F')) . 
-                " DEL " . $fechaInicio->format('Y') . ", CON UNA DURACIÓN DE " . 
-                $participante->curso->duracion . " HORAS, CON LA MODALIDAD " . 
-                strtoupper($participante->curso->modalidad) . ", REALIZADO EN " . 
-                strtoupper($participante->curso->lugar) . ", EN EL DEPARTAMENTO DE " . 
-                strtoupper($participante->curso->departamento->nombre ?? 'SIN DEPARTAMENTO') . 
+
+            $descripcionCompleta = "POR PARTICIPAR Y ACREDITAR SATISFACTORIAMENTE EL CURSO DE CAPACITACIÓN \"" .
+                strtoupper($participante->curso->nombre) . "\" IMPARTIDO POR " .
+                strtoupper($nombresInstructores) . " DEL " .
+                $fechaInicio->format('d') . " DE " . strtoupper($fechaInicio->translatedFormat('F')) .
+                " AL " . $fechaFin->format('d') . " DE " . strtoupper($fechaFin->translatedFormat('F')) .
+                " DEL " . $fechaInicio->format('Y') . ", CON UNA DURACIÓN DE " .
+                $participante->curso->duracion . " HORAS, CON LA MODALIDAD " .
+                strtoupper($participante->curso->modalidad) . ", REALIZADO EN " .
+                strtoupper($participante->curso->lugar) . ", EN EL DEPARTAMENTO DE " .
+                strtoupper($participante->curso->departamento->nombre ?? 'SIN DEPARTAMENTO') .
                 ", CON LA CALIFICACIÓN OBTENIDA DE " . ($participante->calificacion ?? '100') . ".";
-            
+
             $documento = [
                 'tipo_documento' => 'Constancia de Curso',
                 'nombre_completo' => $nombreCompleto,

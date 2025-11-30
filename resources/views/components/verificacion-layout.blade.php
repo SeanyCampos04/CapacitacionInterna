@@ -13,11 +13,11 @@
 
     <!-- Tailwind CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -132,7 +132,7 @@
                     <div class="col-md-6">
                         <h5>Dirección</h5>
                         <p>Carr. al Ingenio Plan de Ayala Km. 2, Col. Vista Hermosa, Cd. Valles, S.L.P. C.P. 79010</p>
-                        
+
                         <h5 class="mt-4">Contacto</h5>
                         <p>Email: escolares@tecvalles.mx</p>
                         <p>Conmutador: tel. (481) 381 20 44, 381 46 05 y 383 21 51</p>
@@ -140,13 +140,13 @@
                     <div class="col-md-6">
                         <h5>Enlaces</h5>
                         <p><a href="#" class="text-light">Portal de Obligaciones de Transparencia INAI</a></p>
-                        
+
                         <h5 class="mt-4">Buzón de Sugerencias</h5>
                         <p>Número de Visitas:</p>
-                        
+
                         <!-- Mapa -->
                         <div class="mt-3">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3692.8574561234567!2d-99.01670!3d21.9845!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d65c8a8b5c8b5c%3A0x5c8b5c8b5c8b5c8b!2sTecnol%C3%B3gico%20Nacional%20de%20M%C3%A9xico%20Campus%20Ciudad%20Valles!5e0!3m2!1ses!2smx!4v1638360000000" 
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3692.8574561234567!2d-99.01670!3d21.9845!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d65c8a8b5c8b5c%3A0x5c8b5c8b5c8b5c8b!2sTecnol%C3%B3gico%20Nacional%20de%20M%C3%A9xico%20Campus%20Ciudad%20Valles!5e0!3m2!1ses!2smx!4v1638360000000"
                                     width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </div>
