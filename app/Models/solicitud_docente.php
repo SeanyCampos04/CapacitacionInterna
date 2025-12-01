@@ -9,7 +9,12 @@ class solicitud_docente extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['diplomado_id', 'participante_id', 'estatus', 'carta_compromiso'];
+    protected $fillable = [
+        'diplomado_id',
+        'participante_id',
+        'estatus',
+        'carta_compromiso',
+        'numero_registro',];
 
     public function diplomado()
     {

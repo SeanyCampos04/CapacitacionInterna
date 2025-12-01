@@ -298,29 +298,78 @@ class DiplomadosController extends Controller
      * Mostrar los docentes inscritos de un diplomado específico
      */
     public function docentesInscritos($id)
-    {
-        // Obtener el diplomado específico con sus solicitudes aceptadas
-        $diplomado = Diplomado::with([
-            'solicitudesParticipantes' => function ($query) {
-                $query->where('estatus', 2) // Solo solicitudes aceptadas
-                      ->with([
-                          'participante.user.datos_generales',
-                          'participante.user' => function ($q) {
-                              $q->select('id', 'email');
-                          }
-                      ]);
-            },
-            'solicitudesInstructores' => function ($query) {
-                $query->where('estatus', 2) // Solo solicitudes aceptadas
-                      ->with([
-                          'instructore.user.datos_generales',
-                          'instructore.user' => function ($q) {
-                              $q->select('id', 'email');
-                          }
-                      ]);
-            }
-        ])->findOrFail($id);
+{
+    // Obtener el diplomado específico con sus solicitudes aceptadas
+    $diplomado = Diplomado::with([
+        'solicitudesParticipantes' => function ($query) {
+            $query->where('estatus', 2)
+                  ->with([
+                      'participante.user.datos_generales',
+                      'participante.user' => function ($q) {
+                          $q->select('id', 'email');
+                      }
+                  ]);
+        },
+        'solicitudesInstructores' => function ($query) {
+            $query->where('estatus', 2)
+                  ->with([
+                      'instructore.user.datos_generales',
+                      'instructore.user' => function ($q) {
+                          $q->select('id', 'email');
+                      }
+                  ]);
+        }
+    ])->findOrFail($id);
 
-        return view('diplomados.admin.docentes-inscritos', compact('diplomado'));
+    return view('diplomados.admin.docentes-inscritos', compact('diplomado'));
+}
+
+
+   public function guardarRegistro(Request $request)
+{
+    $request->validate([
+        'id' => 'required',
+        'tipo' => 'required',
+        'numero' => 'required|string'
+    ]);
+
+    $id = $request->id;
+    $tipo = $request->tipo; // participante o instructor
+    $numero = $request->numero;
+
+    // Validar que NO exista en ninguna de las dos tablas
+    $existeParticipante = solicitud_docente::where('numero_registro', $numero)->exists();
+    $existeInstructor   = solicitud_instructore::where('numero_registro', $numero)->exists();
+
+    if ($existeParticipante || $existeInstructor) {
+        return response()->json([
+            "success" => false,
+            "message" => "El número de registro '{$numero}' ya está asignado. Debes usar uno diferente."
+        ]);
     }
+
+    // Guardar según el tipo
+    if ($tipo === "participante") {
+        $solicitud = solicitud_docente::find($id);
+    } else {
+        $solicitud = solicitud_instructore::find($id);
+    }
+
+    if (!$solicitud) {
+        return response()->json([
+            "success" => false,
+            "message" => "No se encontró la solicitud."
+        ]);
+    }
+
+    // Guardar en BD
+    $solicitud->numero_registro = $numero;
+    $solicitud->save();
+
+    return response()->json([
+        "success" => true
+    ]);
+}
+
+
 }

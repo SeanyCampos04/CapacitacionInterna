@@ -155,13 +155,14 @@
                                 'Sin datos generales';
 
                             $inscritos->push([
-                                'id' => $solicitud->id,
-                                'nombre' => $nombre,
-                                'email' => $user->email,
-                                'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
-                                'estatus' => $solicitud->estatus == 2 ? 'Aceptado' : 'Denegado',
-                                'registro' => 'Participante'
-                            ]);
+    'id' => $solicitud->id,
+    'nombre' => $nombre,
+    'email' => $user->email,
+    'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
+    'estatus' => $solicitud->estatus == 2 ? 'Aceptado' : 'Denegado',
+    'registro' => 'Participante',
+    'numero_registro' => $solicitud->numero_registro
+]);
                         }
 
                         // Agregar instructores
@@ -172,13 +173,15 @@
                                 'Sin datos generales';
 
                             $inscritos->push([
-                                'id' => $solicitud->id,
-                                'nombre' => $nombre,
-                                'email' => $user->email,
-                                'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
-                                'estatus' => $solicitud->estatus == 2 ? 'Aceptado' : 'Denegado',
-                                'registro' => 'Instructor'
-                            ]);
+    'id' => $solicitud->id,
+    'nombre' => $nombre,
+    'email' => $user->email,
+    'duracion' => \Carbon\Carbon::parse($diplomado->inicio_realizacion)->diffInDays(\Carbon\Carbon::parse($diplomado->termino_realizacion)) + 1,
+    'estatus' => $solicitud->estatus == 2 ? 'Aceptado' : 'Denegado',
+    'registro' => 'Instructor',
+    'numero_registro' => $solicitud->numero_registro
+]);
+
                         }
                     @endphp
 
@@ -198,50 +201,93 @@
                                                 <th>Duración del Diplomado</th>
                                                 <th>Estatus</th>
                                                 <th>Como se Registró</th>
+                                                <th>Número de Registro</th>
                                                 <th>Constancia</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($inscritos->sortBy('nombre') as $inscrito)
-                                                <tr>
-                                                    <td>
-                                                        <strong>{{ $inscrito['nombre'] }}</strong>
-                                                    </td>
-                                                    <td>
-                                                        <small class="text-muted">{{ $inscrito['email'] }}</small>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-info">{{ $inscrito['duracion'] }} días</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge {{ $inscrito['estatus'] == 'Aceptado' ? 'badge-success' : 'badge-danger' }}">
-                                                            {{ $inscrito['estatus'] }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge {{ $inscrito['registro'] == 'Participante' ? 'badge-participant' : 'badge-instructor' }}">
-                                                            <i class="fas {{ $inscrito['registro'] == 'Participante' ? 'fa-user-graduate' : 'fa-chalkboard-teacher' }} me-1"></i>
-                                                            {{ $inscrito['registro'] }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        @if($inscrito['estatus'] == 'Aceptado')
-                                                            <a href="{{ route('diplomados.constancia', [
-                                                                'diplomado_id' => $diplomado->id,
-                                                                'participante_id' => $inscrito['id'],
-                                                                'tipo' => strtolower($inscrito['registro'])
-                                                            ]) }}"
-                                                            target="_blank"
-                                                            class="btn btn-success btn-sm">
-                                                                <i class="fas fa-file-pdf me-1"></i>Constancia
-                                                            </a>
-                                                        @else
-                                                            <span class="text-muted small">No disponible</span>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
+@foreach($inscritos->sortBy('nombre') as $inscrito)
+    <tr>
+        <td>
+            <strong>{{ $inscrito['nombre'] }}</strong>
+        </td>
+
+        <td>
+            <small class="text-muted">{{ $inscrito['email'] }}</small>
+        </td>
+
+        <td>
+            <span class="badge bg-info">{{ $inscrito['duracion'] }} días</span>
+        </td>
+
+        <td>
+            <span class="badge {{ $inscrito['estatus'] == 'Aceptado' ? 'badge-success' : 'badge-danger' }}">
+                {{ $inscrito['estatus'] }}
+            </span>
+        </td>
+
+        <td>
+            <span class="badge {{ $inscrito['registro'] == 'Participante' ? 'badge-participant' : 'badge-instructor' }}">
+                <i class="fas {{ $inscrito['registro'] == 'Participante' ? 'fa-user-graduate' : 'fa-chalkboard-teacher' }} me-1"></i>
+                {{ $inscrito['registro'] }}
+            </span>
+        </td>
+
+        <!-- COLUMNA DE NÚMERO DE REGISTRO -->
+        <td style="min-width:320px;">
+    @php
+        $prefijo = "TNM-169-";
+        $tipo = strtolower($inscrito['registro']); // instructor o participante
+        $numero = $inscrito['numero_registro'] ?? null;
+    @endphp
+    @if(!$numero)
+        <!-- SI AÚN NO ESTÁ GUARDADO → MOSTRAR INPUT -->
+        <div class="input-group">
+            <span class="input-group-text">{{ $prefijo }}</span>
+            <input
+                type="text"
+                class="form-control registro-input"
+                id="registro-{{ $inscrito['id'] }}"
+                
+                data-id="{{ $inscrito['id'] }}"
+                data-tipo="{{ $tipo }}"
+            >
+            <button class="btn btn-outline-success guardar-registro"
+                    type="button"
+                    data-id="{{ $inscrito['id'] }}"
+                    data-tipo="{{ $tipo }}">
+                <i class="fas fa-save"></i>
+            </button>
+        </div>
+        <small class="form-text text-muted">
+            Instructor: XX-YYYY/I-XX · Participante: XX-YYYY/XX
+        </small>
+    @else
+        <!-- SI YA ESTÁ GUARDADO → MOSTRAR COMO TEXTO -->
+        <strong>{{ $prefijo . $numero }}</strong>
+    @endif
+</td>
+        <!-- CONSTANCIA -->
+        <td>
+            @if($inscrito['estatus'] == 'Aceptado')
+                <a href="{{ route('diplomados.constancia', [
+                    'diplomado_id' => $diplomado->id,
+                    'participante_id' => $inscrito['id'],
+                    'tipo' => strtolower($inscrito['registro'])
+                ]) }}"
+                target="_blank"
+                class="btn btn-success btn-sm">
+                    <i class="fas fa-file-pdf me-1"></i>Constancia
+                </a>
+            @else
+                <span class="text-muted small">No disponible</span>
+            @endif
+        </td>
+
+    </tr>
+@endforeach
+</tbody>
+
                                     </table>
                                 </div>
 
@@ -263,4 +309,111 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".guardar-registro").forEach(btn => {
+
+        btn.addEventListener("click", function () {
+
+            let id = this.dataset.id;
+            let tipo = this.dataset.tipo;
+            let input = document.getElementById("registro-" + id);
+
+            if (!input.value.trim()) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Campo vacío",
+                    text: "Debes ingresar un número de registro.",
+                    heightAuto: false,
+                    width: "350px",
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: "btn btn-danger"
+                    }
+                });
+                return;
+            }
+
+            let numero = input.value.trim();
+
+            Swal.fire({
+                title: "¿Guardar número?",
+                text: "Confirma para guardar el número de registro.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Guardar",
+                cancelButtonText: "Cancelar",
+                heightAuto: false,
+                width: "350px",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-success me-2',
+                    cancelButton: 'btn btn-secondary'
+                }
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    fetch("{{ route('diplomados.guardarRegistro') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            id: String(id),
+                            tipo: String(tipo),
+                            numero: String(numero)
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+
+                        if (data.success) {
+
+                            Swal.fire({
+                                title: "Guardado",
+                                text: "El número de registro fue guardado correctamente.",
+                                icon: "success",
+                                heightAuto: false,
+                                width: "350px",
+                                buttonsStyling: false,
+                                customClass: {
+                                    confirmButton: 'btn btn-primary'
+                                }
+                            });
+
+                            let celda = input.parentElement.parentElement;
+                            celda.innerHTML = "<strong>TNM-169-" + numero + "</strong>";
+
+                        } else {
+                            Swal.fire({
+                                title: "Error",
+                                text: data.message,
+                                icon: "error",
+                                heightAuto: false,
+                                width: "350px",
+                                buttonsStyling: false,
+                                customClass: { confirmButton: "btn btn-danger" }
+                            });
+                        }
+
+                    }).catch(error => {
+                        console.error("Error en el fetch:", error);
+                        Swal.fire("Error", "Hubo un problema con la conexión.", "error");
+                    });
+
+                }
+
+            });
+
+        });
+
+    });
+
+});
+</script>
 </x-app-diplomados-layout>
