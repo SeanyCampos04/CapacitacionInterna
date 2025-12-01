@@ -23,6 +23,7 @@ use App\Models\cursos_instructore;
 use App\Models\Instructore;
 use App\Models\User;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -183,6 +184,12 @@ Route::middleware('auth')->group(function () {
 // =====================================================
 // RUTAS DEL MÓDULO DE DIPLOMADOS
 // =====================================================
+
+Route::post('/diplomados/guardar-registro', [DiplomadosController::class, 'guardarRegistro'])
+    ->name('diplomados.guardarRegistro');
+
+Route::post('/guardar-numero-registro', [DiplomadosController::class, 'guardarNumeroRegistro'])
+    ->name('guardar.numero.registro');
 
 Route::middleware('auth')->group(function () {
     // Rutas principales del módulo de diplomados

@@ -15,7 +15,8 @@ class solicitud_instructore extends Model
         'diplomado_id',
         'instructore_id',
         'estatus',
-        'carta_terminacion'
+        'carta_terminacion',
+        'numero_registro',
     ];
 
     public function diplomado()
