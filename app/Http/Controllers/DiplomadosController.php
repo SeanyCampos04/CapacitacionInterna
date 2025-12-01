@@ -302,7 +302,7 @@ class DiplomadosController extends Controller
         // Obtener el diplomado específico con sus solicitudes aceptadas
         $diplomado = Diplomado::with([
             'solicitudesParticipantes' => function ($query) {
-                $query->where('estatus', 2) // Solo solicitudes aceptadas
+            $query->where('estatus', 2)
                       ->with([
                           'participante.user.datos_generales',
                           'participante.user' => function ($q) {
