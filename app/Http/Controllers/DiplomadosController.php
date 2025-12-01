@@ -336,15 +336,18 @@ class DiplomadosController extends Controller
     $id = $request->id;
     $tipo = $request->tipo; // participante o instructor
     $numero = $request->numero;
+    
+    // Agregar el prefijo TNM-169- al número
+    $numeroCompleto = 'TNM-169-' . $numero;
 
-    // Validar que NO exista en ninguna de las dos tablas
-    $existeParticipante = solicitud_docente::where('numero_registro', $numero)->exists();
-    $existeInstructor   = solicitud_instructore::where('numero_registro', $numero)->exists();
+    // Validar que NO exista en ninguna de las dos tablas (con prefijo)
+    $existeParticipante = solicitud_docente::where('numero_registro', $numeroCompleto)->exists();
+    $existeInstructor   = solicitud_instructore::where('numero_registro', $numeroCompleto)->exists();
 
     if ($existeParticipante || $existeInstructor) {
         return response()->json([
             "success" => false,
-            "message" => "El número de registro '{$numero}' ya está asignado. Debes usar uno diferente."
+            "message" => "El número de registro '{$numeroCompleto}' ya está asignado. Debes usar uno diferente."
         ]);
     }
 
@@ -362,8 +365,8 @@ class DiplomadosController extends Controller
         ]);
     }
 
-    // Guardar en BD
-    $solicitud->numero_registro = $numero;
+    // Guardar en BD el número completo con prefijo
+    $solicitud->numero_registro = $numeroCompleto;
     $solicitud->save();
 
     return response()->json([

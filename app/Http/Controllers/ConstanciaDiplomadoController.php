@@ -152,8 +152,8 @@ class ConstanciaDiplomadoController extends Controller
             $imagenFondo = public_path('storage/' . $periodo->archivo_fondo);
         }
 
-        // Generar número de registro
-        $numeroRegistro = $this->generarNumeroRegistroDiplomado($diplomado, $tipoRegistro, $participante_id);
+        // Usar el número de registro manual si existe, sino generar automáticamente
+        $numeroRegistro = $solicitud->numero_registro ?? $this->generarNumeroRegistroDiplomado($diplomado, $tipoRegistro, $participante_id);
 
         // Preparar datos para la vista
         $tipoUsuario = $tipoRegistro; // Para compatibilidad con la plantilla
