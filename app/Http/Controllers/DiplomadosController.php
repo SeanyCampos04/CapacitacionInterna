@@ -336,7 +336,7 @@ class DiplomadosController extends Controller
     $id = $request->id;
     $tipo = $request->tipo; // participante o instructor
     $numero = $request->numero;
-    
+
     // Agregar el prefijo TNM-169- al número
     $numeroCompleto = 'TNM-169-' . $numero;
 
