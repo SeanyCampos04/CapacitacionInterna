@@ -33,7 +33,8 @@
 
     <div class="container mx-auto mt-6 bg-white p-6 shadow-lg rounded-lg">
 
-        @foreach($diplomados as $diplomado)
+        @if($diplomados->count() > 0)
+            @foreach($diplomados as $diplomado)
         <div class="diplomado flex justify-between items-center border-b border-gray-300 py-4 mb-4">
             <div class="descripcion flex-1 ml-4">
                 <h4 class="text-lg font-semibold text-gray-800">{{ $diplomado->nombre }}</h4>
@@ -153,7 +154,17 @@
             </div>
         </div>
 
-        @endforeach
+            @endforeach
+        @else
+            <div class="text-center py-8">
+                <div class="bg-gray-50 rounded-lg p-8 border-2 border-dashed border-gray-200">
+                    <i class="fas fa-graduation-cap text-6xl text-gray-400 mb-4"></i>
+                    <h3 class="text-2xl font-semibold text-gray-600 mb-2">No hay diplomados disponibles</h3>
+                    <p class="text-gray-500 text-lg">En este momento no hay diplomados en oferta</p>
+                    <p class="text-gray-400 text-sm mt-4">Vuelve pronto para ver nuevas ofertas de diplomados</p>
+                </div>
+            </div>
+        @endif
     </div>
 
 </x-app-diplomados-layout>
