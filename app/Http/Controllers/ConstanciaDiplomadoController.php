@@ -155,6 +155,18 @@ class ConstanciaDiplomadoController extends Controller
         // Usar el número de registro manual si existe, sino generar automáticamente
         $numeroRegistro = $solicitud->numero_registro ?? $this->generarNumeroRegistroDiplomado($diplomado, $tipoRegistro, $participante_id);
 
+        // Generar código QR para verificación
+        $codigoQR = null;
+        if ($numeroRegistro) {
+            $urlVerificacion = route('verificacion.general', $numeroRegistro);
+            $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' . urlencode($urlVerificacion);
+
+            $qrImageData = @file_get_contents($qrApiUrl);
+            if ($qrImageData !== false) {
+                $codigoQR = 'data:image/png;base64,' . base64_encode($qrImageData);
+            }
+        }
+
         // Preparar datos para la vista
         $tipoUsuario = $tipoRegistro; // Para compatibilidad con la plantilla
         $participante = $usuario->datos_generales; // Los datos del participante
@@ -168,7 +180,8 @@ class ConstanciaDiplomadoController extends Controller
             'duracionDias',
             'fecha_actual',
             'numeroRegistro',
-            'imagenFondo'
+            'imagenFondo',
+            'codigoQR'
         ));
 
         // Nombre del archivo

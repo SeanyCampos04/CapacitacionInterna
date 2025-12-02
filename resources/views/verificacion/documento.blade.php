@@ -2,8 +2,8 @@
     <div class="verification-card">
         <!-- Header -->
         <div class="header-section">
-            <h2 class="mb-2">Verificación de Documento</h2>
-            <p class="mb-0 opacity-90">Sistema de Validación de Constancias y Reconocimientos</p>
+            <h2 class="mb-2">Sistema de Validación de Constancias y Reconocimientos</h2>
+            <p class="mb-0 opacity-90">Verificación de Documentos Oficiales</p>
         </div>
 
         <!-- Estado del documento -->

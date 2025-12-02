@@ -200,10 +200,12 @@
 </head>
 <body>
     <div class="container">
-        <!-- Número de registro - DESACTIVADO TEMPORALMENTE -->
-        {{-- <div class="numero-registro">
-            No. Registro: {{ $numeroRegistro ?? 'N/A' }}
-        </div> --}}
+        <!-- Número de registro -->
+        @if(isset($numeroRegistro) && $numeroRegistro)
+            <div class="numero-registro">
+                No. Registro: {{ $numeroRegistro }}
+            </div>
+        @endif
 
         <!-- Encabezado con logos -->
         <div class="header">
@@ -269,15 +271,15 @@
         <!-- Código QR para verificación -->
         <div class="qr-placeholder">
             @if(isset($codigoQR) && $codigoQR)
-                {!! $codigoQR !!}
+                <img src="{{ $codigoQR }}" alt="QR Code" style="width: 80px; height: 80px;">
             @else
-                <span style="font-size: 8px; color: #999;">
+                <div style="border: 1px solid #ccc; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 8px; color: #999;">
                     @if(!isset($capacitacion->folio) || !$capacitacion->folio || $capacitacion->folio === 'Rechazado')
-                        Sin folio asignado
+                        Sin folio
                     @else
                         QR no generado
                     @endif
-                </span>
+                </div>
             @endif
         </div>
 
