@@ -260,7 +260,7 @@
             </button>
         </div>
         <small class="form-text text-muted">
-            Instructor: XX-YYYY/I-XX · Participante: XX-YYYY/XX
+            Instructor: XX-YYYY/I-XX · Participante: XX-YYYY/XXX
         </small>
     @else
         <!-- SI YA ESTÁ GUARDADO → MOSTRAR COMO TEXTO COMPLETO -->
@@ -338,6 +338,38 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             let numero = input.value.trim();
+
+            // Validaciones de formato
+const regexInstructor = /^[A-Z0-9]{2}-\d{4}\/I-[A-Z0-9]{2}$/;
+const regexParticipante = /^[A-Z0-9]{2}-\d{4}\/[A-Z0-9]{2}$/;
+
+// Validación según tipo
+if (tipo === "instructor" && !regexInstructor.test(numero)) {
+    Swal.fire({
+        icon: "error",
+        title: "Formato inválido",
+        text: "Formato correcto para INSTRUCTOR: XX-YYYY/I-XX",
+        heightAuto: false,
+        width: "350px",
+        buttonsStyling: false,
+        customClass: { confirmButton: "btn btn-danger" }
+    });
+    return;
+}
+
+if (tipo === "participante" && !regexParticipante.test(numero)) {
+    Swal.fire({
+        icon: "error",
+        title: "Formato inválido",
+        text: "Formato correcto para PARTICIPANTE: XX-YYYY/XX",
+        heightAuto: false,
+        width: "350px",
+        buttonsStyling: false,
+        customClass: { confirmButton: "btn btn-danger" }
+    });
+    return;
+}
+
 
             Swal.fire({
                 title: "¿Guardar número?",

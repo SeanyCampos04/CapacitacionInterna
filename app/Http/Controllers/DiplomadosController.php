@@ -325,22 +325,41 @@ class DiplomadosController extends Controller
 }
 
 
-   public function guardarRegistro(Request $request)
+  public function guardarRegistro(Request $request)
 {
     $request->validate([
         'id' => 'required',
-        'tipo' => 'required',
+        'tipo' => 'required|in:participante,instructor',
         'numero' => 'required|string'
     ]);
 
     $id = $request->id;
     $tipo = $request->tipo; // participante o instructor
-    $numero = $request->numero;
+    $numero = strtoupper($request->numero); // Convertimos a mayúsculas por consistencia
 
-    // Agregar el prefijo TNM-169- al número
+    // Regex según el tipo
+    $regexInstructor = '/^[A-Z0-9]{2}-\d{4}\/I-[A-Z0-9]{2}$/';
+    $regexParticipante = '/^[A-Z0-9]{2}-\d{4}\/[A-Z0-9]{2}$/';
+
+    // Validación por tipo
+    if ($tipo === "instructor" && !preg_match($regexInstructor, $numero)) {
+        return response()->json([
+            "success" => false,
+            "message" => "El número de registro para INSTRUCTOR debe tener el formato: XX-YYYY/I-XX"
+        ]);
+    }
+
+    if ($tipo === "participante" && !preg_match($regexParticipante, $numero)) {
+        return response()->json([
+            "success" => false,
+            "message" => "El número de registro para PARTICIPANTE debe tener el formato: XX-YYYY/XX"
+        ]);
+    }
+
+    // Agregar el prefijo TNM-169-
     $numeroCompleto = 'TNM-169-' . $numero;
 
-    // Validar que NO exista en ninguna de las dos tablas (con prefijo)
+    // Validar que NO exista en ninguna de las dos tablas
     $existeParticipante = solicitud_docente::where('numero_registro', $numeroCompleto)->exists();
     $existeInstructor   = solicitud_instructore::where('numero_registro', $numeroCompleto)->exists();
 
@@ -351,7 +370,7 @@ class DiplomadosController extends Controller
         ]);
     }
 
-    // Guardar según el tipo
+    // Buscar solicitud según tipo
     if ($tipo === "participante") {
         $solicitud = solicitud_docente::find($id);
     } else {
@@ -365,13 +384,11 @@ class DiplomadosController extends Controller
         ]);
     }
 
-    // Guardar en BD el número completo con prefijo
+    // Guardar en BD
     $solicitud->numero_registro = $numeroCompleto;
     $solicitud->save();
 
-    return response()->json([
-        "success" => true
-    ]);
+    return response()->json(["success" => true]);
 }
 
 
