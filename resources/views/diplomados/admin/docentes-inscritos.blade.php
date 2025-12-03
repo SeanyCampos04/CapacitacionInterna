@@ -260,7 +260,7 @@
             </button>
         </div>
         <small class="form-text text-muted">
-            Instructor: XX-YYYY/I-XX · Participante: XX-YYYY/XX
+            Instructor: 09-2025/I-01 · Participante: 09-2025/004 (instructores: 2 dígitos, participantes: 3 dígitos)
         </small>
     @else
         <!-- SI YA ESTÁ GUARDADO → MOSTRAR COMO TEXTO COMPLETO -->
