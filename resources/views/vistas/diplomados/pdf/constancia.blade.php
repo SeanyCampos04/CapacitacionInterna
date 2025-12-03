@@ -27,11 +27,12 @@
         .container {
             margin-top: 1.5cm;
             margin-bottom: 0.5cm;
-            margin-left: 1.5cm;
-            margin-right: 1.5cm;
+            margin-left: 2cm;
+            margin-right: 2cm;
             position: relative;
             z-index: 1;
             min-height: calc(100vh - 2cm); /* Asegurar que ocupe toda la altura */
+            max-width: calc(21.59cm - 4cm); /* Ancho carta menos márgenes */
         }
 
         .header {
@@ -108,9 +109,15 @@
         .details {
             font-size: 16px;
             margin: 0.6cm 0;
-            padding: 0.3cm 0;
+            padding: 0.3cm 0.5cm;
             text-align: justify;
             text-transform: uppercase;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            line-height: 1.3;
+            max-width: 100%;
+            box-sizing: border-box;
         }
         .date {
             position: absolute;
@@ -170,7 +177,7 @@
 
         .qr-placeholder {
             position: absolute;
-            bottom: 3.5cm;
+            bottom: 3.2cm;
             right: 1.5cm;
             width: 2cm;
             height: 2cm;
