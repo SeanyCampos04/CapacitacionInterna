@@ -15,13 +15,7 @@
                                     Nombre
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-center">
-                                    @foreach ($cursosTerminados as $cursoTerminado)
-                                        @if ($cursoTerminado->curso->instructores->count() == 2)
-                                            Instructores
-                                        @else
-                                            Instructor
-                                        @endif
-                                    @endforeach
+                                    Instructor
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-center">
                                     Departamento
