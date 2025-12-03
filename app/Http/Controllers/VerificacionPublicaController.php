@@ -204,32 +204,32 @@ class VerificacionPublicaController extends Controller
     /**
      * Método de diagnóstico temporal
      */
-    public function diagnosticar($numeroRegistro) 
+    public function diagnosticar($numeroRegistro)
     {
         $info = [];
-        
+
         // 1. Verificar si llega al método
         $info[] = "✓ Método diagnosticar ejecutado con: " . $numeroRegistro;
-        
+
         // 2. Buscar en solicitud_docentes
         $participantes = DB::table('solicitud_docentes')->get(['id', 'numero_registro', 'estatus']);
         $info[] = "✓ Total registros participantes: " . $participantes->count();
-        
-        // 3. Buscar en solicitud_instructores  
+
+        // 3. Buscar en solicitud_instructores
         $instructores = DB::table('solicitud_instructores')->get(['id', 'numero_registro', 'estatus']);
         $info[] = "✓ Total registros instructores: " . $instructores->count();
-        
+
         // 4. Buscar exacto
         $exactoP = DB::table('solicitud_docentes')->where('numero_registro', $numeroRegistro)->first();
         $info[] = $exactoP ? "✓ Encontrado exacto en participantes: ID " . $exactoP->id : "✗ NO encontrado exacto en participantes";
-        
+
         $exactoI = DB::table('solicitud_instructores')->where('numero_registro', $numeroRegistro)->first();
         $info[] = $exactoI ? "✓ Encontrado exacto en instructores: ID " . $exactoI->id : "✗ NO encontrado exacto en instructores";
-        
+
         // 5. Si encuentra el registro, probar los JOINs
         if ($exactoP) {
             $info[] = "=== PROBANDO JOINS PARA PARTICIPANTE ID " . $exactoP->id . " ===";
-            
+
             $conJoins = DB::table('solicitud_docentes')
                 ->leftJoin('diplomados', 'solicitud_docentes.diplomado_id', '=', 'diplomados.id')
                 ->leftJoin('participantes', 'solicitud_docentes.participante_id', '=', 'participantes.id')
@@ -243,7 +243,7 @@ class VerificacionPublicaController extends Controller
                     'datos_generales.nombre as participante_nombre'
                 )
                 ->first();
-                
+
             if ($conJoins) {
                 $info[] = "✓ JOINs exitosos - Diplomado: " . ($conJoins->diplomado_nombre ?? 'NULL');
                 $info[] = "✓ Participante: " . ($conJoins->participante_nombre ?? 'NULL');
@@ -253,7 +253,7 @@ class VerificacionPublicaController extends Controller
                 $info[] = "✗ JOINs fallaron - no retornó datos";
             }
         }
-        
+
         return response()->json([
             'numero_buscado' => $numeroRegistro,
             'diagnostico' => $info,
@@ -272,14 +272,14 @@ class VerificacionPublicaController extends Controller
         $solicitudBasica = DB::table('solicitud_docentes')
             ->where('numero_registro', $numeroRegistro)
             ->first();
-            
+
         if (!$solicitudBasica) {
             // Buscar con LIKE
             $solicitudBasica = DB::table('solicitud_docentes')
                 ->where('numero_registro', 'LIKE', "%{$numeroRegistro}%")
                 ->first();
         }
-        
+
         if ($solicitudBasica) {
             // PASO 2: Solo si encuentra el registro básico, hacer los JOINs
             $solicitudParticipante = DB::table('solicitud_docentes')
@@ -343,13 +343,13 @@ class VerificacionPublicaController extends Controller
         $solicitudInstructorBasica = DB::table('solicitud_instructores')
             ->where('numero_registro', $numeroRegistro)
             ->first();
-            
+
         if (!$solicitudInstructorBasica) {
             $solicitudInstructorBasica = DB::table('solicitud_instructores')
                 ->where('numero_registro', 'LIKE', "%{$numeroRegistro}%")
                 ->first();
         }
-        
+
         if ($solicitudInstructorBasica) {
             $solicitudInstructor = DB::table('solicitud_instructores')
                 ->join('diplomados', 'solicitud_instructores.diplomado_id', '=', 'diplomados.id')
@@ -408,11 +408,11 @@ class VerificacionPublicaController extends Controller
         }
 
         // PASO 4: Búsquedas adicionales con más flexibilidad
-        
+
         // Buscar solo con la parte numérica si el número empieza con TNM-169-
         if (strpos($numeroRegistro, 'TNM-169-') === 0) {
             $parteNumero = str_replace('TNM-169-', '', $numeroRegistro);
-            
+
             // Buscar en participantes con la parte del número
             $solicitudParticipanteParte = DB::table('solicitud_docentes')
                 ->leftJoin('diplomados', 'solicitud_docentes.diplomado_id', '=', 'diplomados.id')
@@ -425,7 +425,7 @@ class VerificacionPublicaController extends Controller
                     'solicitud_docentes.participante_id'
                 )
                 ->first();
-                
+
             if ($solicitudParticipanteParte) {
                 $documento = [
                     'tipo_documento' => 'Diploma',
@@ -448,7 +448,7 @@ class VerificacionPublicaController extends Controller
                     'modulo' => 'Diplomados'
                 ]);
             }
-            
+
             // Buscar en instructores con la parte del número
             $solicitudInstructorParte = DB::table('solicitud_instructores')
                 ->leftJoin('diplomados', 'solicitud_instructores.diplomado_id', '=', 'diplomados.id')
@@ -460,7 +460,7 @@ class VerificacionPublicaController extends Controller
                     'solicitud_instructores.estatus'
                 )
                 ->first();
-                
+
             if ($solicitudInstructorParte) {
                 $documento = [
                     'tipo_documento' => 'Reconocimiento de Instructor de Diplomado',
