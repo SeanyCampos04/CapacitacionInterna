@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-white">
-            {{ __('Encuesta') }}
+            {{ __('Encuesta - ') }} {{ $curso->nombre }}
         </h2>
     </x-slot>
     <div class="min-h-screen flex flex-col  items-center pt-6  bg-gray-100">

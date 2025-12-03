@@ -260,7 +260,8 @@
             </button>
         </div>
         <small class="form-text text-muted">
-            Instructor: 09-2025/I-01 · Participante: 09-2025/004 (instructores: 2 dígitos, participantes: 3 dígitos)
+             Instructor: XX-YYYY/I-XX (Ej. 09-2025/I-01)<br>
+    Participante: XX-YYYY/XXX (Ej. 09-2025/004)
         </small>
     @else
         <!-- SI YA ESTÁ GUARDADO → MOSTRAR COMO TEXTO COMPLETO -->
@@ -338,6 +339,38 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             let numero = input.value.trim();
+
+            // Validaciones de formato
+const regexInstructor = /^[A-Z0-9]{2}-\d{4}\/I-[A-Z0-9]{2}$/;
+const regexParticipante = /^[A-Z0-9]{2}-\d{4}\/[A-Z0-9]{3}$/;
+
+// Validación según tipo
+if (tipo === "instructor" && !regexInstructor.test(numero)) {
+    Swal.fire({
+        icon: "error",
+        title: "Formato inválido",
+        text: "Formato correcto para INSTRUCTOR: XX-YYYY/I-XX",
+        heightAuto: false,
+        width: "350px",
+        buttonsStyling: false,
+        customClass: { confirmButton: "btn btn-danger" }
+    });
+    return;
+}
+
+if (tipo === "participante" && !regexParticipante.test(numero)) {
+    Swal.fire({
+        icon: "error",
+        title: "Formato inválido",
+        text: "Formato correcto para PARTICIPANTE: XX-YYYY/XXX",
+        heightAuto: false,
+        width: "350px",
+        buttonsStyling: false,
+        customClass: { confirmButton: "btn btn-danger" }
+    });
+    return;
+}
+
 
             Swal.fire({
                 title: "¿Guardar número?",
