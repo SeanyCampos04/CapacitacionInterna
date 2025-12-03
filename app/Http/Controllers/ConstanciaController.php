@@ -7,6 +7,7 @@ use App\Models\RegistroCapacitacionesExt;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ConstanciaController extends Controller
 {
@@ -52,6 +53,27 @@ class ConstanciaController extends Controller
         // No importa si el usuario es instructor en el sistema
         $tipoUsuario = 'Participante';
 
+        // Generar número de registro sistemático
+        $numeroRegistro = $capacitacion->folio ?: $this->generarNumeroRegistroExterno($capacitacion, $tipoUsuario);
+
+        // Actualizar folio si no existe
+        if (!$capacitacion->folio && $numeroRegistro) {
+            $capacitacion->folio = $numeroRegistro;
+            $capacitacion->save();
+        }
+
+        // Generar código QR usando el número de registro - usando API externa para compatibilidad PDF
+        $codigoQR = null;
+        if ($numeroRegistro && $numeroRegistro !== 'Rechazado') {
+            $urlVerificacion = route('verificacion.general', $numeroRegistro);
+            $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' . urlencode($urlVerificacion);
+
+            $qrImageData = @file_get_contents($qrApiUrl);
+            if ($qrImageData !== false) {
+                $codigoQR = 'data:image/png;base64,' . base64_encode($qrImageData);
+            }
+        }
+
         // Obtener imagen de fondo del periodo más reciente (último registrado)
         $imagenFondo = null;
         $periodoReciente = \App\Models\Periodo::orderBy('id', 'desc')->first();
@@ -59,11 +81,8 @@ class ConstanciaController extends Controller
             $imagenFondo = public_path('storage/' . $periodoReciente->archivo_fondo);
         }
 
-        // Generar número de registro - DESACTIVADO TEMPORALMENTE
-        // $numeroRegistro = $this->generarNumeroRegistroExterno($capacitacion, $tipoUsuario);
-
         // Generar el PDF con la vista y los datos
-        $pdf = Pdf::loadView('externa.pdf.constancia', compact('capacitacion', 'tipoUsuario', 'imagenFondo'));
+        $pdf = Pdf::loadView('externa.pdf.constancia', compact('capacitacion', 'tipoUsuario', 'codigoQR', 'imagenFondo', 'numeroRegistro'));
 
         // Retornar el PDF para descargar o visualizar
         return $pdf->stream('constancia.pdf');

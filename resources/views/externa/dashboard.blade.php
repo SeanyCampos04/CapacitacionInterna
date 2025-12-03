@@ -58,14 +58,15 @@
                             $is_cad = in_array(4, $user_role_ids) || in_array('CAD', $user_roles);
                             $is_jefe_departamento = in_array(2, $user_role_ids) || in_array('Jefe Departamento', $user_roles);
                             $is_subdirector = in_array(3, $user_role_ids) || in_array('Subdirector Academico', $user_roles);
-                        @endphp                        <!-- Tarjeta Registrar - Para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
+                        @endphp                        <!-- Tarjeta Registrar - Para todos los usuarios (incluyendo participantes sin rol) -->
                         @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
                              in_array('Instructor', $user_roles) or
                              in_array('Docente', $user_roles) or
                              in_array('admin', $user_roles) or
                              in_array('CAD', $user_roles) or
                              in_array('Jefe Departamento', $user_roles) or
-                             in_array('Subdirector Academico', $user_roles))
+                             in_array('Subdirector Academico', $user_roles) or
+                             empty($user_roles))
                             <div class="col-md-4 mb-4">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
@@ -82,8 +83,8 @@
                             </div>
                         @endif
 
-                        <!-- Tarjeta Ver Capacitaciones - Visible para todos EXCEPTO Instructores -->
-                        @if (!$is_instructor)
+                        <!-- Tarjeta Ver Capacitaciones - Visible solo para usuarios con roles (EXCEPTO Instructores y participantes sin rol) -->
+                        @if (!$is_instructor && !empty($user_roles))
                             <div class="col-md-4 mb-4">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
@@ -100,14 +101,15 @@
                             </div>
                         @endif
 
-                        <!-- Tarjeta Mis Capacitaciones - Para Instructores, Docentes, Admin, CAD, Jefe Departamento, Subdirector -->
+                        <!-- Tarjeta Mis Capacitaciones - Para todos los usuarios (incluyendo participantes sin rol) -->
                         @if ($is_instructor or $is_admin or $is_cad or $is_jefe_departamento or $is_subdirector or
                              in_array('Instructor', $user_roles) or
                              in_array('Docente', $user_roles) or
                              in_array('admin', $user_roles) or
                              in_array('CAD', $user_roles) or
                              in_array('Jefe Departamento', $user_roles) or
-                             in_array('Subdirector Academico', $user_roles))
+                             in_array('Subdirector Academico', $user_roles) or
+                             empty($user_roles))
                             <div class="col-md-4 mb-4">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
@@ -115,9 +117,9 @@
                                             <i class="fas fa-user fa-3x text-info"></i>
                                         </div>
                                         <h5 class="card-title">Mis Capacitaciones</h5>
-                                        <p class="card-text">Ve tus capacitaciones registradas</p>
+                                        <p class="card-text">Consulta tus capacitaciones registradas</p>
                                         <a href="{{ route('externa.mis_capacitaciones') }}" class="btn btn-info">
-                                            Ver Mis Registros
+                                            Ver Capacitaciones
                                         </a>
                                     </div>
                                 </div>

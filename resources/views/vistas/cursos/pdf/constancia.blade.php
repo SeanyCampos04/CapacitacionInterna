@@ -25,13 +25,13 @@
         }
 
         .container {
-            margin-top: 0.5cm;
+            margin-top: 1.5cm;
             margin-bottom: 0.5cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
             position: relative;
             z-index: 1;
-            min-height: calc(100vh - 1cm); /* Asegurar que ocupe toda la altura */
+            min-height: calc(100vh - 2cm); /* Asegurar que ocupe toda la altura */
         }
 
         .header {
@@ -174,13 +174,16 @@
             right: 1.5cm;
             width: 2cm;
             height: 2cm;
-            border: 1px dashed #ccc;
             text-align: center;
             font-size: 10px;
             color: #999;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        .qr-placeholder svg {
+            width: 2cm;
+            height: 2cm;
         }    </style>
 </head>
 <body>
@@ -230,7 +233,11 @@
         </div>
 
         <!-- Nombre completo -->
-        <p class="recipient-name">{{ $participante->user->datos_generales->nombre }} {{ $participante->user->datos_generales->apellido_paterno }} {{ $participante->user->datos_generales->apellido_materno }}</p>
+        @if($tipoUsuario === 'Instructor')
+            <p class="recipient-name">{{ $participante->user->datos_generales->nombre ?? 'Sin nombre' }} {{ $participante->user->datos_generales->apellido_paterno ?? '' }} {{ $participante->user->datos_generales->apellido_materno ?? '' }}</p>
+        @else
+            <p class="recipient-name">{{ $participante->participante->user->datos_generales->nombre ?? 'Sin nombre' }} {{ $participante->participante->user->datos_generales->apellido_paterno ?? '' }} {{ $participante->participante->user->datos_generales->apellido_materno ?? '' }}</p>
+        @endif
 
         <!-- Detalles del curso -->
         <p class="details">
@@ -238,9 +245,9 @@
             <strong>"{{ strtoupper($curso->nombre) }}"</strong>
             impartido por
             @foreach($curso->instructores as $instructorCurso)
-                {{ $instructorCurso->user->datos_generales->nombre }}
-                {{ $instructorCurso->user->datos_generales->apellido_paterno }}
-                {{ $instructorCurso->user->datos_generales->apellido_materno }}@if(!$loop->last), @endif
+                {{ $instructorCurso->user->datos_generales->nombre ?? 'Sin nombre' }}
+                {{ $instructorCurso->user->datos_generales->apellido_paterno ?? '' }}
+                {{ $instructorCurso->user->datos_generales->apellido_materno ?? '' }}@if(!$loop->last), @endif
             @endforeach
             del {{ \Carbon\Carbon::parse($curso->fdi)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdi)->translatedFormat('F') }}
             al {{ \Carbon\Carbon::parse($curso->fdf)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdf)->translatedFormat('F') }}
@@ -256,13 +263,19 @@
             </div>
         </div>
 
-        <!-- Placeholder para código QR -->
-        <div class="qr-placeholder">
-            <span>QR Code</span>
+        <!-- Código QR para verificación -->
+        <div class="qr-placeholder" style="margin-top: 0.3cm; margin-bottom: 0.05cm;">
+            @if(isset($codigoQR) && !empty($codigoQR))
+                <img src="{{ $codigoQR }}" alt="Código QR" width="80" height="80" style="display: block; margin: 0 auto;">
+            @else
+                <div style="width: 80px; height: 80px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <span style="font-size: 8px; color: #666;">QR no disponible</span>
+                </div>
+            @endif
         </div>
 
         <!-- Número de registro -->
-        <div class="status">
+        <div class="status" style="margin-top: -0.05cm;">
             <p>{{ $numeroRegistro ?? 'Sin asignar' }}</p>
         </div>
 

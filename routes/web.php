@@ -19,6 +19,7 @@ use App\Http\Controllers\SolicitudesController;
 use App\Http\Controllers\SolicitudInstructorController;
 use App\Http\Controllers\ConstanciaCursoController;
 use App\Http\Controllers\ConstanciaDiplomadoController;
+use App\Http\Controllers\VerificacionPublicaController;
 use App\Models\cursos_instructore;
 use App\Models\Instructore;
 use App\Models\User;
@@ -295,4 +296,27 @@ Route::middleware('auth')->group(function () {
     Route::get('/capacitacionesext/constancia/{id}', [App\Http\Controllers\ConstanciaController::class, 'generarPDF'])->name('capacitacionesext.constancia');
 });
 
+// =====================================================
+// RUTAS PÚBLICAS PARA VERIFICACIÓN DE DOCUMENTOS QR
+// =====================================================
+
+// Rutas públicas (sin middleware auth) para verificación de documentos
+Route::get('/verificar-constancia/{numero}', [VerificacionPublicaController::class, 'verificarConstancia'])->name('verificacion.constancia')->where('numero', '.*');
+Route::get('/verificar-reconocimiento/{numero}', [VerificacionPublicaController::class, 'verificarReconocimiento'])->name('verificacion.reconocimiento')->where('numero', '.*');
+Route::get('/verificar-diploma/{numero}', [VerificacionPublicaController::class, 'verificarDiploma'])->name('verificacion.diploma')->where('numero', '.*');
+
+// Ruta general de verificación (detecta automáticamente el tipo)
+Route::get('/verificar/{numero}', [VerificacionPublicaController::class, 'verificarDocumento'])->name('verificacion.general')->where('numero', '.*');
+
+// Ruta de diagnóstico temporal
+Route::get('/diagnosticar/{numero}', [VerificacionPublicaController::class, 'diagnosticar'])->name('verificacion.diagnostico')->where('numero', '.*');
+
+// Ruta para probar diplomados directamente
+Route::get('/probar-diploma/{numero}', [VerificacionPublicaController::class, 'verificarDiploma'])->name('verificacion.probar-diploma')->where('numero', '.*');
+
 require __DIR__.'/auth.php';
+
+// Incluir rutas de prueba para QR (comentar en producción)
+if (app()->environment('local')) {
+    require __DIR__.'/test-qr.php';
+}

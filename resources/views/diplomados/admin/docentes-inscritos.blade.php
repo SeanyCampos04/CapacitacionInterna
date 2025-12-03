@@ -248,7 +248,7 @@
                 type="text"
                 class="form-control registro-input"
                 id="registro-{{ $inscrito['id'] }}"
-                
+                placeholder="Número de registro"
                 data-id="{{ $inscrito['id'] }}"
                 data-tipo="{{ $tipo }}"
             >
@@ -263,8 +263,8 @@
             Instructor: XX-YYYY/I-XX · Participante: XX-YYYY/XX
         </small>
     @else
-        <!-- SI YA ESTÁ GUARDADO → MOSTRAR COMO TEXTO -->
-        <strong>{{ $prefijo . $numero }}</strong>
+        <!-- SI YA ESTÁ GUARDADO → MOSTRAR COMO TEXTO COMPLETO -->
+        <strong>{{ $numero }}</strong>
     @endif
 </td>
         <!-- CONSTANCIA -->
