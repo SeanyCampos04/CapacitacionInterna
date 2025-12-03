@@ -191,29 +191,12 @@
         .qr-placeholder svg {
             width: 2cm;
             height: 2cm;
-        }        .numero-registro {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #666;
-            border: 1px solid #ccc;
-            padding: 5px 10px;
-            background-color: #f9f9f9;
         }
 
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Número de registro -->
-        @if(isset($numeroRegistro) && $numeroRegistro)
-            <div class="numero-registro">
-                No. Registro: {{ $numeroRegistro }}
-            </div>
-        @endif
-
         <!-- Encabezado con logos -->
         <div class="header">
             <img src="{{ public_path('edu.png') }}" alt="Logo izquierdo">

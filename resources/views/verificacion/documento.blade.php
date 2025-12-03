@@ -30,25 +30,25 @@
         <!-- Información del documento -->
         <div class="info-section">
             @if($estado === 'VÁLIDO' && $documento)
-                <h4 class="text-center mb-4" style="color: rgb(27, 57, 107);">
+                <h4 class="text-center mb-3" style="color: rgb(27, 57, 107);">
                     <i class="fas fa-certificate"></i> {{ $documento['tipo_documento'] }}
                 </h4>
+
+                <!-- Número de registro y participante -->
+                <div class="verification-code mb-4">
+                    <div style="font-size: 1.3rem; font-weight: bold; margin-bottom: 10px;">
+                        {{ $documento['nombre_completo'] }}
+                    </div>
+                    <div>
+                        <i class="fas fa-shield-alt"></i> NÚMERO DE REGISTRO: {{ $numeroRegistro }}
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="info-row">
-                            <strong class="text-muted">Participante:</strong><br>
-                            <span class="h6">{{ $documento['nombre_completo'] }}</span>
-                        </div>
-
-                        <div class="info-row">
                             <strong class="text-muted">Curso:</strong><br>
                             <span>{{ $documento['nombre_programa'] }}</span>
-                        </div>
-
-                        <div class="info-row">
-                            <strong class="text-muted">Descripción:</strong><br>
-                            <span style="text-align: justify; line-height: 1.4;">{{ $documento['descripcion'] }}</span>
                         </div>
 
                         <div class="info-row">
@@ -59,7 +59,13 @@
 
                     <div class="col-md-6">
                         <div class="info-row">
-                            <strong class="text-muted">Modalidad:</strong><br>
+                            <strong class="text-muted">
+                                @if(isset($modulo) && $modulo === 'Externa')
+                                    Tipo de capacitación:
+                                @else
+                                    Modalidad:
+                                @endif
+                            </strong><br>
                             <span><i class="fas fa-desktop"></i> {{ $documento['modalidad'] }}</span>
                         </div>
 
@@ -119,10 +125,6 @@
                         <span class="badge bg-secondary">{{ $documento['anio'] }}</span>
                     </div>
                 @endif
-
-                <div class="verification-code mt-4">
-                    <i class="fas fa-shield-alt"></i> NÚMERO DE REGISTRO: {{ $numeroRegistro }}
-                </div>
 
             @elseif($estado === 'INVÁLIDO')
                 <div class="text-center">
