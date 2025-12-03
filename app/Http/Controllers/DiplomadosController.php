@@ -339,7 +339,7 @@ class DiplomadosController extends Controller
 
     // Regex según el tipo
     $regexInstructor = '/^[A-Z0-9]{2}-\d{4}\/I-[A-Z0-9]{2}$/';
-    $regexParticipante = '/^[A-Z0-9]{2}-\d{4}\/[A-Z0-9]{2}$/';
+    $regexParticipante = '/^[A-Z0-9]{2}-\d{4}\/[A-Z0-9]{3}$/';
 
     // Validación por tipo
     if ($tipo === "instructor" && !preg_match($regexInstructor, $numero)) {
