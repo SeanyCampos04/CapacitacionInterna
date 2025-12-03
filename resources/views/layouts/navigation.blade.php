@@ -18,7 +18,7 @@
                     $user_roles_count = auth()->user()->roles->count();
                     $hide_modules = ($user_tipo == 3 && $user_roles_count == 0); // Tipo Otro sin roles
                 @endphp
-                
+
                 @unless($hide_modules)
                 <div class="hidden sm:flex sm:items-center sm:ms-2">
                     <x-dropdown align="top" width="20">
