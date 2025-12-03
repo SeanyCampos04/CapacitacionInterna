@@ -12,7 +12,14 @@
 
                 <!-- Navigation Links -->
 
-                <!-- Selector de Módulos -->
+                <!-- Selector de Módulos - Oculto para usuarios tipo Otro sin rol -->
+                @php
+                    $user_tipo = auth()->user()->tipo;
+                    $user_roles_count = auth()->user()->roles->count();
+                    $hide_modules = ($user_tipo == 3 && $user_roles_count == 0); // Tipo Otro sin roles
+                @endphp
+                
+                @unless($hide_modules)
                 <div class="hidden sm:flex sm:items-center sm:ms-2">
                     <x-dropdown align="top" width="20">
                         <x-slot name="trigger">
@@ -46,6 +53,7 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
+                @endunless
 
                 <!-- Inicio -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">

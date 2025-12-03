@@ -10,7 +10,15 @@
                 @endif
             </h2>
             <span class="font-semibold text-lg text-white">
-                Capacitación Interna
+                @php
+                    $user_tipo = auth()->user()->tipo;
+                    $user_roles_count = auth()->user()->roles->count();
+                @endphp
+                @if($user_tipo == 3 && $user_roles_count == 0)
+                    Capacitación
+                @else
+                    Capacitación Interna
+                @endif
             </span>
         </div>
     </x-slot>
