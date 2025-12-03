@@ -51,12 +51,12 @@ class VerificacionPublicaController extends Controller
                 $capacitacionExterna->horas . " HORAS.";
 
             $documento = [
-                'tipo_documento' => 'Constancia de Capacitación Externa',
+                'tipo_documento' => 'Constancia de Capacitación',
                 'nombre_completo' => $capacitacionExterna->nombre . ' ' . $capacitacionExterna->apellido_paterno . ' ' . $capacitacionExterna->apellido_materno,
                 'nombre_programa' => $capacitacionExterna->nombre_capacitacion,
                 'descripcion' => $descripcionCompleta,
                 'horas' => $capacitacionExterna->horas,
-                'modalidad' => 'Externa',
+                'modalidad' => $capacitacionExterna->tipo_capacitacion,
                 'organismo' => $capacitacionExterna->organismo,
                 'fecha_emision' => $capacitacionExterna->created_at,
                 'anio' => $capacitacionExterna->anio,
@@ -77,7 +77,7 @@ class VerificacionPublicaController extends Controller
         $participante = $this->buscarEnCursosInternos($numeroRegistro);
 
         if ($participante) {
-            // Obtener datos del participante
+            // Obtener nombre del participante directamente desde la base de datos por seguridad
             $datosParticipante = DB::table('participantes')
                 ->join('users', 'participantes.user_id', '=', 'users.id')
                 ->join('datos_generales', 'users.id', '=', 'datos_generales.user_id')
@@ -90,12 +90,23 @@ class VerificacionPublicaController extends Controller
                 $nombreCompleto = trim($datosParticipante->nombre . ' ' . $datosParticipante->apellido_paterno . ' ' . $datosParticipante->apellido_materno);
             }
 
+            // Obtener datos del curso directamente
+            $curso = Curso::find($participante->curso_id);
+            if (!$curso) {
+                return view('verificacion.documento', [
+                    'documento' => null,
+                    'numeroRegistro' => $numeroRegistro,
+                    'estado' => 'INVÁLIDO',
+                    'modulo' => 'Curso no encontrado'
+                ]);
+            }
+
             // Obtener datos de instructores
             $instructores = DB::table('cursos_instructores')
                 ->join('instructores', 'cursos_instructores.instructore_id', '=', 'instructores.id')
                 ->join('users', 'instructores.user_id', '=', 'users.id')
                 ->join('datos_generales', 'users.id', '=', 'datos_generales.user_id')
-                ->where('cursos_instructores.curso_id', $participante->curso->id)
+                ->where('cursos_instructores.curso_id', $curso->id)
                 ->select('datos_generales.nombre', 'datos_generales.apellido_paterno', 'datos_generales.apellido_materno')
                 ->get();
 
@@ -108,33 +119,33 @@ class VerificacionPublicaController extends Controller
             }
 
             // Generar descripción completa como en la constancia
-            $fechaInicio = Carbon::parse($participante->curso->fdi);
-            $fechaFin = Carbon::parse($participante->curso->fdf);
+            $fechaInicio = Carbon::parse($curso->fdi);
+            $fechaFin = Carbon::parse($curso->fdf);
 
             $descripcionCompleta = "POR PARTICIPAR Y ACREDITAR SATISFACTORIAMENTE EL CURSO DE CAPACITACIÓN \"" .
-                strtoupper($participante->curso->nombre) . "\" IMPARTIDO POR " .
+                strtoupper($curso->nombre) . "\" IMPARTIDO POR " .
                 strtoupper($nombresInstructores) . " DEL " .
                 $fechaInicio->format('d') . " DE " . strtoupper($fechaInicio->translatedFormat('F')) .
                 " AL " . $fechaFin->format('d') . " DE " . strtoupper($fechaFin->translatedFormat('F')) .
                 " DEL " . $fechaInicio->format('Y') . ", CON UNA DURACIÓN DE " .
-                $participante->curso->duracion . " HORAS, CON LA MODALIDAD " .
-                strtoupper($participante->curso->modalidad) . ", REALIZADO EN " .
-                strtoupper($participante->curso->lugar) . ", EN EL DEPARTAMENTO DE " .
-                strtoupper($participante->curso->departamento->nombre ?? 'SIN DEPARTAMENTO') .
+                $curso->duracion . " HORAS, CON LA MODALIDAD " .
+                strtoupper($curso->modalidad) . ", REALIZADO EN " .
+                strtoupper($curso->lugar) . ", EN EL DEPARTAMENTO DE " .
+                strtoupper($curso->departamento->nombre ?? 'SIN DEPARTAMENTO') .
                 ", CON LA CALIFICACIÓN OBTENIDA DE " . ($participante->calificacion ?? '100') . ".";
 
             $documento = [
                 'tipo_documento' => 'Constancia de Curso',
                 'nombre_completo' => $nombreCompleto,
-                'nombre_programa' => $participante->curso->nombre,
+                'nombre_programa' => $curso->nombre,
                 'descripcion' => $descripcionCompleta,
-                'horas' => $participante->curso->duracion,
-                'modalidad' => $participante->curso->modalidad,
-                'lugar' => $participante->curso->lugar,
+                'horas' => $curso->duracion ?? 0,
+                'modalidad' => $curso->modalidad ?? 'Sin modalidad',
+                'lugar' => $curso->lugar ?? 'Sin lugar',
                 'fecha_emision' => Carbon::now(),
-                'departamento' => $participante->curso->departamento->nombre ?? 'Sin departamento',
-                'fecha_inicio' => $participante->curso->fdi,
-                'fecha_termino' => $participante->curso->fdf,
+                'departamento' => $curso->departamento->nombre ?? 'Sin departamento',
+                'fecha_inicio' => $curso->fdi ?? null,
+                'fecha_termino' => $curso->fdf ?? null,
                 'calificacion' => $participante->calificacion,
                 'instructores' => $nombresInstructores
             ];            return view('verificacion.documento', [
@@ -261,8 +272,12 @@ class VerificacionPublicaController extends Controller
                 ->where('solicitud_docentes.numero_registro', $numeroRegistro)
                 // ->where('solicitud_docentes.estatus', 2) // Temporalmente removido para pruebas
                 ->select(
-                    'diplomados.*',
-                    'datos_generales.nombre',
+                    'diplomados.nombre as diplomado_nombre',
+                    'diplomados.tipo',
+                    'diplomados.sede',
+                    'diplomados.inicio_realizacion',
+                    'diplomados.termino_realizacion',
+                    'datos_generales.nombre as participante_nombre',
                     'datos_generales.apellido_paterno',
                     'datos_generales.apellido_materno',
                     'solicitud_docentes.created_at as fecha_solicitud',
@@ -274,7 +289,7 @@ class VerificacionPublicaController extends Controller
         }
 
         if ($solicitudParticipante) {
-            $nombreCompleto = trim($solicitudParticipante->nombre . ' ' .
+            $nombreCompleto = trim($solicitudParticipante->participante_nombre . ' ' .
                                 $solicitudParticipante->apellido_paterno . ' ' .
                                 $solicitudParticipante->apellido_materno);
 
@@ -285,9 +300,9 @@ class VerificacionPublicaController extends Controller
             $documento = [
                 'tipo_documento' => 'Diploma',
                 'nombre_completo' => $nombreCompleto,
-                'nombre_programa' => $solicitudParticipante->nombre,
+                'nombre_programa' => $solicitudParticipante->diplomado_nombre,
                 'descripcion' => 'Por participar y acreditar satisfactoriamente en el diplomado "' .
-                               strtoupper($solicitudParticipante->nombre) . '" realizado del ' .
+                               strtoupper($solicitudParticipante->diplomado_nombre) . '" realizado del ' .
                                \Carbon\Carbon::parse($solicitudParticipante->inicio_realizacion)->format('d/m/Y') . ' al ' .
                                \Carbon\Carbon::parse($solicitudParticipante->termino_realizacion)->format('d/m/Y') .
                                ', con una duración de ' . $duracionDias . ' días, de tipo ' .
@@ -330,8 +345,12 @@ class VerificacionPublicaController extends Controller
                 ->where('solicitud_instructores.numero_registro', $numeroRegistro)
                 // ->where('solicitud_instructores.estatus', 2) // Temporalmente removido
                 ->select(
-                    'diplomados.*',
-                    'datos_generales.nombre',
+                    'diplomados.nombre as diplomado_nombre',
+                    'diplomados.tipo',
+                    'diplomados.sede',
+                    'diplomados.inicio_realizacion',
+                    'diplomados.termino_realizacion',
+                    'datos_generales.nombre as instructor_nombre',
                     'datos_generales.apellido_paterno',
                     'datos_generales.apellido_materno',
                     'solicitud_instructores.created_at as fecha_solicitud',
@@ -343,7 +362,7 @@ class VerificacionPublicaController extends Controller
         }
 
         if ($solicitudInstructor) {
-            $nombreCompleto = trim($solicitudInstructor->nombre . ' ' .
+            $nombreCompleto = trim($solicitudInstructor->instructor_nombre . ' ' .
                                 $solicitudInstructor->apellido_paterno . ' ' .
                                 $solicitudInstructor->apellido_materno);
 
@@ -353,9 +372,9 @@ class VerificacionPublicaController extends Controller
             $documento = [
                 'tipo_documento' => 'Reconocimiento de Instructor de Diplomado',
                 'nombre_completo' => $nombreCompleto,
-                'nombre_programa' => $solicitudInstructor->nombre,
+                'nombre_programa' => $solicitudInstructor->diplomado_nombre,
                 'descripcion' => 'Por impartir como instructor el diplomado "' .
-                               strtoupper($solicitudInstructor->nombre) . '" realizado del ' .
+                               strtoupper($solicitudInstructor->diplomado_nombre) . '" realizado del ' .
                                \Carbon\Carbon::parse($solicitudInstructor->inicio_realizacion)->format('d/m/Y') . ' al ' .
                                \Carbon\Carbon::parse($solicitudInstructor->termino_realizacion)->format('d/m/Y') .
                                ', con una duración de ' . $duracionDias . ' días, de tipo ' .
@@ -535,7 +554,8 @@ class VerificacionPublicaController extends Controller
 
         // Buscar directamente por número de registro exacto
         $participante = cursos_participante::with([
-            'curso.departamento'
+            'curso.departamento',
+            'participante.user.datos_generales'
         ])->where('numero_registro', $numeroRegistro)
           ->where('acreditado', 2)
           ->first();
@@ -543,7 +563,8 @@ class VerificacionPublicaController extends Controller
         // Si no se encuentra exacto, buscar por LIKE
         if (!$participante) {
             $participante = cursos_participante::with([
-                'curso.departamento'
+                'curso.departamento',
+                'participante.user.datos_generales'
             ])->where('numero_registro', 'LIKE', "%{$numeroRegistro}%")
               ->where('acreditado', 2)
               ->first();
@@ -566,7 +587,8 @@ class VerificacionPublicaController extends Controller
 
             foreach ($variaciones as $variacion) {
                 $participante = cursos_participante::with([
-                    'curso.departamento'
+                    'curso.departamento',
+                    'participante.user.datos_generales'
                 ])->where('numero_registro', $variacion)
                   ->where('acreditado', 2)
                   ->first();
