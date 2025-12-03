@@ -621,8 +621,14 @@ class VerificacionPublicaController extends Controller
             ->leftJoin('departamentos', 'cursos.departamento_id', '=', 'departamentos.id')
             ->where('cursos_instructores.numero_registro', $numeroRegistro)
             ->select(
-                'cursos.*',
-                'datos_generales.nombre',
+                'cursos.id',
+                'cursos.nombre as curso_nombre',
+                'cursos.duracion',
+                'cursos.modalidad',
+                'cursos.lugar',
+                'cursos.fdi',
+                'cursos.fdf',
+                'datos_generales.nombre as instructor_nombre',
                 'datos_generales.apellido_paterno',
                 'datos_generales.apellido_materno',
                 'departamentos.nombre as departamento_nombre'
@@ -633,7 +639,7 @@ class VerificacionPublicaController extends Controller
             // Crear objeto curso simulado
             $curso = (object) [
                 'id' => $cursoInstructor->id,
-                'nombre' => $cursoInstructor->nombre,
+                'nombre' => $cursoInstructor->curso_nombre,
                 'duracion' => $cursoInstructor->duracion,
                 'modalidad' => $cursoInstructor->modalidad,
                 'lugar' => $cursoInstructor->lugar,
@@ -645,7 +651,7 @@ class VerificacionPublicaController extends Controller
             ];
 
             $datosInstructor = (object) [
-                'nombre' => $cursoInstructor->nombre,
+                'nombre' => $cursoInstructor->instructor_nombre,
                 'apellido_paterno' => $cursoInstructor->apellido_paterno,
                 'apellido_materno' => $cursoInstructor->apellido_materno
             ];
@@ -678,8 +684,14 @@ class VerificacionPublicaController extends Controller
                 ->leftJoin('departamentos', 'cursos.departamento_id', '=', 'departamentos.id')
                 ->where('cursos_instructores.numero_registro', $variacion)
                 ->select(
-                    'cursos.*',
-                    'datos_generales.nombre',
+                    'cursos.id',
+                    'cursos.nombre as curso_nombre',
+                    'cursos.duracion',
+                    'cursos.modalidad',
+                    'cursos.lugar',
+                    'cursos.fdi',
+                    'cursos.fdf',
+                    'datos_generales.nombre as instructor_nombre',
                     'datos_generales.apellido_paterno',
                     'datos_generales.apellido_materno',
                     'departamentos.nombre as departamento_nombre'
@@ -689,7 +701,7 @@ class VerificacionPublicaController extends Controller
             if ($cursoInstructor) {
                 $curso = (object) [
                     'id' => $cursoInstructor->id,
-                    'nombre' => $cursoInstructor->nombre,
+                    'nombre' => $cursoInstructor->curso_nombre,
                     'duracion' => $cursoInstructor->duracion,
                     'modalidad' => $cursoInstructor->modalidad,
                     'lugar' => $cursoInstructor->lugar,
@@ -701,7 +713,7 @@ class VerificacionPublicaController extends Controller
                 ];
 
                 $datosInstructor = (object) [
-                    'nombre' => $cursoInstructor->nombre,
+                    'nombre' => $cursoInstructor->instructor_nombre,
                     'apellido_paterno' => $cursoInstructor->apellido_paterno,
                     'apellido_materno' => $cursoInstructor->apellido_materno
                 ];
