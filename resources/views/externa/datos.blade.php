@@ -43,7 +43,7 @@
                 vertical-align: middle;
                 white-space: nowrap;
             }
-            
+
             /* Estilos específicos para la columna de nombre de capacitación */
             .capacitacion-nombre {
                 max-width: 250px;
@@ -52,17 +52,17 @@
                 overflow: hidden;
                 position: relative;
             }
-            
+
             .capacitacion-nombre .texto-scroll {
                 display: inline-block;
                 animation: scroll-text 10s linear infinite;
                 padding-left: 100%;
             }
-            
+
             .capacitacion-nombre:hover .texto-scroll {
                 animation-play-state: paused;
             }
-            
+
             @keyframes scroll-text {
                 0% {
                     transform: translate3d(100%, 0, 0);
@@ -71,7 +71,7 @@
                     transform: translate3d(-100%, 0, 0);
                 }
             }
-            
+
             /* Alternativa con scrollbar */
             .capacitacion-scroll {
                 max-width: 250px;
@@ -80,21 +80,21 @@
                 overflow-y: hidden;
                 white-space: nowrap;
             }
-            
+
             .capacitacion-scroll::-webkit-scrollbar {
                 height: 4px;
             }
-            
+
             .capacitacion-scroll::-webkit-scrollbar-track {
                 background: #f1f1f1;
                 border-radius: 2px;
             }
-            
+
             .capacitacion-scroll::-webkit-scrollbar-thumb {
                 background: #c1c1c1;
                 border-radius: 2px;
             }
-            
+
             .capacitacion-scroll::-webkit-scrollbar-thumb:hover {
                 background: #a1a1a1;
             }

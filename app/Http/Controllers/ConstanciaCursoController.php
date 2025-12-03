@@ -195,7 +195,7 @@ class ConstanciaCursoController extends Controller
         $cursoInstructor = \App\Models\cursos_instructore::where('curso_id', $curso_id)
             ->where('instructore_id', $instructor_id)
             ->first();
-        
+
         if ($cursoInstructor) {
             $cursoInstructor->update(['numero_registro' => $numeroRegistro]);
         }

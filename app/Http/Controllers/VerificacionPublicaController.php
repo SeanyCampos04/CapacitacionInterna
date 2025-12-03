@@ -197,7 +197,7 @@ class VerificacionPublicaController extends Controller
 
         // Si no se encuentra en cursos internos, buscar en diplomados
         $instructorDiplomado = $this->buscarInstructorEnDiplomados($numeroRegistro);
-        
+
         if ($instructorDiplomado) {
             $documento = [
                 'tipo_documento' => 'Reconocimiento de Instructor de Diplomado',
@@ -554,7 +554,7 @@ class VerificacionPublicaController extends Controller
             $numeroCurso = intval($matches[1]);
             $anio = $matches[2];
             $numeroParticipante = intval($matches[3]);
-            
+
             // Generar posibles variaciones del formato
             $variaciones = [
                 sprintf('TNM-169-%d-%s/%d', $numeroCurso, $anio, $numeroParticipante),
@@ -563,14 +563,14 @@ class VerificacionPublicaController extends Controller
                 sprintf('TNM-169-%d-%s/%02d', $numeroCurso, $anio, $numeroParticipante),
                 sprintf('TNM-169-%d-%s/%03d', $numeroCurso, $anio, $numeroParticipante)
             ];
-            
+
             foreach ($variaciones as $variacion) {
                 $participante = cursos_participante::with([
                     'curso.departamento'
                 ])->where('numero_registro', $variacion)
                   ->where('acreditado', 2)
                   ->first();
-                  
+
                 if ($participante) {
                     break;
                 }
@@ -601,7 +601,7 @@ class VerificacionPublicaController extends Controller
             ->select(
                 'cursos.*',
                 'datos_generales.nombre',
-                'datos_generales.apellido_paterno', 
+                'datos_generales.apellido_paterno',
                 'datos_generales.apellido_materno',
                 'departamentos.nombre as departamento_nombre'
             )
@@ -638,7 +638,7 @@ class VerificacionPublicaController extends Controller
         $numeroCurso = (int)$matches[1];
         $anio = (int)$matches[2];
         $numeroInstructor = (int)$matches[3];
-        
+
         $variaciones = [
             sprintf('TNM-169-%d-%s/I-%d', $numeroCurso, $anio, $numeroInstructor),
             sprintf('TNM-169-%02d-%s/I-%02d', $numeroCurso, $anio, $numeroInstructor),
@@ -646,7 +646,7 @@ class VerificacionPublicaController extends Controller
             sprintf('TNM-169-%d-%s/I-%02d', $numeroCurso, $anio, $numeroInstructor),
             sprintf('TNM-169-%d-%s/I-%03d', $numeroCurso, $anio, $numeroInstructor)
         ];
-        
+
         foreach ($variaciones as $variacion) {
             $cursoInstructor = DB::table('cursos_instructores')
                 ->join('cursos', 'cursos_instructores.curso_id', '=', 'cursos.id')
@@ -658,7 +658,7 @@ class VerificacionPublicaController extends Controller
                 ->select(
                     'cursos.*',
                     'datos_generales.nombre',
-                    'datos_generales.apellido_paterno', 
+                    'datos_generales.apellido_paterno',
                     'datos_generales.apellido_materno',
                     'departamentos.nombre as departamento_nombre'
                 )
