@@ -201,67 +201,7 @@ class VerificacionPublicaController extends Controller
         ]);
     }
 
-    /**
-     * Método de diagnóstico temporal
-     */
-    public function diagnosticar($numeroRegistro)
-    {
-        $info = [];
 
-        // 1. Verificar si llega al método
-        $info[] = "✓ Método diagnosticar ejecutado con: " . $numeroRegistro;
-
-        // 2. Buscar en solicitud_docentes
-        $participantes = DB::table('solicitud_docentes')->get(['id', 'numero_registro', 'estatus']);
-        $info[] = "✓ Total registros participantes: " . $participantes->count();
-
-        // 3. Buscar en solicitud_instructores
-        $instructores = DB::table('solicitud_instructores')->get(['id', 'numero_registro', 'estatus']);
-        $info[] = "✓ Total registros instructores: " . $instructores->count();
-
-        // 4. Buscar exacto
-        $exactoP = DB::table('solicitud_docentes')->where('numero_registro', $numeroRegistro)->first();
-        $info[] = $exactoP ? "✓ Encontrado exacto en participantes: ID " . $exactoP->id : "✗ NO encontrado exacto en participantes";
-
-        $exactoI = DB::table('solicitud_instructores')->where('numero_registro', $numeroRegistro)->first();
-        $info[] = $exactoI ? "✓ Encontrado exacto en instructores: ID " . $exactoI->id : "✗ NO encontrado exacto en instructores";
-
-        // 5. Si encuentra el registro, probar los JOINs
-        if ($exactoP) {
-            $info[] = "=== PROBANDO JOINS PARA PARTICIPANTE ID " . $exactoP->id . " ===";
-
-            $conJoins = DB::table('solicitud_docentes')
-                ->leftJoin('diplomados', 'solicitud_docentes.diplomado_id', '=', 'diplomados.id')
-                ->leftJoin('participantes', 'solicitud_docentes.participante_id', '=', 'participantes.id')
-                ->leftJoin('users', 'participantes.user_id', '=', 'users.id')
-                ->leftJoin('datos_generales', 'users.id', '=', 'datos_generales.user_id')
-                ->where('solicitud_docentes.numero_registro', $numeroRegistro)
-                ->select(
-                    'solicitud_docentes.*',
-                    'diplomados.nombre as diplomado_nombre',
-                    'diplomados.sede',
-                    'datos_generales.nombre as participante_nombre'
-                )
-                ->first();
-
-            if ($conJoins) {
-                $info[] = "✓ JOINs exitosos - Diplomado: " . ($conJoins->diplomado_nombre ?? 'NULL');
-                $info[] = "✓ Participante: " . ($conJoins->participante_nombre ?? 'NULL');
-                $info[] = "✓ Estatus: " . $conJoins->estatus;
-                $info[] = "✓ Diplomado ID: " . ($conJoins->diplomado_id ?? 'NULL');
-            } else {
-                $info[] = "✗ JOINs fallaron - no retornó datos";
-            }
-        }
-
-        return response()->json([
-            'numero_buscado' => $numeroRegistro,
-            'diagnostico' => $info,
-            'participantes' => $participantes->take(5),
-            'instructores' => $instructores->take(5),
-            'registro_encontrado' => $exactoP
-        ]);
-    }
 
     /**
      * Verificar diploma/reconocimiento de diplomados
