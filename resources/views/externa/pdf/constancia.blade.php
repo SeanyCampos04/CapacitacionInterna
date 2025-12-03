@@ -263,7 +263,7 @@
 
         <!-- Detalles de la capacitación (parte verde) -->
         <p class="details">
-            Por participar y acreditar el {{ $capacitacion->tipo_capacitacion }}
+            Por participar y acreditar satisfactoriamente el {{ $capacitacion->tipo_capacitacion }}
             <strong>"{{ strtoupper($capacitacion->nombre_capacitacion) }}"</strong>
             en el periodo {{ $capacitacion->anio }} con un total de {{ $capacitacion->horas }} horas.
         </p>

@@ -252,14 +252,23 @@
 
         <!-- Detalles del diplomado -->
         <p class="details">
-            Por {{ $tipoUsuario === 'Instructor' ? 'impartir como instructor' : 'participar y acreditar satisfactoriamente' }}
-            en el diplomado
-            <strong>"{{ strtoupper($diplomado->nombre) }}"</strong>
-            realizado del {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->format('d') }} de {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->translatedFormat('F') }}
-            al {{ \Carbon\Carbon::parse($diplomado->termino_realizacion)->format('d') }} de {{ \Carbon\Carbon::parse($diplomado->termino_realizacion)->translatedFormat('F') }}
-            del {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->format('Y') }},
-            con una duración de {{ $duracionDias }} días, de tipo {{ strtoupper($diplomado->tipo) }},
-            realizado en {{ strtoupper($diplomado->sede) }}.
+            @if($tipoUsuario === 'Instructor')
+                Por impartir como instructor el diplomado
+                <strong>"{{ strtoupper($diplomado->nombre) }}"</strong>
+                realizado del {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->format('d') }} de {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->translatedFormat('F') }}
+                al {{ \Carbon\Carbon::parse($diplomado->termino_realizacion)->format('d') }} de {{ \Carbon\Carbon::parse($diplomado->termino_realizacion)->translatedFormat('F') }}
+                del {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->format('Y') }},
+                con una duración de {{ $duracionDias }} días, de tipo {{ strtoupper($diplomado->tipo) }},
+                realizado en {{ strtoupper($diplomado->sede) }}.
+            @else
+                Por participar y acreditar satisfactoriamente en el diplomado
+                <strong>"{{ strtoupper($diplomado->nombre) }}"</strong>
+                realizado del {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->format('d') }} de {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->translatedFormat('F') }}
+                al {{ \Carbon\Carbon::parse($diplomado->termino_realizacion)->format('d') }} de {{ \Carbon\Carbon::parse($diplomado->termino_realizacion)->translatedFormat('F') }}
+                del {{ \Carbon\Carbon::parse($diplomado->inicio_realizacion)->format('Y') }},
+                con una duración de {{ $duracionDias }} días, de tipo {{ strtoupper($diplomado->tipo) }},
+                realizado en {{ strtoupper($diplomado->sede) }}.
+            @endif
         </p>
 
         <!-- Pie de página con firma y director -->

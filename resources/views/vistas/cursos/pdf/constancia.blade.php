@@ -248,19 +248,29 @@
 
         <!-- Detalles del curso -->
         <p class="details">
-            Por {{ $tipoUsuario === 'Instructor' ? 'impartir' : 'participar y acreditar satisfactoriamente' }} el curso de capacitación
-            <strong>"{{ strtoupper($curso->nombre) }}"</strong>
-            impartido por
-            @foreach($curso->instructores as $instructorCurso)
-                {{ $instructorCurso->user->datos_generales->nombre ?? 'Sin nombre' }}
-                {{ $instructorCurso->user->datos_generales->apellido_paterno ?? '' }}
-                {{ $instructorCurso->user->datos_generales->apellido_materno ?? '' }}@if(!$loop->last), @endif
-            @endforeach
-            del {{ \Carbon\Carbon::parse($curso->fdi)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdi)->translatedFormat('F') }}
-            al {{ \Carbon\Carbon::parse($curso->fdf)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdf)->translatedFormat('F') }}
-            del {{ \Carbon\Carbon::parse($curso->fdi)->format('Y') }},
-            con una duración de {{ $curso->duracion }} horas, con la modalidad {{ strtoupper($curso->modalidad) }},
-            realizado en {{ strtoupper($curso->lugar) }}, en el departamento de {{ strtoupper($curso->departamento->nombre) }}@if($tipoUsuario === 'Participante' && isset($calificacion)), con la calificación obtenida de {{ $calificacion }}@endif.
+            @if($tipoUsuario === 'Instructor')
+                Por impartir el curso de capacitación
+                <strong>"{{ strtoupper($curso->nombre) }}"</strong>
+                del {{ \Carbon\Carbon::parse($curso->fdi)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdi)->translatedFormat('F') }}
+                al {{ \Carbon\Carbon::parse($curso->fdf)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdf)->translatedFormat('F') }}
+                del {{ \Carbon\Carbon::parse($curso->fdi)->format('Y') }},
+                con una duración de {{ $curso->duracion }} horas, con la modalidad {{ strtoupper($curso->modalidad) }},
+                realizado en {{ strtoupper($curso->lugar) }}, en el departamento de {{ strtoupper($curso->departamento->nombre) }}.
+            @else
+                Por participar y acreditar satisfactoriamente el curso de capacitación
+                <strong>"{{ strtoupper($curso->nombre) }}"</strong>
+                impartido por
+                @foreach($curso->instructores as $instructorCurso)
+                    {{ $instructorCurso->user->datos_generales->nombre ?? 'Sin nombre' }}
+                    {{ $instructorCurso->user->datos_generales->apellido_paterno ?? '' }}
+                    {{ $instructorCurso->user->datos_generales->apellido_materno ?? '' }}@if(!$loop->last), @endif
+                @endforeach
+                del {{ \Carbon\Carbon::parse($curso->fdi)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdi)->translatedFormat('F') }}
+                al {{ \Carbon\Carbon::parse($curso->fdf)->format('d') }} de {{ \Carbon\Carbon::parse($curso->fdf)->translatedFormat('F') }}
+                del {{ \Carbon\Carbon::parse($curso->fdi)->format('Y') }},
+                con una duración de {{ $curso->duracion }} horas, con la modalidad {{ strtoupper($curso->modalidad) }},
+                realizado en {{ strtoupper($curso->lugar) }}, en el departamento de {{ strtoupper($curso->departamento->nombre) }}.
+            @endif
         </p>
 
         <!-- Pie de página con firma y director -->
