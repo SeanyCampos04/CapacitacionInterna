@@ -308,6 +308,12 @@ Route::get('/verificar-diploma/{numero}', [VerificacionPublicaController::class,
 // Ruta general de verificación (detecta automáticamente el tipo)
 Route::get('/verificar/{numero}', [VerificacionPublicaController::class, 'verificarDocumento'])->name('verificacion.general')->where('numero', '.*');
 
+// Ruta de diagnóstico temporal
+Route::get('/diagnosticar/{numero}', [VerificacionPublicaController::class, 'diagnosticar'])->name('verificacion.diagnostico')->where('numero', '.*');
+
+// Ruta para probar diplomados directamente
+Route::get('/probar-diploma/{numero}', [VerificacionPublicaController::class, 'verificarDiploma'])->name('verificacion.probar-diploma')->where('numero', '.*');
+
 require __DIR__.'/auth.php';
 
 // Incluir rutas de prueba para QR (comentar en producción)

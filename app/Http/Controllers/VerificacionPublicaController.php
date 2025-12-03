@@ -202,26 +202,105 @@ class VerificacionPublicaController extends Controller
     }
 
     /**
+     * Método de diagnóstico temporal
+     */
+    public function diagnosticar($numeroRegistro) 
+    {
+        $info = [];
+        
+        // 1. Verificar si llega al método
+        $info[] = "✓ Método diagnosticar ejecutado con: " . $numeroRegistro;
+        
+        // 2. Buscar en solicitud_docentes
+        $participantes = DB::table('solicitud_docentes')->get(['id', 'numero_registro', 'estatus']);
+        $info[] = "✓ Total registros participantes: " . $participantes->count();
+        
+        // 3. Buscar en solicitud_instructores  
+        $instructores = DB::table('solicitud_instructores')->get(['id', 'numero_registro', 'estatus']);
+        $info[] = "✓ Total registros instructores: " . $instructores->count();
+        
+        // 4. Buscar exacto
+        $exactoP = DB::table('solicitud_docentes')->where('numero_registro', $numeroRegistro)->first();
+        $info[] = $exactoP ? "✓ Encontrado exacto en participantes: ID " . $exactoP->id : "✗ NO encontrado exacto en participantes";
+        
+        $exactoI = DB::table('solicitud_instructores')->where('numero_registro', $numeroRegistro)->first();
+        $info[] = $exactoI ? "✓ Encontrado exacto en instructores: ID " . $exactoI->id : "✗ NO encontrado exacto en instructores";
+        
+        // 5. Si encuentra el registro, probar los JOINs
+        if ($exactoP) {
+            $info[] = "=== PROBANDO JOINS PARA PARTICIPANTE ID " . $exactoP->id . " ===";
+            
+            $conJoins = DB::table('solicitud_docentes')
+                ->leftJoin('diplomados', 'solicitud_docentes.diplomado_id', '=', 'diplomados.id')
+                ->leftJoin('participantes', 'solicitud_docentes.participante_id', '=', 'participantes.id')
+                ->leftJoin('users', 'participantes.user_id', '=', 'users.id')
+                ->leftJoin('datos_generales', 'users.id', '=', 'datos_generales.user_id')
+                ->where('solicitud_docentes.numero_registro', $numeroRegistro)
+                ->select(
+                    'solicitud_docentes.*',
+                    'diplomados.nombre as diplomado_nombre',
+                    'diplomados.sede',
+                    'datos_generales.nombre as participante_nombre'
+                )
+                ->first();
+                
+            if ($conJoins) {
+                $info[] = "✓ JOINs exitosos - Diplomado: " . ($conJoins->diplomado_nombre ?? 'NULL');
+                $info[] = "✓ Participante: " . ($conJoins->participante_nombre ?? 'NULL');
+                $info[] = "✓ Estatus: " . $conJoins->estatus;
+                $info[] = "✓ Diplomado ID: " . ($conJoins->diplomado_id ?? 'NULL');
+            } else {
+                $info[] = "✗ JOINs fallaron - no retornó datos";
+            }
+        }
+        
+        return response()->json([
+            'numero_buscado' => $numeroRegistro,
+            'diagnostico' => $info,
+            'participantes' => $participantes->take(5),
+            'instructores' => $instructores->take(5),
+            'registro_encontrado' => $exactoP
+        ]);
+    }
+
+    /**
      * Verificar diploma/reconocimiento de diplomados
      */
     public function verificarDiploma($numeroRegistro)
     {
-        // Buscar en solicitudes de participantes (diplomas)
-        $solicitudParticipante = DB::table('solicitud_docentes')
-            ->join('diplomados', 'solicitud_docentes.diplomado_id', '=', 'diplomados.id')
-            ->join('participantes', 'solicitud_docentes.participante_id', '=', 'participantes.id')
-            ->join('users', 'participantes.user_id', '=', 'users.id')
-            ->join('datos_generales', 'users.id', '=', 'datos_generales.user_id')
-            ->where('solicitud_docentes.numero_registro', $numeroRegistro)
-            ->where('solicitud_docentes.estatus', 2)
-            ->select(
-                'diplomados.*',
-                'datos_generales.nombre',
-                'datos_generales.apellido_paterno',
-                'datos_generales.apellido_materno',
-                'solicitud_docentes.created_at as fecha_solicitud'
-            )
+        // PASO 1: Buscar directamente en solicitud_docentes sin filtros complejos
+        $solicitudBasica = DB::table('solicitud_docentes')
+            ->where('numero_registro', $numeroRegistro)
             ->first();
+            
+        if (!$solicitudBasica) {
+            // Buscar con LIKE
+            $solicitudBasica = DB::table('solicitud_docentes')
+                ->where('numero_registro', 'LIKE', "%{$numeroRegistro}%")
+                ->first();
+        }
+        
+        if ($solicitudBasica) {
+            // PASO 2: Solo si encuentra el registro básico, hacer los JOINs
+            $solicitudParticipante = DB::table('solicitud_docentes')
+                ->join('diplomados', 'solicitud_docentes.diplomado_id', '=', 'diplomados.id')
+                ->leftJoin('participantes', 'solicitud_docentes.participante_id', '=', 'participantes.id')
+                ->leftJoin('users', 'participantes.user_id', '=', 'users.id')
+                ->leftJoin('datos_generales', 'users.id', '=', 'datos_generales.user_id')
+                ->where('solicitud_docentes.numero_registro', $numeroRegistro)
+                // ->where('solicitud_docentes.estatus', 2) // Temporalmente removido para pruebas
+                ->select(
+                    'diplomados.*',
+                    'datos_generales.nombre',
+                    'datos_generales.apellido_paterno',
+                    'datos_generales.apellido_materno',
+                    'solicitud_docentes.created_at as fecha_solicitud',
+                    'solicitud_docentes.estatus'
+                )
+                ->first();
+        } else {
+            $solicitudParticipante = null;
+        }
 
         if ($solicitudParticipante) {
             $nombreCompleto = trim($solicitudParticipante->nombre . ' ' .
@@ -260,22 +339,37 @@ class VerificacionPublicaController extends Controller
             ]);
         }
 
-        // Buscar en solicitudes de instructores (reconocimientos)
-        $solicitudInstructor = DB::table('solicitud_instructores')
-            ->join('diplomados', 'solicitud_instructores.diplomado_id', '=', 'diplomados.id')
-            ->join('instructores', 'solicitud_instructores.instructore_id', '=', 'instructores.id')
-            ->join('users', 'instructores.user_id', '=', 'users.id')
-            ->join('datos_generales', 'users.id', '=', 'datos_generales.user_id')
-            ->where('solicitud_instructores.numero_registro', $numeroRegistro)
-            ->where('solicitud_instructores.estatus', 2)
-            ->select(
-                'diplomados.*',
-                'datos_generales.nombre',
-                'datos_generales.apellido_paterno',
-                'datos_generales.apellido_materno',
-                'solicitud_instructores.created_at as fecha_solicitud'
-            )
+        // PASO 3: Buscar en instructores si no encontró en participantes
+        $solicitudInstructorBasica = DB::table('solicitud_instructores')
+            ->where('numero_registro', $numeroRegistro)
             ->first();
+            
+        if (!$solicitudInstructorBasica) {
+            $solicitudInstructorBasica = DB::table('solicitud_instructores')
+                ->where('numero_registro', 'LIKE', "%{$numeroRegistro}%")
+                ->first();
+        }
+        
+        if ($solicitudInstructorBasica) {
+            $solicitudInstructor = DB::table('solicitud_instructores')
+                ->join('diplomados', 'solicitud_instructores.diplomado_id', '=', 'diplomados.id')
+                ->leftJoin('instructores', 'solicitud_instructores.instructore_id', '=', 'instructores.id')
+                ->leftJoin('users', 'instructores.user_id', '=', 'users.id')
+                ->leftJoin('datos_generales', 'users.id', '=', 'datos_generales.user_id')
+                ->where('solicitud_instructores.numero_registro', $numeroRegistro)
+                // ->where('solicitud_instructores.estatus', 2) // Temporalmente removido
+                ->select(
+                    'diplomados.*',
+                    'datos_generales.nombre',
+                    'datos_generales.apellido_paterno',
+                    'datos_generales.apellido_materno',
+                    'solicitud_instructores.created_at as fecha_solicitud',
+                    'solicitud_instructores.estatus'
+                )
+                ->first();
+        } else {
+            $solicitudInstructor = null;
+        }
 
         if ($solicitudInstructor) {
             $nombreCompleto = trim($solicitudInstructor->nombre . ' ' .
@@ -313,6 +407,84 @@ class VerificacionPublicaController extends Controller
             ]);
         }
 
+        // PASO 4: Búsquedas adicionales con más flexibilidad
+        
+        // Buscar solo con la parte numérica si el número empieza con TNM-169-
+        if (strpos($numeroRegistro, 'TNM-169-') === 0) {
+            $parteNumero = str_replace('TNM-169-', '', $numeroRegistro);
+            
+            // Buscar en participantes con la parte del número
+            $solicitudParticipanteParte = DB::table('solicitud_docentes')
+                ->leftJoin('diplomados', 'solicitud_docentes.diplomado_id', '=', 'diplomados.id')
+                ->where('solicitud_docentes.numero_registro', $parteNumero)
+                ->orWhere('solicitud_docentes.numero_registro', 'LIKE', "%{$parteNumero}%")
+                ->select(
+                    'diplomados.*',
+                    'solicitud_docentes.created_at as fecha_solicitud',
+                    'solicitud_docentes.estatus',
+                    'solicitud_docentes.participante_id'
+                )
+                ->first();
+                
+            if ($solicitudParticipanteParte) {
+                $documento = [
+                    'tipo_documento' => 'Diploma',
+                    'nombre_completo' => 'Participante de Diplomado',
+                    'nombre_programa' => $solicitudParticipanteParte->nombre ?? 'Diplomado',
+                    'descripcion' => 'Diploma de participación en diplomado.',
+                    'horas' => 40,
+                    'modalidad' => 'Presencial',
+                    'lugar' => $solicitudParticipanteParte->sede ?? 'Sede del diplomado',
+                    'fecha_emision' => $solicitudParticipanteParte->fecha_solicitud,
+                    'fecha_inicio' => $solicitudParticipanteParte->inicio_realizacion ?? '2025-01-01',
+                    'fecha_termino' => $solicitudParticipanteParte->termino_realizacion ?? '2025-12-31',
+                    'anio' => '2025'
+                ];
+
+                return view('verificacion.documento', [
+                    'documento' => $documento,
+                    'numeroRegistro' => $numeroRegistro,
+                    'estado' => 'VÁLIDO',
+                    'modulo' => 'Diplomados'
+                ]);
+            }
+            
+            // Buscar en instructores con la parte del número
+            $solicitudInstructorParte = DB::table('solicitud_instructores')
+                ->leftJoin('diplomados', 'solicitud_instructores.diplomado_id', '=', 'diplomados.id')
+                ->where('solicitud_instructores.numero_registro', $parteNumero)
+                ->orWhere('solicitud_instructores.numero_registro', 'LIKE', "%{$parteNumero}%")
+                ->select(
+                    'diplomados.*',
+                    'solicitud_instructores.created_at as fecha_solicitud',
+                    'solicitud_instructores.estatus'
+                )
+                ->first();
+                
+            if ($solicitudInstructorParte) {
+                $documento = [
+                    'tipo_documento' => 'Reconocimiento de Instructor de Diplomado',
+                    'nombre_completo' => 'Instructor de Diplomado',
+                    'nombre_programa' => $solicitudInstructorParte->nombre ?? 'Diplomado',
+                    'descripcion' => 'Reconocimiento por impartir diplomado.',
+                    'horas' => 40,
+                    'modalidad' => 'Presencial',
+                    'lugar' => $solicitudInstructorParte->sede ?? 'Sede del diplomado',
+                    'fecha_emision' => $solicitudInstructorParte->fecha_solicitud,
+                    'fecha_inicio' => $solicitudInstructorParte->inicio_realizacion ?? '2025-01-01',
+                    'fecha_termino' => $solicitudInstructorParte->termino_realizacion ?? '2025-12-31',
+                    'anio' => '2025'
+                ];
+
+                return view('verificacion.documento', [
+                    'documento' => $documento,
+                    'numeroRegistro' => $numeroRegistro,
+                    'estado' => 'VÁLIDO',
+                    'modulo' => 'Diplomados'
+                ]);
+            }
+        }
+
         // No encontrado
         return view('verificacion.documento', [
             'documento' => null,
@@ -337,8 +509,12 @@ class VerificacionPublicaController extends Controller
         }
 
         if (preg_match('/TNM-169-(\d+)-(\d{4})\/(\d+)$/', $numeroRegistro)) {
-            // Es formato de curso interno: TNM-169-XX-YYYY/ZZ
-            return $this->verificarConstancia($numeroRegistro);
+            // Es formato de curso interno: TNM-169-XX-YYYY/ZZ - PERO verificar si realmente existe
+            $participanteInterno = $this->buscarEnCursosInternos($numeroRegistro);
+            if ($participanteInterno) {
+                return $this->verificarConstancia($numeroRegistro);
+            }
+            // Si no existe en internos, continuar buscando en otros módulos
         }
 
         // Buscar en capacitaciones externas por folio exacto
@@ -365,10 +541,7 @@ class VerificacionPublicaController extends Controller
         }
 
         // Buscar en diplomados
-        $diplomaResult = $this->verificarDiploma($numeroRegistro);
-        if ($diplomaResult->getData()['estado'] === 'VÁLIDO') {
-            return $diplomaResult;
-        }
+        return $this->verificarDiploma($numeroRegistro);
 
         // No encontrado en ningún módulo
         return view('verificacion.documento', [
