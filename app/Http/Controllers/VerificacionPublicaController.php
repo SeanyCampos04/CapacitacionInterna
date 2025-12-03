@@ -159,7 +159,7 @@ class VerificacionPublicaController extends Controller
      */
     public function verificarReconocimiento($numeroRegistro)
     {
-        // Buscar instructor en cursos internos
+        // Primero buscar instructor en cursos internos
         $instructor = $this->buscarInstructorEnCursosInternos($numeroRegistro);
 
         if ($instructor) {
@@ -174,7 +174,10 @@ class VerificacionPublicaController extends Controller
                 'tipo_documento' => 'Reconocimiento de Instructor',
                 'nombre_completo' => $nombreInstructor,
                 'nombre_programa' => $instructor['curso']->nombre,
-                'descripcion' => 'Reconocimiento por impartir curso de capacitación',
+                'descripcion' => 'Por impartir el curso de capacitación "' . strtoupper($instructor['curso']->nombre) . '" del ' .
+                               \Carbon\Carbon::parse($instructor['curso']->fdi)->format('d') . ' de ' . \Carbon\Carbon::parse($instructor['curso']->fdi)->translatedFormat('F') .
+                               ' al ' . \Carbon\Carbon::parse($instructor['curso']->fdf)->format('d') . ' de ' . \Carbon\Carbon::parse($instructor['curso']->fdf)->translatedFormat('F') .
+                               ' del ' . \Carbon\Carbon::parse($instructor['curso']->fdi)->format('Y') . ', con una duración de ' . $instructor['curso']->duracion . ' horas.',
                 'horas' => $instructor['curso']->duracion,
                 'modalidad' => $instructor['curso']->modalidad,
                 'lugar' => $instructor['curso']->lugar,
@@ -192,7 +195,35 @@ class VerificacionPublicaController extends Controller
             ]);
         }
 
-        // No encontrado
+        // Si no se encuentra en cursos internos, buscar en diplomados
+        $instructorDiplomado = $this->buscarInstructorEnDiplomados($numeroRegistro);
+
+        if ($instructorDiplomado) {
+            $documento = [
+                'tipo_documento' => 'Reconocimiento de Instructor de Diplomado',
+                'nombre_completo' => $instructorDiplomado['nombre'],
+                'nombre_programa' => $instructorDiplomado['diplomado_nombre'],
+                'descripcion' => 'Por impartir como instructor el diplomado "' . strtoupper($instructorDiplomado['diplomado_nombre']) . '" realizado del ' .
+                               \Carbon\Carbon::parse($instructorDiplomado['fecha_inicio'])->format('d/m/Y') . ' al ' .
+                               \Carbon\Carbon::parse($instructorDiplomado['fecha_termino'])->format('d/m/Y') . '.',
+                'horas' => $instructorDiplomado['duracion_dias'] * 8, // Estimación de horas
+                'modalidad' => 'Presencial',
+                'lugar' => $instructorDiplomado['sede'],
+                'fecha_emision' => $instructorDiplomado['fecha_solicitud'],
+                'fecha_inicio' => $instructorDiplomado['fecha_inicio'],
+                'fecha_termino' => $instructorDiplomado['fecha_termino'],
+                'anio' => \Carbon\Carbon::parse($instructorDiplomado['fecha_inicio'])->format('Y')
+            ];
+
+            return view('verificacion.documento', [
+                'documento' => $documento,
+                'numeroRegistro' => $numeroRegistro,
+                'estado' => 'VÁLIDO',
+                'modulo' => 'Diplomados'
+            ]);
+        }
+
+        // No encontrado en ningún lado
         return view('verificacion.documento', [
             'documento' => null,
             'numeroRegistro' => $numeroRegistro,
@@ -201,67 +232,7 @@ class VerificacionPublicaController extends Controller
         ]);
     }
 
-    /**
-     * Método de diagnóstico temporal
-     */
-    public function diagnosticar($numeroRegistro)
-    {
-        $info = [];
 
-        // 1. Verificar si llega al método
-        $info[] = "✓ Método diagnosticar ejecutado con: " . $numeroRegistro;
-
-        // 2. Buscar en solicitud_docentes
-        $participantes = DB::table('solicitud_docentes')->get(['id', 'numero_registro', 'estatus']);
-        $info[] = "✓ Total registros participantes: " . $participantes->count();
-
-        // 3. Buscar en solicitud_instructores
-        $instructores = DB::table('solicitud_instructores')->get(['id', 'numero_registro', 'estatus']);
-        $info[] = "✓ Total registros instructores: " . $instructores->count();
-
-        // 4. Buscar exacto
-        $exactoP = DB::table('solicitud_docentes')->where('numero_registro', $numeroRegistro)->first();
-        $info[] = $exactoP ? "✓ Encontrado exacto en participantes: ID " . $exactoP->id : "✗ NO encontrado exacto en participantes";
-
-        $exactoI = DB::table('solicitud_instructores')->where('numero_registro', $numeroRegistro)->first();
-        $info[] = $exactoI ? "✓ Encontrado exacto en instructores: ID " . $exactoI->id : "✗ NO encontrado exacto en instructores";
-
-        // 5. Si encuentra el registro, probar los JOINs
-        if ($exactoP) {
-            $info[] = "=== PROBANDO JOINS PARA PARTICIPANTE ID " . $exactoP->id . " ===";
-
-            $conJoins = DB::table('solicitud_docentes')
-                ->leftJoin('diplomados', 'solicitud_docentes.diplomado_id', '=', 'diplomados.id')
-                ->leftJoin('participantes', 'solicitud_docentes.participante_id', '=', 'participantes.id')
-                ->leftJoin('users', 'participantes.user_id', '=', 'users.id')
-                ->leftJoin('datos_generales', 'users.id', '=', 'datos_generales.user_id')
-                ->where('solicitud_docentes.numero_registro', $numeroRegistro)
-                ->select(
-                    'solicitud_docentes.*',
-                    'diplomados.nombre as diplomado_nombre',
-                    'diplomados.sede',
-                    'datos_generales.nombre as participante_nombre'
-                )
-                ->first();
-
-            if ($conJoins) {
-                $info[] = "✓ JOINs exitosos - Diplomado: " . ($conJoins->diplomado_nombre ?? 'NULL');
-                $info[] = "✓ Participante: " . ($conJoins->participante_nombre ?? 'NULL');
-                $info[] = "✓ Estatus: " . $conJoins->estatus;
-                $info[] = "✓ Diplomado ID: " . ($conJoins->diplomado_id ?? 'NULL');
-            } else {
-                $info[] = "✗ JOINs fallaron - no retornó datos";
-            }
-        }
-
-        return response()->json([
-            'numero_buscado' => $numeroRegistro,
-            'diagnostico' => $info,
-            'participantes' => $participantes->take(5),
-            'instructores' => $instructores->take(5),
-            'registro_encontrado' => $exactoP
-        ]);
-    }
 
     /**
      * Verificar diploma/reconocimiento de diplomados
@@ -557,7 +528,7 @@ class VerificacionPublicaController extends Controller
      */
     private function buscarEnCursosInternos($numeroRegistro)
     {
-        // Verificar formato básico TNM-169-XX-YYYY/ZZ
+        // Verificar formato básico TNM-169-XX-YYYY/ZZ (con o sin ceros)
         if (!preg_match('/TNM-169-(\d+)-(\d{4})\/(\d+)/', $numeroRegistro, $matches)) {
             return null;
         }
@@ -578,6 +549,34 @@ class VerificacionPublicaController extends Controller
               ->first();
         }
 
+        // Si aún no se encuentra, intentar con variaciones de formato (con/sin ceros)
+        if (!$participante) {
+            $numeroCurso = intval($matches[1]);
+            $anio = $matches[2];
+            $numeroParticipante = intval($matches[3]);
+
+            // Generar posibles variaciones del formato
+            $variaciones = [
+                sprintf('TNM-169-%d-%s/%d', $numeroCurso, $anio, $numeroParticipante),
+                sprintf('TNM-169-%02d-%s/%02d', $numeroCurso, $anio, $numeroParticipante),
+                sprintf('TNM-169-%02d-%s/%03d', $numeroCurso, $anio, $numeroParticipante),
+                sprintf('TNM-169-%d-%s/%02d', $numeroCurso, $anio, $numeroParticipante),
+                sprintf('TNM-169-%d-%s/%03d', $numeroCurso, $anio, $numeroParticipante)
+            ];
+
+            foreach ($variaciones as $variacion) {
+                $participante = cursos_participante::with([
+                    'curso.departamento'
+                ])->where('numero_registro', $variacion)
+                  ->where('acreditado', 2)
+                  ->first();
+
+                if ($participante) {
+                    break;
+                }
+            }
+        }
+
         return $participante;
     }
 
@@ -586,50 +585,198 @@ class VerificacionPublicaController extends Controller
      */
     private function buscarInstructorEnCursosInternos($numeroRegistro)
     {
-        // Verificar formato básico TNM-169-XX-YYYY/I-ZZ
+        // Verificar formato básico TNM-169-XX-YYYY/I-ZZ (con o sin ceros)
         if (!preg_match('/TNM-169-(\d+)-(\d{4})\/I-(\d+)/', $numeroRegistro, $matches)) {
             return null;
         }
 
-        // Buscar directamente en la tabla de instructores por número de registro
-        // Primero necesitamos encontrar si existe un sistema de registro para instructores
-        // Por ahora, vamos a buscar por el patrón del número de registro
+        // Buscar en la tabla cursos_instructores por número de registro
+        $cursoInstructor = DB::table('cursos_instructores')
+            ->join('cursos', 'cursos_instructores.curso_id', '=', 'cursos.id')
+            ->join('instructores', 'cursos_instructores.instructore_id', '=', 'instructores.id')
+            ->join('users', 'instructores.user_id', '=', 'users.id')
+            ->join('datos_generales', 'users.id', '=', 'datos_generales.user_id')
+            ->leftJoin('departamentos', 'cursos.departamento_id', '=', 'departamentos.id')
+            ->where('cursos_instructores.numero_registro', $numeroRegistro)
+            ->select(
+                'cursos.*',
+                'datos_generales.nombre',
+                'datos_generales.apellido_paterno',
+                'datos_generales.apellido_materno',
+                'departamentos.nombre as departamento_nombre'
+            )
+            ->first();
 
+        if ($cursoInstructor) {
+            // Crear objeto curso simulado
+            $curso = (object) [
+                'id' => $cursoInstructor->id,
+                'nombre' => $cursoInstructor->nombre,
+                'duracion' => $cursoInstructor->duracion,
+                'modalidad' => $cursoInstructor->modalidad,
+                'lugar' => $cursoInstructor->lugar,
+                'fdi' => $cursoInstructor->fdi,
+                'fdf' => $cursoInstructor->fdf,
+                'departamento' => (object) [
+                    'nombre' => $cursoInstructor->departamento_nombre
+                ]
+            ];
+
+            $datosInstructor = (object) [
+                'nombre' => $cursoInstructor->nombre,
+                'apellido_paterno' => $cursoInstructor->apellido_paterno,
+                'apellido_materno' => $cursoInstructor->apellido_materno
+            ];
+
+            return [
+                'curso' => $curso,
+                'instructor_datos' => $datosInstructor
+            ];
+        }
+
+        // Si no se encuentra exacto, probar con variaciones de formato
         $numeroCurso = (int)$matches[1];
         $anio = (int)$matches[2];
         $numeroInstructor = (int)$matches[3];
 
-        // Buscar curso por número y año (mantenemos esta lógica para instructores)
-        $cursosDelAnio = Curso::whereYear('created_at', $anio)
-            ->orderBy('created_at')
-            ->get();
-
-        if ($cursosDelAnio->count() < $numeroCurso) {
-            return null;
-        }
-
-        $curso = Curso::with('departamento')->find($cursosDelAnio[$numeroCurso - 1]->id);
-
-        // Buscar instructor en la tabla cursos_instructores
-        $instructorRelacion = DB::table('cursos_instructores')
-            ->where('curso_id', $curso->id)
-            ->first();
-
-        if (!$instructorRelacion) {
-            return null;
-        }
-
-        // Obtener datos del instructor
-        $datosInstructor = DB::table('instructores')
-            ->join('users', 'instructores.user_id', '=', 'users.id')
-            ->join('datos_generales', 'users.id', '=', 'datos_generales.user_id')
-            ->where('instructores.id', $instructorRelacion->instructore_id)
-            ->select('datos_generales.nombre', 'datos_generales.apellido_paterno', 'datos_generales.apellido_materno')
-            ->first();
-
-        return [
-            'curso' => $curso,
-            'instructor_datos' => $datosInstructor
+        $variaciones = [
+            sprintf('TNM-169-%d-%s/I-%d', $numeroCurso, $anio, $numeroInstructor),
+            sprintf('TNM-169-%02d-%s/I-%02d', $numeroCurso, $anio, $numeroInstructor),
+            sprintf('TNM-169-%02d-%s/I-%03d', $numeroCurso, $anio, $numeroInstructor),
+            sprintf('TNM-169-%d-%s/I-%02d', $numeroCurso, $anio, $numeroInstructor),
+            sprintf('TNM-169-%d-%s/I-%03d', $numeroCurso, $anio, $numeroInstructor)
         ];
+
+        foreach ($variaciones as $variacion) {
+            $cursoInstructor = DB::table('cursos_instructores')
+                ->join('cursos', 'cursos_instructores.curso_id', '=', 'cursos.id')
+                ->join('instructores', 'cursos_instructores.instructore_id', '=', 'instructores.id')
+                ->join('users', 'instructores.user_id', '=', 'users.id')
+                ->join('datos_generales', 'users.id', '=', 'datos_generales.user_id')
+                ->leftJoin('departamentos', 'cursos.departamento_id', '=', 'departamentos.id')
+                ->where('cursos_instructores.numero_registro', $variacion)
+                ->select(
+                    'cursos.*',
+                    'datos_generales.nombre',
+                    'datos_generales.apellido_paterno',
+                    'datos_generales.apellido_materno',
+                    'departamentos.nombre as departamento_nombre'
+                )
+                ->first();
+
+            if ($cursoInstructor) {
+                $curso = (object) [
+                    'id' => $cursoInstructor->id,
+                    'nombre' => $cursoInstructor->nombre,
+                    'duracion' => $cursoInstructor->duracion,
+                    'modalidad' => $cursoInstructor->modalidad,
+                    'lugar' => $cursoInstructor->lugar,
+                    'fdi' => $cursoInstructor->fdi,
+                    'fdf' => $cursoInstructor->fdf,
+                    'departamento' => (object) [
+                        'nombre' => $cursoInstructor->departamento_nombre
+                    ]
+                ];
+
+                $datosInstructor = (object) [
+                    'nombre' => $cursoInstructor->nombre,
+                    'apellido_paterno' => $cursoInstructor->apellido_paterno,
+                    'apellido_materno' => $cursoInstructor->apellido_materno
+                ];
+
+                return [
+                    'curso' => $curso,
+                    'instructor_datos' => $datosInstructor
+                ];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Buscar instructor en diplomados
+     */
+    private function buscarInstructorEnDiplomados($numeroRegistro)
+    {
+        // Buscar directamente en solicitud_instructores
+        $solicitudInstructor = DB::table('solicitud_instructores')
+            ->join('diplomados', 'solicitud_instructores.diplomado_id', '=', 'diplomados.id')
+            ->leftJoin('instructores', 'solicitud_instructores.instructore_id', '=', 'instructores.id')
+            ->leftJoin('users', 'instructores.user_id', '=', 'users.id')
+            ->leftJoin('datos_generales', 'users.id', '=', 'datos_generales.user_id')
+            ->where('solicitud_instructores.numero_registro', $numeroRegistro)
+            ->where('solicitud_instructores.estatus', 2) // Solo aprobados
+            ->select(
+                'diplomados.nombre as diplomado_nombre',
+                'diplomados.sede',
+                'diplomados.inicio_realizacion as fecha_inicio',
+                'diplomados.termino_realizacion as fecha_termino',
+                'datos_generales.nombre',
+                'datos_generales.apellido_paterno',
+                'datos_generales.apellido_materno',
+                'solicitud_instructores.created_at as fecha_solicitud'
+            )
+            ->first();
+
+        if ($solicitudInstructor) {
+            $nombreCompleto = trim($solicitudInstructor->nombre . ' ' .
+                                $solicitudInstructor->apellido_paterno . ' ' .
+                                $solicitudInstructor->apellido_materno);
+
+            $duracionDias = \Carbon\Carbon::parse($solicitudInstructor->fecha_inicio)
+                ->diffInDays(\Carbon\Carbon::parse($solicitudInstructor->fecha_termino)) + 1;
+
+            return [
+                'nombre' => $nombreCompleto,
+                'diplomado_nombre' => $solicitudInstructor->diplomado_nombre,
+                'sede' => $solicitudInstructor->sede,
+                'fecha_inicio' => $solicitudInstructor->fecha_inicio,
+                'fecha_termino' => $solicitudInstructor->fecha_termino,
+                'fecha_solicitud' => $solicitudInstructor->fecha_solicitud,
+                'duracion_dias' => $duracionDias
+            ];
+        }
+
+        // Intentar búsqueda con LIKE si no encuentra exacto
+        $solicitudInstructorLike = DB::table('solicitud_instructores')
+            ->join('diplomados', 'solicitud_instructores.diplomado_id', '=', 'diplomados.id')
+            ->leftJoin('instructores', 'solicitud_instructores.instructore_id', '=', 'instructores.id')
+            ->leftJoin('users', 'instructores.user_id', '=', 'users.id')
+            ->leftJoin('datos_generales', 'users.id', '=', 'datos_generales.user_id')
+            ->where('solicitud_instructores.numero_registro', 'LIKE', "%{$numeroRegistro}%")
+            ->where('solicitud_instructores.estatus', 2)
+            ->select(
+                'diplomados.nombre as diplomado_nombre',
+                'diplomados.sede',
+                'diplomados.inicio_realizacion as fecha_inicio',
+                'diplomados.termino_realizacion as fecha_termino',
+                'datos_generales.nombre',
+                'datos_generales.apellido_paterno',
+                'datos_generales.apellido_materno',
+                'solicitud_instructores.created_at as fecha_solicitud'
+            )
+            ->first();
+
+        if ($solicitudInstructorLike) {
+            $nombreCompleto = trim($solicitudInstructorLike->nombre . ' ' .
+                                $solicitudInstructorLike->apellido_paterno . ' ' .
+                                $solicitudInstructorLike->apellido_materno);
+
+            $duracionDias = \Carbon\Carbon::parse($solicitudInstructorLike->fecha_inicio)
+                ->diffInDays(\Carbon\Carbon::parse($solicitudInstructorLike->fecha_termino)) + 1;
+
+            return [
+                'nombre' => $nombreCompleto,
+                'diplomado_nombre' => $solicitudInstructorLike->diplomado_nombre,
+                'sede' => $solicitudInstructorLike->sede,
+                'fecha_inicio' => $solicitudInstructorLike->fecha_inicio,
+                'fecha_termino' => $solicitudInstructorLike->fecha_termino,
+                'fecha_solicitud' => $solicitudInstructorLike->fecha_solicitud,
+                'duracion_dias' => $duracionDias
+            ];
+        }
+
+        return null;
     }
 }

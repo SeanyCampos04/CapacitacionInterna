@@ -72,7 +72,7 @@ class ConstanciaDiplomadoController extends Controller
                 throw new \Exception('Participante no encontrado entre los aprobados.');
             }
 
-            return sprintf('TNM-169-%02d-%s/%02d',
+            return sprintf('TNM-169-%02d-%s/%03d',
                 $numeroDiplomado,
                 $año,
                 $numeroParticipante + 1

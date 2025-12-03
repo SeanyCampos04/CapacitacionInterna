@@ -54,7 +54,7 @@ class ConstanciaCursoController extends Controller
             return $p->id == $participanteId;
         });
 
-        return sprintf('TNM-169-%02d-%s/%02d',
+        return sprintf('TNM-169-%02d-%s/%03d',
             $numeroDelCurso,
             $curso->periodo->anio,
             $numeroParticipante + 1
@@ -190,6 +190,15 @@ class ConstanciaCursoController extends Controller
 
         // Generar número de registro
         $numeroRegistro = $this->generarNumeroRegistroInstructor($curso, $instructor_id);
+
+        // Buscar la relación curso-instructor y actualizar el número de registro
+        $cursoInstructor = \App\Models\cursos_instructore::where('curso_id', $curso_id)
+            ->where('instructore_id', $instructor_id)
+            ->first();
+
+        if ($cursoInstructor) {
+            $cursoInstructor->update(['numero_registro' => $numeroRegistro]);
+        }
 
         // Generar código QR descargando imagen de API externa
         $urlVerificacion = route('verificacion.reconocimiento', $numeroRegistro);

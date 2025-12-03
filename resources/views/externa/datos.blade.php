@@ -43,6 +43,61 @@
                 vertical-align: middle;
                 white-space: nowrap;
             }
+
+            /* Estilos específicos para la columna de nombre de capacitación */
+            .capacitacion-nombre {
+                max-width: 250px;
+                min-width: 200px;
+                white-space: nowrap;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .capacitacion-nombre .texto-scroll {
+                display: inline-block;
+                animation: scroll-text 10s linear infinite;
+                padding-left: 100%;
+            }
+
+            .capacitacion-nombre:hover .texto-scroll {
+                animation-play-state: paused;
+            }
+
+            @keyframes scroll-text {
+                0% {
+                    transform: translate3d(100%, 0, 0);
+                }
+                100% {
+                    transform: translate3d(-100%, 0, 0);
+                }
+            }
+
+            /* Alternativa con scrollbar */
+            .capacitacion-scroll {
+                max-width: 250px;
+                min-width: 200px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+            }
+
+            .capacitacion-scroll::-webkit-scrollbar {
+                height: 4px;
+            }
+
+            .capacitacion-scroll::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 2px;
+            }
+
+            .capacitacion-scroll::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 2px;
+            }
+
+            .capacitacion-scroll::-webkit-scrollbar-thumb:hover {
+                background: #a1a1a1;
+            }
             .delete-btn {
                 margin-left: 10px;
             }
@@ -150,7 +205,7 @@
                         <tr>
                             <th scope="col" class="px-6 py-3 text-center">Nombre Completo</th>
                             <th scope="col" class="px-6 py-3 text-center">Tipo de Capacitación</th>
-                            <th scope="col" class="px-6 py-3 text-center">Nombre de la Capacitación</th>
+                            <th scope="col" class="px-6 py-3 text-center capacitacion-scroll">Nombre de la Capacitación</th>
                             <th scope="col" class="px-6 py-3 text-center">Fecha Inicio</th>
                             <th scope="col" class="px-6 py-3 text-center">Fecha Termino</th>
                             <th scope="col" class="px-6 py-3 text-center">Año</th>
@@ -173,7 +228,9 @@
                             <tr class="bg-white border-b">
                                 <td class="text-center">{{ $capacitacion->nombre }} {{ $capacitacion->apellido_paterno }} {{ $capacitacion->apellido_materno }}</td>
                                 <td class="text-center">{{ $capacitacion->tipo_capacitacion }}</td>
-                                <td class="text-center">{{ $capacitacion->nombre_capacitacion }}</td>
+                                <td class="text-center capacitacion-scroll" title="{{ $capacitacion->nombre_capacitacion }}">
+                                    {{ $capacitacion->nombre_capacitacion }}
+                                </td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($capacitacion->fecha_inicio)->format('d/m/Y') }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($capacitacion->fecha_termino)->format('d/m/Y') }}</td>
                                 <td class="text-center">{{ $capacitacion->anio }}</td>
@@ -277,9 +334,9 @@
                                                                     <label for="numero_folio_{{ $capacitacion->id }}" class="form-label label-left">Número de Registro</label>
                                                                     <div class="input-group">
                                                                         <span class="input-group-text">TNM-169-</span>
-                                                                        <input type="text" name="numero_folio" id="numero_folio_{{ $capacitacion->id }}" class="form-control" placeholder="Ej: XX-YYYY/XX" value="{{ $capacitacion->folio ? str_replace('TNM-169-', '', $capacitacion->folio) : '' }}" onkeyup="validarNumeroRegistro(this)">
+                                                                        <input type="text" name="numero_folio" id="numero_folio_{{ $capacitacion->id }}" class="form-control" placeholder="Ej: 09-2025/004" value="{{ $capacitacion->folio ? str_replace('TNM-169-', '', $capacitacion->folio) : '' }}" onkeyup="validarNumeroRegistro(this)">
                                                                     </div>
-                                                                    <small class="form-text text-muted">Formato sugerido: XX-YYYY/XX (No se permite formato de instructor /I-)</small>
+                                                                    <small class="form-text text-muted">Formato: XX-YYYY/XXX (con ceros, ej: 09-2025/004). No se permite formato de instructor (/I-)</small>
                                                                     <div id="error_{{ $capacitacion->id }}" class="text-danger" style="display: none;">No se permite el formato de instructor (/I-) en capacitaciones externas</div>
                                                                 </div>
                                                                 <!-- Botón de guardar -->
