@@ -47,9 +47,7 @@
                             <x-dropdown-link :href="route('diplomados.index')">
                                 {{ __('Diplomados') }}
                             </x-dropdown-link>
-                            <!-- <x-dropdown-link href="#" onclick="alert('Módulo en desarrollo')">
-                                {{ __('Estadías') }}
-                            </x-dropdown-link> -->
+
                         </x-slot>
                     </x-dropdown>
                 </div>
