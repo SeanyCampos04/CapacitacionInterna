@@ -97,27 +97,27 @@
     <div class="container mt-6 mx-auto">
         <div class="course-info-card">
             <h5>{{ $solicitarcurso->nombre }}</h5>
-            
+
             <div class="info-item">
                 <span class="info-label">Instructor:</span>
                 <span class="info-value">{{ $solicitarcurso->instructor_propuesto }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Contacto del instructor:</span>
                 <span class="info-value">{{ $solicitarcurso->contacto_propuesto }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Objetivo:</span>
                 <span class="info-value">{{ $solicitarcurso->objetivo }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Participantes aproximados:</span>
                 <span class="info-value">{{ $solicitarcurso->num_participantes }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Prioridad:</span>
                 <span class="info-value">
@@ -130,7 +130,7 @@
                     @endif
                 </span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Estado:</span>
                 <span class="info-value">
@@ -143,7 +143,7 @@
                     @endif
                 </span>
             </div>
-            
+
             @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
                 @if ($solicitarcurso->estatus == 0)
                     <div class="btn-container">

@@ -142,7 +142,7 @@
     <div class="container mt-6 mx-auto">
         <div class="course-info-card">
             <h5>{{ $curso->nombre }}</h5>
-            
+
             <div class="info-item">
                 <span class="info-label">
                     @if ($curso->instructores->count() == 1)
@@ -171,52 +171,52 @@
                     @endif
                 </div>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Departamento:</span>
                 <span class="info-value">{{ $curso->departamento->nombre }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Periodo:</span>
                 <span class="info-value">{{ $curso->periodo->periodo }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Fecha de inicio:</span>
                 <span class="info-value">{{ $curso->fdi }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Fecha de terminación:</span>
                 <span class="info-value">{{ $curso->fdf }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Duración:</span>
                 <span class="info-value">{{ $curso->duracion }} horas</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Horario:</span>
                 <span class="info-value">{{ $curso->horario }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Modalidad:</span>
                 <span class="info-value">{{ $curso->modalidad }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Lugar:</span>
                 <span class="info-value">{{ $curso->lugar }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Inscritos:</span>
                 <span class="info-value">{{ $curso->cursos_participantes->count() }}/{{ $curso->limite_participantes }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Estado:</span>
                 <span class="info-value">
@@ -227,7 +227,7 @@
                     @endif
                 </span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Ficha Técnica Actual:</span>
                 <span class="info-value">

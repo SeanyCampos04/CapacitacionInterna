@@ -168,7 +168,7 @@
     <div class="container mt-6 mx-auto">
         <div class="course-info-card">
             <h5>{{ $curso->nombre }}</h5>
-            
+
             <div class="info-item">
                 <span class="info-label">
                     @if ($curso->instructores->count() == 1)
@@ -197,42 +197,42 @@
                     @endif
                 </div>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Departamento:</span>
                 <span class="info-value">{{ $curso->departamento->nombre }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Periodo:</span>
                 <span class="info-value">{{ $curso->periodo->periodo }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Duración:</span>
                 <span class="info-value">{{ $curso->duracion }} horas</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Horario:</span>
                 <span class="info-value">{{ $curso->horario }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Modalidad:</span>
                 <span class="info-value">{{ $curso->modalidad }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Lugar:</span>
                 <span class="info-value">{{ $curso->lugar }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Inscritos:</span>
                 <span class="info-value">{{ $curso->cursos_participantes->count() }}/{{ $curso->limite_participantes }}</span>
             </div>
-            
+
             <div class="info-item">
                 <span class="info-label">Estado:</span>
                 <span class="info-value">
@@ -282,7 +282,7 @@
 
         <!-- Tabla de participantes -->
         <h1 class="section-title">Docentes inscritos</h1>
-        
+
         <div class="optimized-container bg-white shadow-lg rounded-lg">
             <div class="table-responsive">
                 <table class="table table-hover compact-table">
@@ -327,7 +327,7 @@
                                 <td class="text-center actions-col">
                                     @if ($curso->estado_calificacion == 0 && $curso->estatus == 0)
                                         @if ($estatus_usuario == 1)
-                                            <a href="{{ route('instructor.edit', $participanteInscrito->id) }}" 
+                                            <a href="{{ route('instructor.edit', $participanteInscrito->id) }}"
                                                class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-star"></i>
                                             </a>
@@ -339,7 +339,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <div class="mt-4 text-center">
                 @if ($curso->estado_calificacion == 0 && $curso->estatus == 0)
                     @if ($estatus_usuario == 1)
