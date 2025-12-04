@@ -1,10 +1,14 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Editar curso') }}
         </h2>
     </x-slot>
+
+    <!-- Font Awesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <div class="min-h-screen flex flex-col  items-center pt-6  bg-gray-100">
         <form action="{{ route('cursos.update', ['curso' => $curso]) }}" method="POST"
             class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
@@ -173,7 +177,13 @@
                     <label for="es_tutorias" class="ml-2 text-gray-700">Aporta Formación Tutorial</label>
                 </div>
             </div>
-            <x-primary-button class="mt-4" name="action" value="editar">Actualizar</x-primary-button>
+            <div class="mt-4">
+                <button type="submit" name="action" value="editar"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl">
+                    <i class="fas fa-save mr-2"></i>
+                    Actualizar Curso
+                </button>
+            </div>
         </form>
     </div>
 </x-app-layout>

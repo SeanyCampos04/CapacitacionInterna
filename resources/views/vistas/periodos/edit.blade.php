@@ -1,8 +1,8 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white">
-            {{ __('Editar periodo') }}
+        <h2 class="font-semibold text-xl text-gray-800">
+            {{ __('Editar Periodo') }}
         </h2>
     </x-slot>
 
