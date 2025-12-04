@@ -1,21 +1,26 @@
 <x-app-layout>
-
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-white">
             {{ __('Registrar curso') }}
         </h2>
     </x-slot>
-    <div class="min-h-screen flex flex-col  items-center pt-6  bg-gray-100">
-        <form action="{{ route('cursos.store') }}" method="POST"
-            class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+
+    <!-- Bootstrap CSS y Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg mx-auto">
+                <form action="{{ route('cursos.store') }}" method="POST" onsubmit="return validateDates()">
             @csrf
-            <x-text-input id="dncId" name="dncId" type="hidden" class="mt-1 block w-full" value="{{$solicitarcurso->id}}"/>
+            <x-text-input id="dncId" name="dncId" type="hidden" class="mt-1 block w-full" value="{{$solicitarcurso->id ?? ''}}"/>
 
             <!-- Nombre del curso -->
             <div class="mt-4">
                 <x-input-label for="nombre" value="Nombre del curso" />
                 <x-text-input id="nombre" name="nombre" type="text" class="mt-1 block w-full"
-                    value="{{ $solicitarcurso->nombre }}" />
+                    value="{{ $solicitarcurso->nombre ?? '' }}" />
                 <x-input-error :messages="$errors->get('nombre')" class="mt-2" />
             </div>
             <!-- Instructores -->
@@ -61,7 +66,7 @@
             <div class="mt-4">
                 <x-input-label for="objetivo" value="Objetivo" />
                 <x-text-input id="objetivo" name="objetivo" type="text" class="mt-1 block w-full"
-                    value="{{ $solicitarcurso->objetivo }}" />
+                    value="{{ $solicitarcurso->objetivo ?? '' }}" />
                 <x-input-error :messages="$errors->get('objetivo')" class="mt-2" />
             </div>
             <!-- Modalidad -->
@@ -155,7 +160,15 @@
                     <label for="es_tutorias" class="ml-2 text-gray-700">Aporta Formación Tutorial</label>
                 </div>
             </div>
-            <x-primary-button class="mt-4">Registrar</x-primary-button>
-        </form>
+                    <button type="submit"
+                        class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 mt-4">
+                        Registrar Curso
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </x-app-layout>

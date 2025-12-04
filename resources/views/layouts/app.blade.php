@@ -20,6 +20,14 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Forzar modo claro siempre -->
+    <script>
+        // Remover cualquier clase dark del documento
+        document.documentElement.classList.remove('dark');
+        // Asegurar que no se añada modo oscuro
+        localStorage.setItem('darkMode', 'false');
+    </script>
 </head>
 
 <body class="font-sans antialiased bg-gray-100">
@@ -28,7 +36,7 @@
 
         <!-- Page Heading -->
         @if (isset($header))
-            <header class="shadow" style="background:rgb(27,57,106);">
+            <header class="bg-white shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>

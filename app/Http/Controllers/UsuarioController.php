@@ -19,11 +19,69 @@ class UsuarioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $usuarios = User::all();
-        return view('vistas.usuarios.index', compact('usuarios'));
-    }
+    public function index(Request $request)
+{
+    // Usuario actual
+    $user = Auth::user();
+    $rolesPermitidos = ['Admin/CAD', 'Jefe de departamento', 'Instructor', 'Subdirector académico'];
+
+    // Filtros del buscador
+    $busqueda = $request->input('busqueda');
+    $filtroDepartamento = $request->input('departamento');
+    $filtroEstatus = $request->input('estatus');
+    $filtroRol = $request->input('rol');
+
+    $usuarios = User::with(['datos_generales.departamento', 'roles'])
+        ->when($busqueda, function ($query, $busqueda) {
+            $query->whereHas('datos_generales', function ($subQuery) use ($busqueda) {
+                $subQuery->where('nombre', 'like', "%{$busqueda}%")
+                    ->orWhere('apellido_paterno', 'like', "%{$busqueda}%")
+                    ->orWhere('apellido_materno', 'like', "%{$busqueda}%")
+                    ->orWhereHas('departamento', function ($depQuery) use ($busqueda) {
+                        $depQuery->where('nombre', 'like', "%{$busqueda}%");
+                    });
+            })
+            ->orWhere('email', 'like', "%{$busqueda}%");
+        })
+        ->when($filtroDepartamento, function ($query, $filtroDepartamento) {
+            $query->whereHas('datos_generales.departamento', function ($sub) use ($filtroDepartamento) {
+                $sub->where('id', $filtroDepartamento);
+            });
+        })
+        ->when($filtroEstatus !== null && $filtroEstatus !== '', function ($query) use ($filtroEstatus) {
+            $query->where('estatus', $filtroEstatus);
+        })
+        ->when($filtroRol, function ($query, $filtroRol) {
+    $query->whereHas('roles', function ($sub) use ($filtroRol) {
+        $sub->where('roles.id', $filtroRol);
+    });
+})
+        ->whereHas('datos_generales')
+        ->get()
+        ->sortBy(function ($usuario) {
+            return strtolower(
+                ($usuario->datos_generales->nombre ?? '') . ' ' .
+                ($usuario->datos_generales->apellido_paterno ?? '') . ' ' .
+                ($usuario->datos_generales->apellido_materno ?? '')
+            );
+        });
+
+    // Variables necesarias para los selects
+    $departamentos = Departamento::orderBy('nombre')->get();
+    $roles = Role::orderBy('nombre')->get();
+
+    // Retornamos todo al blade
+    return view('vistas.usuarios.index', compact(
+        'usuarios',
+        'busqueda',
+        'departamentos',
+        'roles',
+        'filtroDepartamento',
+        'filtroEstatus',
+        'filtroRol'
+    ));
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -45,8 +103,14 @@ class UsuarioController extends Controller
     {
         try {
             $usuario = User::findOrFail($id);
-            $participante = Participante::find($id);
-            $cursos = cursos_participante::with('curso')->where('participante_id', $participante->id)->orderBy('id', 'desc')->get();
+
+            // Buscar el participante usando el user_id, no el id directamente
+            $participante = Participante::where('user_id', $id)->first();
+
+            $cursos = [];
+            if ($participante) {
+                $cursos = cursos_participante::with('curso')->where('participante_id', $participante->id)->orderBy('id', 'desc')->get();
+            }
 
             return view('vistas.usuarios.show', compact('usuario', 'cursos'));
         } catch (\Exception $e) {

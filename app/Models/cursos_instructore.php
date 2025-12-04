@@ -12,7 +12,8 @@ class cursos_instructore extends Model
     protected $fillable = [
         'instructore_id',
         'curso_id',
-        'ficha_tecnica'
+        'ficha_tecnica',
+        'numero_registro'
     ];
     public $timestamps = true;
 

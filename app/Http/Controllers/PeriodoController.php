@@ -35,6 +35,7 @@ class PeriodoController extends Controller
             'periodo' => 'required|string|max:255', // El periodo es obligatorio y debe ser una cadena
             'anio' => 'required|integer|digits:4', // El año es obligatorio, debe ser un número de 4 dígitos
             'trimestre' => 'required|integer|in:1,2,3,4', // El trimestre debe ser un valor entre 1 y 4
+            'archivo' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5048',
         ]);
 
         // Crear y guardar el nuevo periodo
@@ -42,7 +43,15 @@ class PeriodoController extends Controller
         $periodos->periodo = $request->periodo;
         $periodos->anio = $request->anio;
         $periodos->trimestre = $request->trimestre;
+
+        // Guardar archivo si se subió
+        if ($request->hasFile('archivo')) {
+            $ruta = $request->file('archivo')->store('periodos/'.$periodos->id, 'public');
+            $periodos->archivo_fondo = $ruta;
+        }
+
         $periodos->save();
+
 
         // Redirigir al listado de periodos
         return redirect(route('periodos.index'))->with('success', 'Periodo creado exitosamente.');
@@ -71,17 +80,29 @@ class PeriodoController extends Controller
      */
     public function update(Request $request, Periodo $periodo)
     {
-        // Validación de entrada
+
+        // Validación de entrada y archivo
         $request->validate([
             'periodo' => 'required|string|max:255', // El periodo es obligatorio y debe ser una cadena
             'anio' => 'required|integer|digits:4', // El año es obligatorio, debe ser un número de 4 dígitos
             'trimestre' => 'required|integer|in:1,2,3,4', // El trimestre debe ser un valor entre 1 y 4
+            'archivo' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5048',
         ]);
 
         // Actualizar el periodo
         $periodo->periodo = $request->periodo;
         $periodo->anio = $request->anio;
         $periodo->trimestre = $request->trimestre;
+
+        // Guardar archivo si se envía
+        if ($request->hasFile('archivo')) {
+            $ruta = $request->file('archivo')->store(
+                "periodos/" . $periodo->id,
+                "public"
+            );
+            $periodo->archivo_fondo = $ruta;
+        }
+
         $periodo->save();
 
         // Redirigir al listado de periodos con mensaje de éxito

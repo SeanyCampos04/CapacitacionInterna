@@ -11,7 +11,8 @@ class Periodo extends Model
     protected $fillable = [
         'nombre',
         'anio',
-        'trimestre'
+        'trimestre',
+        'archivo_fondo'
     ];
 
     public function cursos()

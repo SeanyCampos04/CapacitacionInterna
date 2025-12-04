@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Curso;
+use App\Models\Periodo;
 use App\Models\cursos_participante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,19 +14,47 @@ class InstructorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        // Obtener el instructor asociado al usuario autenticado
-        $instructorId = $request->user()->instructor->id;
 
-        // Obtener los cursos donde el instructor está asignado usando la tabla pivote
-        $cursos = Curso::whereHas('instructores', function ($query) use ($instructorId) {
-            $query->where('instructore_id', $instructorId);
-        })->orderBy('id', 'desc')->get();
 
-        // Pasar los cursos a la vista
-        return view('vistas.cursos.instructor.index', compact('cursos'));
+
+public function index(Request $request)
+{
+    // Obtener el instructor asociado al usuario autenticado
+    $instructorId = $request->user()->instructor->id;
+
+    // Iniciar la consulta de cursos donde el instructor está asignado
+    $query = Curso::whereHas('instructores', function ($q) use ($instructorId) {
+        $q->where('instructore_id', $instructorId);
+    })->with('periodo');
+
+    // Filtro de búsqueda (por nombre, modalidad, lugar, etc.)
+    if ($request->filled('q')) {
+        $q = $request->input('q');
+        $query->where(function ($sub) use ($q) {
+            $sub->where('nombre', 'like', "%$q%")
+                ->orWhere('modalidad', 'like', "%$q%")
+                ->orWhere('lugar', 'like', "%$q%");
+        });
     }
+
+    // Filtro por periodo 
+    if ($request->filled('periodo_id')) {
+        $query->where('periodo_id', $request->periodo_id);
+    }
+
+    // Paginar y mantener query string para que links conserven filtros
+    $cursos = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+
+    // Cargar todos los periodos para el select
+    $periodos = Periodo::orderBy('periodo', 'desc')->get();
+
+    // Valor seleccionado (opcional, para mantener selección en el select)
+    $periodoFiltro = $request->input('periodo_id');
+
+    // Pasar variables a la vista
+    return view('vistas.cursos.instructor.index', compact('cursos', 'periodos', 'periodoFiltro'));
+}
+
 
     /**
      * Show the form for creating a new resource.
