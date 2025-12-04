@@ -6,6 +6,40 @@
         </h2>
     </x-slot>
 
+    <style>
+        /* Estilo del botón igual al de otros formularios */
+        .w-full {
+            width: 100%;
+        }
+        .bg-indigo-600 {
+            background-color: #4f46e5;
+        }
+        .bg-indigo-600:hover {
+            background-color: #4338ca;
+        }
+        .text-white {
+            color: white;
+        }
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .rounded-md {
+            border-radius: 0.375rem;
+        }
+        .focus\:ring-2:focus {
+            --tw-ring-width: 2px;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5);
+        }
+        .focus\:ring-indigo-500:focus {
+            --tw-ring-color: rgb(99 102 241);
+        }
+    </style>
+
     <div class="min-h-screen flex flex-col  items-center pt-6  bg-gray-100">
         <form action="{{ route('periodos.store') }}" method="POST" enctype="multipart/form-data"
             class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
@@ -94,10 +128,11 @@ function previewFile() {
 }
 </script>
 
-            <div class="flex items-center justify-end mt-4">
-                <x-primary-button class="ms-4">
+            <div class="mt-4">
+                <button type="submit"
+                    class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500">
                     {{ __('Registrar') }}
-                </x-primary-button>
+                </button>
             </div>
         </form>
     </div>

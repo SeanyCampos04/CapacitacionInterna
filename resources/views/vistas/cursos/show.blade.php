@@ -11,6 +11,84 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
+        .course-info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .course-info-card h5 {
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #374151;
+            min-width: 140px;
+        }
+
+        .info-value {
+            color: #6b7280;
+            text-align: right;
+            flex: 1;
+        }
+
+        .instructor-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .instructor-chip {
+            background-color: #e0f2fe;
+            color: #0277bd;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .ficha-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .ficha-link:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        .actions-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e5e7eb;
+        }
+
         .btn-action {
             width: 40px;
             height: 35px;
@@ -62,70 +140,111 @@
     </style>
 
     <div class="container mt-6 mx-auto">
-        <div class="flex flex-wrap justify-center">
-            <div class="mb-4 mx-2 w-full md:w-1/2 lg:w-5/12 xl:w-1/3">
-                <div class="bg-white rounded-lg overflow-hidden shadow-md h-full">
-                    <div class="p-4">
-                        <h5 class="text-2xl font-bold mb-3">{{ $curso->nombre }}</h5>
-                        <h6 class="text-base font-semibold text-gray-700 mb-2">
-                            <strong>
-                                @if ($curso->instructores->count() == 1)
-                                    Instructor:
-                                    @foreach ($curso->instructores as $instructor)
-                                        <span class="font-medium">
-                                            {{ $instructor->user->datos_generales->nombre }}
-                                            {{ $instructor->user->datos_generales->apellido_paterno }}
-                                            {{ $instructor->user->datos_generales->apellido_materno }}
-                                        </span>
-                                    @endforeach
-                                @else
-                                    Instructores:
-                                    <div class="flex flex-wrap">
-                                        @foreach ($curso->instructores as $instructor)
-                                            <div class="bg-gray-100 p-2 m-1 rounded-lg shadow-sm">
-                                                {{ $instructor->user->datos_generales->nombre }}
-                                                {{ $instructor->user->datos_generales->apellido_paterno }}
-                                                {{ $instructor->user->datos_generales->apellido_materno }}
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </strong>
-                        </h6>
-                        <p class="text-base text-gray-700 mb-1"><strong>Departamento:</strong> {{ $curso->departamento->nombre }}</p>
-                        <p class="text-base text-gray-700 mb-1"><strong>Periodo:</strong> {{ $curso->periodo->periodo }}</p>
-                        <p class="text-base text-gray-700 mb-1"><strong>Fecha de inicio:</strong> {{ $curso->fdi }}</p>
-                        <p class="text-base text-gray-700 mb-1"><strong>Fecha de terminación:</strong> {{ $curso->fdf }}</p>
-                        <p class="text-base text-gray-700 mb-1"><strong>Duración:</strong> {{ $curso->duracion }} horas</p>
-                        <p class="text-base text-gray-700 mb-1"><strong>Horario:</strong> {{ $curso->horario }}</p>
-                        <p class="text-base text-gray-700 mb-1"><strong>Modalidad:</strong> {{ $curso->modalidad }}</p>
-                        <p class="text-base text-gray-700 mb-1"><strong>Lugar:</strong> {{ $curso->lugar }}</p>
-                        <p class="text-base text-gray-700 mb-1"><strong>Inscritos:</strong> {{ $curso->cursos_participantes->count() }}/{{ $curso->limite_participantes }}</p>
-                        <p class="text-base text-gray-700 mb-3"><strong>Estado:</strong>
-                            @if ($curso->estatus == 1)
-                                Disponible
-                            @else
-                                Terminado
-                            @endif
-                        </p>
+        <div class="course-info-card">
+            <h5>{{ $curso->nombre }}</h5>
+            
+            <div class="info-item">
+                <span class="info-label">
+                    @if ($curso->instructores->count() == 1)
+                        Instructor:
+                    @else
+                        Instructores:
+                    @endif
+                </span>
+                <div class="info-value">
+                    @if ($curso->instructores->count() == 1)
+                        @foreach ($curso->instructores as $instructor)
+                            {{ $instructor->user->datos_generales->nombre }}
+                            {{ $instructor->user->datos_generales->apellido_paterno }}
+                            {{ $instructor->user->datos_generales->apellido_materno }}
+                        @endforeach
+                    @else
+                        <div class="instructor-chips">
+                            @foreach ($curso->instructores as $instructor)
+                                <span class="instructor-chip">
+                                    {{ $instructor->user->datos_generales->nombre }}
+                                    {{ $instructor->user->datos_generales->apellido_paterno }}
+                                    {{ $instructor->user->datos_generales->apellido_materno }}
+                                </span>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Departamento:</span>
+                <span class="info-value">{{ $curso->departamento->nombre }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Periodo:</span>
+                <span class="info-value">{{ $curso->periodo->periodo }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Fecha de inicio:</span>
+                <span class="info-value">{{ $curso->fdi }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Fecha de terminación:</span>
+                <span class="info-value">{{ $curso->fdf }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Duración:</span>
+                <span class="info-value">{{ $curso->duracion }} horas</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Horario:</span>
+                <span class="info-value">{{ $curso->horario }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Modalidad:</span>
+                <span class="info-value">{{ $curso->modalidad }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Lugar:</span>
+                <span class="info-value">{{ $curso->lugar }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Inscritos:</span>
+                <span class="info-value">{{ $curso->cursos_participantes->count() }}/{{ $curso->limite_participantes }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Estado:</span>
+                <span class="info-value">
+                    @if ($curso->estatus == 1)
+                        <span class="text-green-600 font-semibold">Disponible</span>
+                    @else
+                        <span class="text-red-600 font-semibold">Terminado</span>
+                    @endif
+                </span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Ficha Técnica Actual:</span>
+                <span class="info-value">
+                    @if ($curso->ficha_tecnica)
+                        <a href="{{ asset('uploads/' . $curso->ficha_tecnica) }}"
+                           target="_blank"
+                           class="ficha-link">
+                           Ver ficha técnica actual (PDF)
+                        </a>
+                    @else
+                        <span class="text-gray-500">No disponible</span>
+                    @endif
+                </span>
+            </div>
 
-                        <!-- Mostrar ficha técnica existente -->
-                        @if ($curso->ficha_tecnica)
-                            <div class="mb-4">
-                                <p class="text-sm text-gray-700"><strong>Ficha Técnica Actual:</strong></p>
-                                <a href="{{ asset('uploads/' . $curso->ficha_tecnica) }}"
-                                   target="_blank"
-                                   class="text-blue-600 hover:text-blue-800">
-                                   Ver ficha técnica actual (PDF)
-                                </a>
-                            </div>
-                        @else
-                            <p class="text-sm text-gray-700">No se ha subido ninguna ficha técnica para este curso.</p>
-                        @endif
-
-                        @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
-
-                            <div class="d-flex flex-wrap justify-content-center gap-3">
+            @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
+            <div class="actions-container">
                                 <form action="{{ route('cursos.edit', $curso->id) }}" method="GET" class="">
                                     @csrf
                                     @method('GET')
@@ -176,9 +295,6 @@
                                 </form>
                             </div>
                         @endif
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

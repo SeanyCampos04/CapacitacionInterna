@@ -1,74 +1,263 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white">
+        <h2 class="font-semibold text-xl text-gray-800">
             {{ __('Detalles del curso: ') }} {{ $curso->nombre }}
         </h2>
     </x-slot>
 
+    <style>
+        .course-info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .course-info-card h5 {
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #374151;
+            min-width: 120px;
+        }
+
+        .info-value {
+            color: #6b7280;
+            text-align: right;
+            flex: 1;
+        }
+
+        .instructor-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .instructor-chip {
+            background-color: #e0f2fe;
+            color: #0277bd;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .form-container h3 {
+            color: #1f2937;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .btn-upload {
+            background: #4f46e5;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-upload:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .optimized-container {
+            width: 95%;
+            max-width: 1200px !important;
+            margin: 1rem auto !important;
+            padding: 2rem;
+        }
+
+        .compact-table {
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .compact-table th,
+        .compact-table td {
+            padding: 12px 8px !important;
+            vertical-align: middle;
+        }
+
+        .compact-table th {
+            background-color: #10b981 !important;
+            color: white !important;
+            font-weight: 600 !important;
+            border: none !important;
+            padding: 18px 12px !important;
+            font-size: 14px !important;
+            white-space: nowrap;
+        }
+
+        .compact-table td {
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+        }
+
+        .compact-table .email-col {
+            width: 22%;
+        }
+
+        .compact-table .name-col {
+            width: 25%;
+        }
+
+        .compact-table .dept-col {
+            width: 20%;
+        }
+
+        .compact-table .grade-col {
+            width: 10%;
+        }
+
+        .compact-table .status-col {
+            width: 13%;
+        }
+
+        .compact-table .actions-col {
+            width: 10%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 3rem 0 2rem 0;
+        }
+    </style>
+
     <div class="container mt-6 mx-auto">
-        <div class="flex flex-wrap justify-center">
-            <div class="mb-4 mx-2 w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
-                <div class="bg-white rounded-lg overflow-hidden shadow-md h-full">
-                    <div class="p-4">
-                        <h5 class="text-xl font-semibold">{{ $curso->nombre }}</h5>
-                        <h6 class="text-sm font-semibold text-gray-700 mb-2">
-                            <strong>
-                                @if ($curso->instructores->count() == 1)
-                                    Instructor:
-                                    @foreach ($curso->instructores as $instructor)
-                                        <span class="font-medium">{{ $instructor->user->datos_generales->nombre }}
-                                            {{ $instructor->user->datos_generales->apellido_paterno }}
-                                            {{ $instructor->user->datos_generales->apellido_materno }}</span>
-                                    @endforeach
-                                @else
-                                    Instructores:
-                                    <div class="flex flex-wrap">
-                                        @foreach ($curso->instructores as $instructor)
-                                            <div class="bg-gray-100 p-2 m-1 rounded-lg shadow-sm">
-                                                {{ $instructor->user->datos_generales->nombre }}
-                                                {{ $instructor->user->datos_generales->apellido_paterno }}
-                                                {{ $instructor->user->datos_generales->apellido_materno }}
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </strong>
-                        </h6>
-                        <p class="text-sm text-gray-700"><strong>Departamento:</strong>
-                            {{ $curso->departamento->nombre }}</p>
-                        <p class="text-sm text-gray-700"><strong>Periodo:</strong> {{ $curso->periodo->periodo }}</p>
-                        <p class="text-sm text-gray-700"><strong>Duración:</strong> {{ $curso->duracion }} horas</p>
-                        <p class="text-sm text-gray-700"><strong>Horario:</strong> {{ $curso->horario }}</p>
-                        <p class="text-sm text-gray-700"><strong>Modalidad:</strong> {{ $curso->modalidad }}</p>
-                        <p class="text-sm text-gray-700"><strong>Lugar:</strong> {{ $curso->lugar }}</p>
-                        <p class="text-sm text-gray-700"><strong>Inscritos:</strong>
-                            {{ $curso->cursos_participantes->count() }}/{{ $curso->limite_participantes }}</p>
-                        <p class="text-sm text-gray-700"><strong>Estado:</strong>
-                            @if ($curso->estatus == 1)
-                                Disponible
-                            @else
-                                Terminado
-                            @endif
-                        </p>
-                    </div>
+        <div class="course-info-card">
+            <h5>{{ $curso->nombre }}</h5>
+            
+            <div class="info-item">
+                <span class="info-label">
+                    @if ($curso->instructores->count() == 1)
+                        Instructor:
+                    @else
+                        Instructores:
+                    @endif
+                </span>
+                <div class="info-value">
+                    @if ($curso->instructores->count() == 1)
+                        @foreach ($curso->instructores as $instructor)
+                            {{ $instructor->user->datos_generales->nombre }}
+                            {{ $instructor->user->datos_generales->apellido_paterno }}
+                            {{ $instructor->user->datos_generales->apellido_materno }}
+                        @endforeach
+                    @else
+                        <div class="instructor-chips">
+                            @foreach ($curso->instructores as $instructor)
+                                <span class="instructor-chip">
+                                    {{ $instructor->user->datos_generales->nombre }}
+                                    {{ $instructor->user->datos_generales->apellido_paterno }}
+                                    {{ $instructor->user->datos_generales->apellido_materno }}
+                                </span>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Departamento:</span>
+                <span class="info-value">{{ $curso->departamento->nombre }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Periodo:</span>
+                <span class="info-value">{{ $curso->periodo->periodo }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Duración:</span>
+                <span class="info-value">{{ $curso->duracion }} horas</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Horario:</span>
+                <span class="info-value">{{ $curso->horario }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Modalidad:</span>
+                <span class="info-value">{{ $curso->modalidad }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Lugar:</span>
+                <span class="info-value">{{ $curso->lugar }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Inscritos:</span>
+                <span class="info-value">{{ $curso->cursos_participantes->count() }}/{{ $curso->limite_participantes }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Estado:</span>
+                <span class="info-value">
+                    @if ($curso->estatus == 1)
+                        <span class="text-green-600 font-semibold">Disponible</span>
+                    @else
+                        <span class="text-red-600 font-semibold">Terminado</span>
+                    @endif
+                </span>
             </div>
         </div>
 
         <!-- Formulario para subir ficha técnica -->
-        <div class="flex justify-center mt-6">
+        <div class="form-container">
             <form action="{{ route('curso.subir_fichatecnica', ['curso_id' => $curso->id]) }}" method="POST"
-                enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3 lg:w-1/2">
+                enctype="multipart/form-data">
                 @csrf
-                <h3 class="text-lg font-bold mb-4 text-center">Subir Ficha Técnica</h3>
+                <h3>Subir Ficha Técnica</h3>
 
                 <!-- Mostrar enlace al archivo actual si existe -->
                 @if ($curso->ficha_tecnica)
                     <div class="mb-4">
-                        <p class="text-sm text-gray-600">Actualmente hay una ficha técnica subida:</p>
+                        <p class="text-sm text-gray-600 mb-2">Actualmente hay una ficha técnica subida:</p>
                         <a href="{{ asset('uploads/' . $curso->ficha_tecnica) }}" target="_blank"
-                            class="text-blue-600 hover:text-blue-800 underline">
+                            class="text-blue-600 hover:text-blue-800 underline font-medium">
                             Ver Ficha Técnica Actual
                         </a>
                     </div>
@@ -76,106 +265,99 @@
                 @if ($estatus_usuario == 1)
                     <!-- Campo para subir nueva ficha técnica -->
                     <div class="mb-4">
-                        <label for="ficha_tecnica" class="block text-sm font-medium text-gray-700">Ficha Técnica
-                            (PDF)</label>
+                        <label for="ficha_tecnica" class="block text-sm font-medium text-gray-700 mb-2">Ficha Técnica (PDF)</label>
                         <input type="file" id="ficha_tecnica" name="ficha_tecnica" accept="application/pdf"
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                     <!-- Botón para subir -->
-                    <div class="flex justify-center">
-                        <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <div class="text-center">
+                        <button type="submit" class="btn-upload">
                             Subir Ficha Técnica
                         </button>
                     </div>
                 @endif
-
             </form>
         </div>
 
 
         <!-- Tabla de participantes -->
-        <div class="py-12">
-            <h1 class="text-center text-xl"><strong>Docentes inscritos</strong></h1>
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                        <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-                            <thead class="text-xm text-gray-700 bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-center">Correo</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Nombre</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Departamento</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Calificación</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Estatus</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($ParticipantesOrdenados as $participanteInscrito)
-                                    <tr class="bg-white border-b">
-                                        <td class="text-left">{{ $participanteInscrito->participante->user->email }}
-                                        </td>
-                                        <td class="text-left">
-                                            {{ $participanteInscrito->participante->user->datos_generales->apellido_paterno }}
-                                            {{ $participanteInscrito->participante->user->datos_generales->apellido_materno }}
-                                            {{ $participanteInscrito->participante->user->datos_generales->nombre }}
-                                        </td>
-                                        <td class="text-left">
-                                            {{ $participanteInscrito->participante->user->datos_generales->departamento->nombre }}
-                                        </td>
-                                        <td class="text-center">
-                                            @if ($participanteInscrito->calificacion)
-                                                {{ $participanteInscrito->calificacion }}
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if ($participanteInscrito->acreditado == 2)
-                                                <span class="text-green-600">Acreditado</span>
-                                            @elseif ($participanteInscrito->acreditado == 1)
-                                                <span class="text-red-600">No Acreditado</span>
-                                            @else
-                                                <span class="text-blue-600">Sin Calificar</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if ($curso->estado_calificacion == 0 && $curso->estatus == 0)
-                                                @if ($estatus_usuario == 1)
-                                                    <form
-                                                        action="{{ route('instructor.edit', $participanteInscrito->id) }}"
-                                                        method="GET">
-                                                        @csrf
-                                                        <x-primary-button
-                                                            class="common-button bg-blue-600 text-white hover:bg-blue-700">
-                                                            Calificar
-                                                        </x-primary-button>
-                                                    </form>
-                                                @endif
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="mt-4 text-right">
-                    @if ($curso->estado_calificacion == 0 && $curso->estatus == 0)
-                        @if ($estatus_usuario == 1)
-                            <form action="{{ route('instructor.subir_calificacion', $curso->id) }}" method="GET">
-                                @csrf
-                                <x-primary-button class="common-button bg-green-600 text-white hover:bg-green-700"
-                                    onclick="return confirm('¿Estás seguro de que quieres subir las calificaciones?');">
-                                    Subir calificación
-                                </x-primary-button>
-                            </form>
-                        @endif
-                    @elseif ($curso->estado_calificacion != 0)
-                        Calificaciones subidas
+        <h1 class="section-title">Docentes inscritos</h1>
+        
+        <div class="optimized-container bg-white shadow-lg rounded-lg">
+            <div class="table-responsive">
+                <table class="table table-hover compact-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center email-col">Correo</th>
+                            <th class="text-center name-col">Nombre</th>
+                            <th class="text-center dept-col">Departamento</th>
+                            <th class="text-center grade-col">Calificación</th>
+                            <th class="text-center status-col">Estatus</th>
+                            <th class="text-center actions-col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($ParticipantesOrdenados as $participanteInscrito)
+                            <tr>
+                                <td class="text-center email-col">{{ $participanteInscrito->participante->user->email }}</td>
+                                <td class="text-left name-col">
+                                    {{ $participanteInscrito->participante->user->datos_generales->apellido_paterno }}
+                                    {{ $participanteInscrito->participante->user->datos_generales->apellido_materno }}
+                                    {{ $participanteInscrito->participante->user->datos_generales->nombre }}
+                                </td>
+                                <td class="text-left dept-col">
+                                    {{ $participanteInscrito->participante->user->datos_generales->departamento->nombre }}
+                                </td>
+                                <td class="text-center grade-col">
+                                    @if ($participanteInscrito->calificacion)
+                                        <span class="fw-bold">{{ $participanteInscrito->calificacion }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-center status-col">
+                                    @if ($participanteInscrito->acreditado == 2)
+                                        <span class="badge bg-success">Acreditado</span>
+                                    @elseif ($participanteInscrito->acreditado == 1)
+                                        <span class="badge bg-danger">No Acreditado</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">Sin Calificar</span>
+                                    @endif
+                                </td>
+                                <td class="text-center actions-col">
+                                    @if ($curso->estado_calificacion == 0 && $curso->estatus == 0)
+                                        @if ($estatus_usuario == 1)
+                                            <a href="{{ route('instructor.edit', $participanteInscrito->id) }}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-star"></i>
+                                            </a>
+                                        @endif
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-4 text-center">
+                @if ($curso->estado_calificacion == 0 && $curso->estatus == 0)
+                    @if ($estatus_usuario == 1)
+                        <form action="{{ route('instructor.subir_calificacion', $curso->id) }}" method="GET" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-success btn-lg"
+                                onclick="return confirm('¿Estás seguro de que quieres subir las calificaciones?');">
+                                <i class="fas fa-upload"></i> Subir Calificaciones
+                            </button>
+                        </form>
                     @endif
-                </div>
+                @elseif ($curso->estado_calificacion != 0)
+                    <div class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle"></i> Calificaciones subidas
+                    </div>
+                @endif
+            </div>
+        </div>
             </div>
         </div>
     </div>

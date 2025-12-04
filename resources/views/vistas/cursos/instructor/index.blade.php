@@ -20,55 +20,53 @@
 
     <div class="py-12">
         <div class="mx-auto sm:px-6 lg:px-8">
-
-            <!-- BUSCADOR -->
-            <div class="mb-6">
-                <form id="searchForm" action="{{ route('instructor.index') }}" method="GET" class="flex flex-wrap items-center gap-3">
-
-                    <!-- Campo de búsqueda -->
-                    <input
-                        type="text"
-                        name="q"
-                        id="searchInput"
-                        placeholder="Buscar por nombre, modalidad, lugar o periodo"
-                        value="{{ old('q', $search ?? request('q')) }}"
-                        class="flex-1 rounded-md border-gray-300 shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                    >
-
-                    <!-- Filtro por periodo -->
-                    <select
-                        name="periodo_id"
-                        id="periodoSelect"
-                        class="rounded-md border-gray-300 shadow-sm px- py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                    >
-                        <option value="">--Todos los periodos--</option>
-                        @foreach ($periodos as $p)
-                            <option value="{{ $p->id }}" {{ ($periodoFiltro ?? '') == $p->id ? 'selected' : '' }}>
-                                {{ $p->periodo }}
-                            </option>
-                        @endforeach
-                    </select>
-
-                    <!-- Botón de búsqueda -->
-                    <button
-                        type="submit"
-                        class="inline-flex items-center px-4 py-2 bg-indigo-700 text-white rounded-md shadow hover:bg-indigo-800"
-                    >
-                        Buscar
-                    </button>
-                </form>
-
-                <!-- Contador de resultados -->
-                @php
-                    $totalResultados = method_exists($cursos ?? null, 'total') ? $cursos->total() : ($cursos ? $cursos->count() : 0);
-                @endphp
-                <p class="text-sm text-gray-500 mt-2">
-                    Resultados: <strong>{{ $totalResultados }}</strong> cursos
-                </p>
-            </div>
-
             <!--  TABLA -->
             <div class="optimized-container bg-white shadow-lg rounded-lg">
+                <!-- BUSCADOR -->
+                <div class="mb-6">
+                    <form id="searchForm" action="{{ route('instructor.index') }}" method="GET" class="flex flex-wrap items-center gap-3">
+
+                        <!-- Campo de búsqueda -->
+                        <input
+                            type="text"
+                            name="q"
+                            id="searchInput"
+                            placeholder="Buscar por nombre, modalidad, lugar o periodo"
+                            value="{{ old('q', $search ?? request('q')) }}"
+                            class="flex-1 rounded-md border-gray-300 shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        >
+
+                        <!-- Filtro por periodo -->
+                        <select
+                            name="periodo_id"
+                            id="periodoSelect"
+                            class="rounded-md border-gray-300 shadow-sm px- py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        >
+                            <option value="">--Todos los periodos--</option>
+                            @foreach ($periodos as $p)
+                                <option value="{{ $p->id }}" {{ ($periodoFiltro ?? '') == $p->id ? 'selected' : '' }}>
+                                    {{ $p->periodo }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <!-- Botón de búsqueda -->
+                        <button
+                            type="submit"
+                            class="inline-flex items-center px-4 py-2 bg-indigo-700 text-white rounded-md shadow hover:bg-indigo-800"
+                        >
+                            Buscar
+                        </button>
+                    </form>
+
+                    <!-- Contador de resultados -->
+                    @php
+                        $totalResultados = method_exists($cursos ?? null, 'total') ? $cursos->total() : ($cursos ? $cursos->count() : 0);
+                    @endphp
+                    <p class="text-sm text-gray-500 mt-2">
+                        Resultados: <strong>{{ $totalResultados }}</strong> cursos
+                    </p>
+                </div>
                 <table class="w-full table-auto border-collapse border border-gray-200">
                     <thead>
                         <tr>

@@ -123,7 +123,7 @@
                                     <form action="{{ route('periodos.destroy', $periodo->id) }}" method="POST" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
+                                        <button type="submit"
                                                 class="btn-action btn-delete"
                                                 title="Eliminar"
                                                 onclick="return confirm('¿Estás seguro de que quieres eliminar este periodo?');">
@@ -137,7 +137,7 @@
                                    title="Ver detalles">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                
+
                                 @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
                                     <a href="{{ route('periodos.edit', $periodo->id) }}"
                                        class="btn-action btn-edit"

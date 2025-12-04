@@ -30,7 +30,6 @@
         .compact-table th {
             font-size: 0.8rem;
             font-weight: 600;
-            text-transform: uppercase;
             letter-spacing: 0.025em;
         }
 
@@ -65,8 +64,8 @@
         .btn-view { background: #3b82f6; color: white; }
         .btn-view:hover { background: #2563eb; color: white; }
 
-        .btn-edit { background: #f59e0b; color: white; }
-        .btn-edit:hover { background: #d97706; color: white; }
+        .btn-edit { background: #10b981; color: white; }
+        .btn-edit:hover { background: #059669; color: white; }
 
         .btn-delete { background: #ef4444; color: white; }
         .btn-delete:hover { background: #dc2626; color: white; }
