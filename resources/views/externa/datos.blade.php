@@ -16,7 +16,7 @@
             margin: 1rem auto !important;
             padding: 1.25rem;
         }
-        
+
         /* Estilo del header igual al de Diplomados */
         .table thead th,
         .custom-header th {
@@ -27,7 +27,7 @@
             padding: 15px 12px !important;
             font-size: 14px !important;
         }
-        
+
         .custom-header {
             background-color: #e3f2fd !important;
         }

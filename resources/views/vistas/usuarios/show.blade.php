@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white">
+        <h2 class="font-semibold text-xl text-gray-800">
             {{ __('Detalles del usuario:') }} {{ $usuario->datos_generales->nombre }}
             {{ $usuario->datos_generales->apellido_paterno }} {{ $usuario->datos_generales->apellido_materno }}
         </h2>

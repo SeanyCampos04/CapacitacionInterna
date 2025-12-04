@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center w-full">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Bienvenido') }}
                 @if(Auth::user() && Auth::user()->datos_generales)
                     {{ Auth::user()->datos_generales->nombre }} {{ Auth::user()->datos_generales->apellido_paterno }}
@@ -9,7 +9,7 @@
                     {{ Auth::user()->name }}
                 @endif
             </h2>
-            <span class="font-semibold text-lg text-green-600 dark:text-green-400">
+            <span class="font-semibold text-lg text-green-600">
                 @php
                     $user_tipo = auth()->user()->tipo;
                     $user_roles_count = auth()->user()->roles->count();
@@ -26,9 +26,9 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <h3 class="text-2xl font-bold mb-4">{{ __("Menú de Opciones") }}</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">Selecciona una opción para gestionar las capacitaciones internas.</p>
+                <div class="p-6 text-gray-900 bg-white">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ __("Menú de Opciones") }}</h3>
+                    <p class="text-gray-600 mb-6">Selecciona una opción para gestionar las capacitaciones internas.</p>
 
                     <!-- Agregar Bootstrap CSS y Font Awesome -->
                     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
