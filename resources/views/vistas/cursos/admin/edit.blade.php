@@ -178,7 +178,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <button type="submit" name="action" value="editar" 
+                <button type="submit" name="action" value="editar"
                         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl">
                     <i class="fas fa-save mr-2"></i>
                     Actualizar Curso

@@ -71,15 +71,15 @@ class CursoParticipanteController extends Controller
 
         // Verificar si el usuario es instructor del curso que está intentando tomar
         $user = $request->user();
-        
+
         // Verificar si el usuario tiene rol de instructor (usando la tabla user_roles directamente)
         $user_role_ids = \Illuminate\Support\Facades\DB::table('user_roles')
             ->where('user_id', $user->id)
             ->pluck('role_id')
             ->toArray();
-            
+
         $is_instructor = in_array(5, $user_role_ids); // 5 es el ID del rol Instructor
-        
+
         if ($is_instructor) {
             // Verificar si este instructor imparte el curso al que se quiere inscribir
             $esInstructorDelCurso = $curso->instructores()
@@ -87,7 +87,7 @@ class CursoParticipanteController extends Controller
                     $query->where('id', $user->id);
                 })
                 ->exists();
-            
+
             if ($esInstructorDelCurso) {
                 return back()->with('error', 'No puedes inscribirte a un curso que tú mismo impartes.')->withInput();
             }

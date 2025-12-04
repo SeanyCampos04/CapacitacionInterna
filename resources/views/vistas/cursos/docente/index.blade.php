@@ -197,15 +197,15 @@
                             // Verificar si el usuario actual es instructor de este curso
                             $user = auth()->user();
                             $esInstructorDelCurso = false;
-                            
+
                             // Verificar si el usuario tiene rol de instructor usando la tabla user_roles directamente
                             $user_role_ids = \Illuminate\Support\Facades\DB::table('user_roles')
                                 ->where('user_id', $user->id)
                                 ->pluck('role_id')
                                 ->toArray();
-                                
+
                             $is_instructor = in_array(5, $user_role_ids); // 5 es el ID del rol Instructor
-                            
+
                             if ($is_instructor) {
                                 $esInstructorDelCurso = $curso->instructores()
                                     ->whereHas('user', function ($query) use ($user) {
