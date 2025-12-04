@@ -6,6 +6,9 @@
         </h2>
     </x-slot>
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         .course-info-card {
             background: white;
@@ -132,29 +135,12 @@
             font-size: 13px;
         }
 
-        .compact-table .email-col {
-            width: 22%;
-        }
-
-        .compact-table .name-col {
-            width: 25%;
-        }
-
-        .compact-table .dept-col {
-            width: 20%;
-        }
-
-        .compact-table .grade-col {
-            width: 10%;
-        }
-
-        .compact-table .status-col {
-            width: 13%;
-        }
-
-        .compact-table .actions-col {
-            width: 10%;
-        }
+        .compact-table th:nth-child(1) { width: 25%; }
+        .compact-table th:nth-child(2) { width: 25%; }
+        .compact-table th:nth-child(3) { width: 20%; }
+        .compact-table th:nth-child(4) { width: 10%; }
+        .compact-table th:nth-child(5) { width: 10%; }
+        .compact-table th:nth-child(6) { width: 10%; }
 
         .section-title {
             text-align: center;
@@ -288,34 +274,34 @@
                 <table class="table table-hover compact-table">
                     <thead>
                         <tr>
-                            <th class="text-center email-col">Correo</th>
-                            <th class="text-center name-col">Nombre</th>
-                            <th class="text-center dept-col">Departamento</th>
-                            <th class="text-center grade-col">Calificación</th>
-                            <th class="text-center status-col">Estatus</th>
-                            <th class="text-center actions-col">Acciones</th>
+                            <th class="text-center">Correo</th>
+                            <th class="text-center">Nombre</th>
+                            <th class="text-center">Departamento</th>
+                            <th class="text-center">Calificación</th>
+                            <th class="text-center">Estatus</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($ParticipantesOrdenados as $participanteInscrito)
                             <tr>
-                                <td class="text-center email-col">{{ $participanteInscrito->participante->user->email }}</td>
-                                <td class="text-left name-col">
+                                <td class="text-center">{{ $participanteInscrito->participante->user->email }}</td>
+                                <td class="text-center">
                                     {{ $participanteInscrito->participante->user->datos_generales->apellido_paterno }}
                                     {{ $participanteInscrito->participante->user->datos_generales->apellido_materno }}
                                     {{ $participanteInscrito->participante->user->datos_generales->nombre }}
                                 </td>
-                                <td class="text-left dept-col">
+                                <td class="text-center">
                                     {{ $participanteInscrito->participante->user->datos_generales->departamento->nombre }}
                                 </td>
-                                <td class="text-center grade-col">
+                                <td class="text-center">
                                     @if ($participanteInscrito->calificacion)
                                         <span class="fw-bold">{{ $participanteInscrito->calificacion }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
-                                <td class="text-center status-col">
+                                <td class="text-center">
                                     @if ($participanteInscrito->acreditado == 2)
                                         <span class="badge bg-success">Acreditado</span>
                                     @elseif ($participanteInscrito->acreditado == 1)
@@ -324,14 +310,18 @@
                                         <span class="badge bg-warning text-dark">Sin Calificar</span>
                                     @endif
                                 </td>
-                                <td class="text-center actions-col">
+                                <td class="text-center">
                                     @if ($curso->estado_calificacion == 0 && $curso->estatus == 0)
                                         @if ($estatus_usuario == 1)
                                             <a href="{{ route('instructor.edit', $participanteInscrito->id) }}"
-                                               class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-star"></i>
+                                               class="btn btn-sm"
+                                               title="Calificar participante"
+                                               style="background-color: #10b981; color: white; border: none; padding: 6px 10px; border-radius: 4px; text-decoration: none;">
+                                                <i class="fas fa-pencil-alt"></i>
                                             </a>
                                         @endif
+                                    @else
+                                        <span class="text-muted">-</span>
                                     @endif
                                 </td>
                             </tr>
@@ -345,15 +335,19 @@
                     @if ($estatus_usuario == 1)
                         <form action="{{ route('instructor.subir_calificacion', $curso->id) }}" method="GET" style="display: inline;">
                             @csrf
-                            <button type="submit" class="btn btn-success btn-lg"
-                                onclick="return confirm('¿Estás seguro de que quieres subir las calificaciones?');">
-                                <i class="fas fa-upload"></i> Subir Calificaciones
+                            <button type="submit"
+                                    class="btn btn-lg fw-bold"
+                                    style="background-color: #10b981; color: white; padding: 15px 30px; font-size: 16px; border-radius: 10px; border: none; box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3); transition: all 0.3s ease;"
+                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(16, 185, 129, 0.4)'; this.style.backgroundColor='#059669';"
+                                    onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 8px rgba(16, 185, 129, 0.3)'; this.style.backgroundColor='#10b981';"
+                                    onclick="return confirm('¿Estás seguro de que quieres subir las calificaciones?');">
+                                <i class="fas fa-upload me-2"></i> Subir Calificaciones
                             </button>
                         </form>
                     @endif
                 @elseif ($curso->estado_calificacion != 0)
-                    <div class="alert alert-success" role="alert">
-                        <i class="fas fa-check-circle"></i> Calificaciones subidas
+                    <div class="alert alert-success d-flex align-items-center justify-content-center" role="alert" style="max-width: 400px; margin: 0 auto; border-radius: 10px;">
+                        <i class="fas fa-check-circle me-2"></i> Calificaciones subidas correctamente
                     </div>
                 @endif
             </div>

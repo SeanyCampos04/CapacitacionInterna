@@ -64,6 +64,11 @@
                             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
                         }
 
+                        /* Icono verde para instructor */
+                        .text-green {
+                            color: #10b981 !important;
+                        }
+
                         /* Hacer que los dropdowns se abran hacia arriba */
                         .dropup .dropdown-menu {
                             top: auto !important;

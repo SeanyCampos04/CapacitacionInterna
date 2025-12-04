@@ -106,8 +106,16 @@
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                        <button class="inline-flex items-center px-1 py-4 text-sm leading-5 font-medium rounded-md text-gray-100 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                            <div>
+                                @if(Auth::user() && Auth::user()->datos_generales)
+                                    {{ Auth::user()->datos_generales->nombre }}
+                                    {{ Auth::user()->datos_generales->apellido_paterno }}
+                                    {{ Auth::user()->datos_generales->apellido_materno }}
+                                @else
+                                    {{ Auth::user()->name ?? Auth::user()->nombre ?? '' }}
+                                @endif
+                            </div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -119,7 +127,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Perfil') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -129,7 +137,7 @@
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('Finalizar sesión') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>

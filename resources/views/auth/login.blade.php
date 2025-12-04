@@ -39,10 +39,13 @@
             -->
         </div>
 
-        <div class="flex items-center justify-center mt-4">
-            <x-primary-button>
+        <div class="flex items-center justify-center mt-6">
+            <button type="submit"
+                    style="background: #4f46e5; border: none; color: white; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;"
+                    onmouseover="this.style.background='#4338ca'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(79, 70, 229, 0.3)';"
+                    onmouseout="this.style.background='#4f46e5'; this.style.transform='translateY(0px)'; this.style.boxShadow='none';">
                 {{ __('Iniciar sesión') }}
-            </x-primary-button>
+            </button>
         </div>
     </form>
 

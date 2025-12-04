@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white">
+        <h2 class="font-semibold text-xl text-gray-800">
             {{ __('Calificar Participante:') }} {{ $curso_participante->participante->nombre_completo }}
         </h2>
     </x-slot>
@@ -40,7 +40,11 @@
                 <x-input-error :messages="$errors->get('comentarios')" class="mt-2" />
             </div>
 
-            <x-primary-button class="mt-4">Guardar Calificación</x-primary-button>
+            <div class="mt-6">
+                <button type="submit" class="w-full" style="background: #4f46e5; border: none; color: white; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#4338ca'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(79, 70, 229, 0.3)';" onmouseout="this.style.background='#4f46e5'; this.style.transform='translateY(0px)'; this.style.boxShadow='none';">
+                    Guardar Calificación
+                </button>
+            </div>
         </form>
     </div>
 </x-app-layout>

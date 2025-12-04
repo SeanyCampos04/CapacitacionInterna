@@ -24,7 +24,7 @@
 
 <body class="font-sans antialiased flex items-center justify-center min-h-screen bg-gray-200">
     <div class="container mx-auto">
-        <h1 class="text-center text-4xl font-bold my-8">Capacitación docente</h1>
+        <h1 class="text-center text-4xl font-bold my-8">Capacitación y Actualización Docente</h1>
         <div class="flex flex-col md:flex-row rounded-lg overflow-hidden shadow-md bg-white">
             <div class="md:w-1/2 flex items-center justify-center" style="background:rgb(27, 57, 107)">
                 <img class="mx-auto h-64 rounded-full" src="{{ asset('images/logo.png') }}" alt="Logo">
