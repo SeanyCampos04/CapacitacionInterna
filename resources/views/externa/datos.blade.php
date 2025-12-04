@@ -1,48 +1,131 @@
 <x-app-externa-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Capacitaciones Externas Registradas') }}
         </h2>
     </x-slot>
 
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Lista de Capacitaciones Externas</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS y Font Awesome - Updated -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-        <style>
-            body {
-                background-color: #f8f9fa;
-            }
-            .container {
-                margin-top: 50px;
-                max-width: 1200px;
-                background-color: #ffffff;
-                border-radius: 8px;
-                box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-                padding: 20px;
-            }
-            h2 {
-                text-align: left;
-                margin-bottom: 10px;
-                font-size: 24px;
-            }
-            .table-responsive {
-                margin-top: 20px;
-                overflow-x: auto;
-            }
-            table {
-                width: 100%;
-            }
+    <style>
+        .optimized-container {
+            width: 98%;
+            max-width: 1400px !important;
+            margin: 1rem auto !important;
+            padding: 1.25rem;
+        }
+        
+        /* Estilo del header igual al de Diplomados */
+        .table thead th,
+        .custom-header th {
+            background-color: #e3f2fd !important;
+            color: #333 !important;
+            font-weight: 600 !important;
+            border: none !important;
+            padding: 15px 12px !important;
+            font-size: 14px !important;
+        }
+        
+        .custom-header {
+            background-color: #e3f2fd !important;
+        }
 
-            th, td {
-                text-align: center;
-                vertical-align: middle;
-                white-space: nowrap;
-            }
+        .compact-table {
+            font-size: 0.95rem;
+        }
+
+        .compact-table th,
+        .compact-table td {
+            padding: 0.5rem 0.75rem !important;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        /* Badges más grandes y visibles */
+        .compact-table .badge {
+            font-size: 0.85rem !important;
+            padding: 0.4em 0.8em !important;
+            font-weight: 600 !important;
+        }
+
+        .compact-table th {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        /* Botones de acción */
+        .action-btn {
+            width: 80px;
+            height: 35px;
+            border-radius: 8px;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 3px;
+            transition: all 0.2s ease;
+            text-decoration: none !important;
+            font-size: 1rem;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-view {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #d97706;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-certificate {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-certificate:hover {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-participants {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .btn-participants:hover {
+            background: #7c3aed;
+            color: white;
+        }
 
             /* Estilos específicos para la columna de nombre de capacitación */
             .capacitacion-nombre {
@@ -131,23 +214,26 @@
                 margin-top: 0.25rem;
             }
 
-        </style>
+    </style>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body>
-        <div class="container">
-                  @if(
-    in_array('admin', $user_roles) ||
-    in_array('CAD', $user_roles) ||
-    in_array('Jefe Departamento', $user_roles) ||
-    in_array('Subdirector Academico', $user_roles) ||
-    in_array('Docente', $user_roles) ||
-    empty($user_roles) ||
-    (isset($is_mis_capacitaciones) && $is_mis_capacitaciones)
-)
+        <div class="optimized-container bg-white shadow-lg rounded-lg">
 
-        <!-- Mostrar buscador para roles específicos O si es Mis Capacitaciones -->
-                        <!-- Buscador y filtros -->
-                        <div class="mb-6">
+            @if(
+                in_array('admin', $user_roles) ||
+                in_array('CAD', $user_roles) ||
+                in_array('Jefe Departamento', $user_roles) ||
+                in_array('Subdirector Academico', $user_roles) ||
+                in_array('Docente', $user_roles) ||
+                empty($user_roles) ||
+                (isset($is_mis_capacitaciones) && $is_mis_capacitaciones)
+            )
+            <!-- Mostrar buscador para roles específicos O si es Mis Capacitaciones -->
+            <!-- Buscador y filtros -->
+            <div class="mb-6">
                            @if(isset($is_mis_capacitaciones) && $is_mis_capacitaciones)
     <form id="searchForm" action="{{ route('externa.mis_capacitaciones') }}" method="GET" class="flex flex-wrap items-center gap-3">
 @else
@@ -200,42 +286,52 @@
 
 
             <div class="table-responsive">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-                    <thead class="text-xm text-gray-700 bg-gray-50">
+                <table class="table table-hover compact-table">
+                    <thead class="custom-header">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-center">Nombre Completo</th>
-                            <th scope="col" class="px-6 py-3 text-center">Tipo de Capacitación</th>
-                            <th scope="col" class="px-6 py-3 text-center capacitacion-scroll">Nombre de la Capacitación</th>
-                            <th scope="col" class="px-6 py-3 text-center">Fecha Inicio</th>
-                            <th scope="col" class="px-6 py-3 text-center">Fecha Termino</th>
-                            <th scope="col" class="px-6 py-3 text-center">Año</th>
-                            <th scope="col" class="px-6 py-3 text-center">Organismo</th>
-                            <th scope="col" class="px-6 py-3 text-center">Horas</th>
-                            <th scope="col" class="px-6 py-3 text-center">Evidencia</th>
-                            <th scope="col" class="px-6 py-3 text-center">Comentarios</th> <!-- Nueva columna para el estado -->
-                            <th scope="col" class="px-6 py-3 text-center">Folio</th>
-                            <th scope="col" class="px-6 py-3 text-center">Eliminar</th>
+                            <th class="text-center">Nombre</th>
+                            <th class="text-center">Tipo</th>
+                            <th class="text-center" style="min-width: 200px;">Capacitación</th>
+                            <th class="text-center">Inicio</th>
+                            <th class="text-center">Término</th>
+                            <th class="text-center">Año</th>
+                            <th class="text-center">Organismo</th>
+                            <th class="text-center">Horas</th>
+                            <th class="text-center">Evidencia</th>
+                            <th class="text-center">Comentarios</th>
+                            <th class="text-center">Folio</th>
+                            <th class="text-center">Acciones</th>
                             @if($tipo_usuario == 1) <!-- Verifica si no es docente para mostrar las acciones -->
                                 @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
-                                    <th scope="col" class="px-6 py-3 text-center">Constancias</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Acciones</th>
+                                    <th class="text-center">Constancias</th>
+                                    <th class="text-center">Detalles</th>
                                 @endif
                             @endif
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($capacitaciones as $capacitacion)
-                            <tr class="bg-white border-b">
+                            <tr class="align-middle">
                                 <td class="text-center">{{ $capacitacion->nombre }} {{ $capacitacion->apellido_paterno }} {{ $capacitacion->apellido_materno }}</td>
-                                <td class="text-center">{{ $capacitacion->tipo_capacitacion }}</td>
-                                <td class="text-center capacitacion-scroll" title="{{ $capacitacion->nombre_capacitacion }}">
+                                <td class="text-center">
+                                    @if($capacitacion->tipo_capacitacion == 'diplomado')
+                                        <span class="badge" style="background-color: #00bcd4; color: white;">{{ $capacitacion->tipo_capacitacion }}</span>
+                                    @elseif($capacitacion->tipo_capacitacion == 'mooc')
+                                        <span class="badge" style="background-color: #00bcd4; color: white;">{{ $capacitacion->tipo_capacitacion }}</span>
+                                    @elseif($capacitacion->tipo_capacitacion == 'taller_curso')
+                                        <span class="badge" style="background-color: #00bcd4; color: white;">taller_curso</span>
+                                    @else
+                                        <span class="badge" style="background-color: #00bcd4; color: white;">{{ $capacitacion->tipo_capacitacion }}</span>
+                                    @endif
+                                </td>
+                                <td class="text-start" title="{{ $capacitacion->nombre_capacitacion }}" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                     {{ $capacitacion->nombre_capacitacion }}
                                 </td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($capacitacion->fecha_inicio)->format('d/m/Y') }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($capacitacion->fecha_termino)->format('d/m/Y') }}</td>
                                 <td class="text-center">{{ $capacitacion->anio }}</td>
                                 <td class="text-center">{{ $capacitacion->organismo }}</td>
-                                <td class="text-center">{{ $capacitacion->horas }}</td>
+                                <td class="text-center"><span class="badge bg-secondary">{{ $capacitacion->horas }}h</span></td>
                                 <td class="text-center">
     @php
         $rutaEvidencia = 'storage/evidencias/' . basename($capacitacion->evidencia);
@@ -244,11 +340,12 @@
     @if ($capacitacion->evidencia && file_exists(public_path($rutaEvidencia)))
         <a href="{{ url($rutaEvidencia) }}"
            target="_blank"
-           class="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition">
-            Ver PDF
+           class="action-btn btn-view"
+           title="Ver evidencia">
+            <i class="fas fa-file-pdf"></i>
         </a>
     @else
-        <span class="text-gray-400">No disponible</span>
+        <span class="text-muted small">-</span>
     @endif
 </td>
 
@@ -256,43 +353,47 @@
                                 <td class="text-center">
                                     <!-- Mostrar el estado de la capacitación -->
                                     @if($capacitacion->status)
-                                        {{ $capacitacion->status }}
+                                        <span class="badge bg-success small">{{ $capacitacion->status }}</span>
                                     @else
-                                        Ninguno
+                                        <span class="text-muted small">-</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     <!-- Mostrar el folio de la capacitación -->
                                     @if($capacitacion->folio)
                                         @if($capacitacion->folio == 'Rechazado')
-                                            {{ $capacitacion->folio }}
+                                            <span class="badge bg-danger small">{{ $capacitacion->folio }}</span>
                                         @else
-                                            @if(str_starts_with($capacitacion->folio, 'TNM-169-'))
-                                                {{ $capacitacion->folio }}
-                                            @else
-                                                TNM-169-{{ $capacitacion->folio }}
-                                            @endif
+                                            <span class="badge bg-primary small">
+                                                @if(str_starts_with($capacitacion->folio, 'TNM-169-'))
+                                                    {{ $capacitacion->folio }}
+                                                @else
+                                                    TNM-169-{{ $capacitacion->folio }}
+                                                @endif
+                                            </span>
                                         @endif
                                     @else
-                                        No asignado
+                                        <span class="text-muted small">-</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    <form action="{{ route('capacitacionesext.destroy', $capacitacion->id) }}" method="POST" class="delete-form">
+                                    <form action="{{ route('capacitacionesext.destroy', $capacitacion->id) }}" method="POST" class="delete-form d-inline">
                                         @csrf
                                         @method('DELETE')
                                         @if ($capacitacion->folio)
-                                            <x-primary-button
-                                                class="bg-red-600 cursor-not-allowed opacity-50"
-                                                disabled>
-                                                🗑
-                                            </x-primary-button>
+                                            <button type="button"
+                                                class="action-btn btn-delete opacity-50"
+                                                disabled
+                                                title="No se puede eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         @else
-                                            <x-primary-button
-                                                class="bg-red-600 hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-0"
-                                                onclick="return confirm('¿Estás seguro de que deseas eliminar esta capacitación?');">
-                                                🗑
-                                            </x-primary-button>
+                                            <button type="submit"
+                                                class="action-btn btn-delete"
+                                                onclick="return confirm('¿Estás seguro de que deseas eliminar esta capacitación?')"
+                                                title="Eliminar capacitación">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         @endif
                                     </form>
                                 </td>
@@ -300,19 +401,21 @@
                                 @if($tipo_usuario == 1) <!-- Verifica si no es docente para mostrar las acciones -->
                                     @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
                                         <td class="text-center">
-                                            <a href="{{ route('capacitacionesext.constancia', $capacitacion->id) }}" target="_blank">
-                                                <x-primary-button class="bg-green-600 hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-0">
-                                                    📄
-                                                </x-primary-button>
+                                            <a href="{{ route('capacitacionesext.constancia', $capacitacion->id) }}"
+                                               target="_blank"
+                                               class="action-btn btn-certificate"
+                                               title="Generar constancia">
+                                                <i class="fas fa-file-alt"></i>
                                             </a>
                                         </td>
                                         <td class="text-center">
-                                            <x-primary-button
-                                                class="bg-green-600 hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-0"
+                                            <button type="button"
+                                                class="action-btn btn-view"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#modal-{{ $capacitacion->id }}">
-                                                Detalles
-                                            </x-primary-button>
+                                                data-bs-target="#modal-{{ $capacitacion->id }}"
+                                                title="Ver detalles">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
                                             <!-- Modal -->
                                             <div class="modal fade" id="modal-{{ $capacitacion->id }}" tabindex="-1" aria-labelledby="modalLabel-{{ $capacitacion->id }}" aria-hidden="true">
                                                 <div class="modal-dialog modal-xl">

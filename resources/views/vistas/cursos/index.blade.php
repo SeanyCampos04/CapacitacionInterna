@@ -49,74 +49,67 @@
             </div>
 
             <!-- TABLA -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-                        <thead class="text-xm text-gray-700 bg-gray-50">
+            <div class="optimized-container bg-white shadow-lg rounded-lg">
+                <table class="w-full table-auto border-collapse border border-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-left text-sm font-semibold">Nombre</th>
+                            <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-left text-sm font-semibold">Instructor</th>
+                            <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-center text-sm font-semibold">Fecha Inicio</th>
+                            <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-center text-sm font-semibold">Fecha Final</th>
+                            <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-center text-sm font-semibold">Modalidad</th>
+                            <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-center text-sm font-semibold">Periodo</th>
+                            <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-center text-sm font-semibold">Lugar</th>
+                            <th class="py-2 px-4 border-b border-gray-200 bg-blue-100 text-center text-sm font-semibold">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($cursos as $curso)
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-2 px-4 border-b border-gray-200 text-sm font-semibold text-blue-600">{{ $curso->nombre }}</td>
+                                <td class="py-2 px-4 border-b border-gray-200 text-sm">
+                                    @foreach ($curso->instructores as $instructor)
+                                        {{ optional($instructor->user->datos_generales)->nombre }}
+                                        {{ optional($instructor->user->datos_generales)->apellido_paterno }}
+                                        {{ optional($instructor->user->datos_generales)->apellido_materno }}<br>
+                                    @endforeach
+                                </td>
+                                <td class="py-2 px-4 border-b border-gray-200 text-sm text-center">
+                                    @if($curso->fdi)
+                                        {{ \Carbon\Carbon::parse($curso->fdi)->format('Y-m-d') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="py-2 px-4 border-b border-gray-200 text-sm text-center">
+                                    @if($curso->fdf)
+                                        {{ \Carbon\Carbon::parse($curso->fdf)->format('Y-m-d') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="py-2 px-4 border-b border-gray-200 text-sm text-center">{{ $curso->modalidad ?? '-' }}</td>
+                                <td class="py-2 px-4 border-b border-gray-200 text-sm text-center">{{ optional($curso->periodo)->periodo ?? '-' }}</td>
+                                <td class="py-2 px-4 border-b border-gray-200 text-sm text-center">{{ $curso->lugar ?? '-' }}</td>
+
+                            <td class="py-2 px-4 border-b border-gray-200 text-center">
+                                <a href="{{ route('cursos.show', $curso->id) }}"
+                                   class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition-colors duration-200"
+                                   title="Ver detalles">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                                </tr>
+                        @empty
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-center">Nombre</th>
-                                <th scope="col" class="px-6 py-3 text-center">Instructor</th>
-                                <th scope="col" class="px-6 py-3 text-center">Fecha de inicio</th>
-                                <th scope="col" class="px-6 py-3 text-center">Fecha de terminación</th>
-                                <th scope="col" class="px-6 py-3 text-center">Modalidad</th>
-                                <th scope="col" class="px-6 py-3 text-center">Periodo</th>
-                                <th scope="col" class="px-6 py-3 text-center">Lugar</th>
-                                <th scope="col" class="px-6 py-3 text-center">Acciones</th>
+                                <td colspan="8" class="py-2 px-4 text-center text-gray-500">
+                                    No hay cursos registrados.
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($cursos as $curso)
-                                <tr class="bg-white border-b">
-                                    <td class="text-center px-4 py-3">{{ $curso->nombre }}</td>
-
-                                    <td class="text-center px-4 py-3">
-                                        @foreach ($curso->instructores as $instructor)
-                                            {{ optional($instructor->user->datos_generales)->nombre }}
-                                            {{ optional($instructor->user->datos_generales)->apellido_paterno }}
-                                            {{ optional($instructor->user->datos_generales)->apellido_materno }}
-                                            <br>
-                                        @endforeach
-                                    </td>
-
-                                    <td class="text-center px-4 py-3">
-                                        @if($curso->fdi)
-                                            {{ \Carbon\Carbon::parse($curso->fdi)->format('Y-m-d') }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-
-                                    <td class="text-center px-4 py-3">
-                                        @if($curso->fdf)
-                                            {{ \Carbon\Carbon::parse($curso->fdf)->format('Y-m-d') }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-
-                                    <td class="text-center px-4 py-3">{{ $curso->modalidad ?? '-' }}</td>
-                                    <td class="text-center px-4 py-3">{{ optional($curso->periodo)->periodo ?? '-' }}</td>
-                                    <td class="text-center px-4 py-3">{{ $curso->lugar ?? '-' }}</td>
-
-                                    <td class="text-center px-4 py-3">
-                                        <a href="{{ route('cursos.show', $curso->id) }}"
-                                           class="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                            Ver detalles
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr class="bg-white border-b">
-                                    <td colspan="8" class="text-center py-4 text-gray-500">
-                                        No hay cursos registrados.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Paginación -->
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>                <!-- Paginación -->
                 <div class="p-4">
                     @if(method_exists($cursos ?? null, 'links'))
                         {{ $cursos->links() }}

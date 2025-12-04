@@ -43,17 +43,36 @@
             border: 1px solid #ced4da;
             padding: 10px;
         }
-        .btn-primary {
-            background-color: #0069d9;
-            border-color: #0069d9;
-            padding: 12px 25px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 600;
+        /* Estilo del botón igual al de Diplomados */
+        .w-full {
+            width: 100%;
         }
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+        .bg-indigo-600 {
+            background-color: #4f46e5;
+        }
+        .bg-indigo-600:hover {
+            background-color: #4338ca;
+        }
+        .text-white {
+            color: white;
+        }
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .rounded-md {
+            border-radius: 0.375rem;
+        }
+        .focus\:ring-2:focus {
+            --tw-ring-width: 2px;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5);
+        }
+        .focus\:ring-indigo-500:focus {
+            --tw-ring-color: rgb(99 102 241);
         }
         .text-center {
             margin-top: 20px;
@@ -197,9 +216,12 @@
             <input type="file" class="form-control" id="evidencia" name="evidencia" accept="application/pdf" required>
         </div>
 
-        <!-- Botones -->
-        <div class="text-center">
-            <x-primary-button type="submit" class="bg-green-600 hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-0">Registrar Capacitación</x-primary-button>
+        <!-- Botón -->
+        <div class="mt-4">
+            <button type="submit"
+                class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500">
+                Registrar Capacitación
+            </button>
         </div>
     </form>
 </div>

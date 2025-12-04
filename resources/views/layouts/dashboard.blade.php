@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center w-full">
-            <h2 class="font-semibold text-2xl text-white">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Bienvenido') }}
                 @if(Auth::user() && Auth::user()->datos_generales)
                     {{ Auth::user()->datos_generales->nombre }} {{ Auth::user()->datos_generales->apellido_paterno }}
@@ -9,7 +9,7 @@
                     {{ Auth::user()->name }}
                 @endif
             </h2>
-            <span class="font-semibold text-lg text-white">
+            <span class="font-semibold text-lg text-green-600 dark:text-green-400">
                 @php
                     $user_tipo = auth()->user()->tipo;
                     $user_roles_count = auth()->user()->roles->count();
@@ -26,23 +26,42 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-2xl font-bold mb-4">{{ __("Menú de Opciones") }}</h3>
-                    <p class="text-gray-600 mb-6">Selecciona una opción para gestionar las capacitaciones internas.</p>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Selecciona una opción para gestionar las capacitaciones internas.</p>
 
                     <!-- Agregar Bootstrap CSS y Font Awesome -->
                     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
                     <style>
+                        /* Quitar el subrayado de todos los enlaces */
+                        a {
+                            text-decoration: none !important;
+                        }
                         .card {
                             transition: transform 0.2s;
                         }
                         .card:hover {
                             transform: translateY(-5px);
                         }
-                        a {
-                            text-decoration: none !important;
+
+                        /* Botón verde para instructor */
+                        .btn-green {
+                            background: linear-gradient(45deg, #10b981, #059669);
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 6px;
+                            font-weight: 500;
+                            transition: all 0.3s ease;
+                        }
+
+                        .btn-green:hover {
+                            background: linear-gradient(45deg, #059669, #047857);
+                            color: white;
+                            transform: translateY(-1px);
+                            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
                         }
 
                         /* Hacer que los dropdowns se abran hacia arriba */
@@ -51,12 +70,6 @@
                             bottom: 100% !important;
                             margin-bottom: 0.125rem !important;
                             transform: translate3d(0px, -2px, 0px) !important;
-                            box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-                        }
-
-                        .dropup .dropdown-toggle::after {
-                            border-top: 0;
-                            border-bottom: 0.3em solid;
                         }
                     </style>
 
@@ -142,11 +155,11 @@
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
                                         <div class="mb-3">
-                                            <i class="fas fa-chalkboard-teacher fa-3x text-info"></i>
+                                            <i class="fas fa-chalkboard-teacher fa-3x text-green"></i>
                                         </div>
                                         <h5 class="card-title">Instructor</h5>
                                         <p class="card-text">Gestión de cursos como instructor</p>
-                                        <a href="{{ route('instructor.index') }}" class="btn btn-info">
+                                        <a href="{{ route('instructor.index') }}" class="btn btn-green">
                                             Ver Cursos
                                         </a>
                                     </div>
