@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Cursos disponibles') }}
         </h2>
     </x-slot>
@@ -52,7 +52,9 @@
                                     <form action="{{ route('curso_participante.store') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="curso_id" value="{{ $curso->id }}">
-                                        <x-primary-button class="mt-4">Registrar</x-primary-button>
+                                        <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 mt-4">
+                                            Registrar
+                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -61,4 +63,35 @@
             @endif
         </div>
     </div>
+
+    <style>
+        /* Estilo del botón igual al de Externa */
+        .bg-indigo-600 {
+            background-color: #4f46e5;
+        }
+        .bg-indigo-600:hover {
+            background-color: #4338ca;
+        }
+        .text-white {
+            color: white;
+        }
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .rounded-md {
+            border-radius: 0.375rem;
+        }
+        .focus\:ring-2:focus {
+            --tw-ring-width: 2px;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5);
+        }
+        .focus\:ring-indigo-500:focus {
+            --tw-ring-color: rgb(99 102 241);
+        }
+    </style>
 </x-app-layout>
