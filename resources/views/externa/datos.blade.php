@@ -53,7 +53,6 @@
         .compact-table th {
             font-size: 0.8rem;
             font-weight: 600;
-            text-transform: uppercase;
             letter-spacing: 0.025em;
         }
 

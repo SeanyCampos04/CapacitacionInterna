@@ -77,8 +77,8 @@
                     </x-nav-link>
                 </div>
 
-                <!-- Visualizar Capacitaciones - Solo para Admin y CAD -->
-                @if ($is_admin or $is_cad)
+                <!-- Visualizar Capacitaciones - Para Admin, CAD, Jefe Departamento y Subdirector -->
+                @if ($is_admin or $is_cad or $is_jefe_departamento or $is_subdirector)
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
                         <x-nav-link :href="route('externa.datos')" :active="request()->routeIs('externa.datos')">
                             {{ __('Visualizar') }}
@@ -163,7 +163,7 @@
                 {{ __('Inicio') }}
             </x-responsive-nav-link>
 
-            @if ($is_admin or $is_cad)
+            @if ($is_admin or $is_cad or $is_jefe_departamento or $is_subdirector)
                 <x-responsive-nav-link :href="route('externa.datos')" :active="request()->routeIs('externa.datos')">
                     {{ __('Visualizar') }}
                 </x-responsive-nav-link>
