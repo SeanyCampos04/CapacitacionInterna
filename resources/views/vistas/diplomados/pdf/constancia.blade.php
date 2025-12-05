@@ -46,6 +46,7 @@
 
         .header img {
             height: 60px;
+            visibility: hidden; /* Logos ocultos pero mantienen espacio */
         }
 
         .title {
@@ -173,6 +174,7 @@
             bottom: 0.3cm;
             left: 0;
             text-align: left;
+            display: none; /* Logos de afiliaciones ocultos */
         }
 
         .qr-placeholder {
