@@ -5,6 +5,9 @@
         </h2>
     </x-slot>
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         .optimized-container {
             width: 95%;
@@ -66,8 +69,8 @@
                         </td>
                         <td class="py-2 px-4 border-b border-gray-200 text-center">
                             <a href="{{ route('diplomados.detalles_instructor', $solicitud->diplomado->id) }}"
-                               class="text-blue-500 hover:underline">
-                                Ver detalles
+                               class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition-colors duration-200">
+                                <i class="fas fa-eye mr-2"></i>Ver detalles
                             </a>
                         </td>
                     </tr>
